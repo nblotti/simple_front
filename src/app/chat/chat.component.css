@@ -1,0 +1,147 @@
+/**********************************************************************************************************************/
+/*                                                                                                                    */
+/*                                                position of the buttons & windows                                   */
+/*                                                                                                                    */
+/**********************************************************************************************************************/
+
+.button_container {
+
+  margin-top: 430px;;
+}
+
+
+.chat {
+  content: url("../../assets/chatgpt.png");
+  height: 20px;
+  float: right;
+
+  font-family: "Inter Semi Bold";
+
+}
+
+.chatcontent {
+
+
+}
+
+.maincontainer {
+
+  margin: 0px;
+  background-color: #444654;
+  text-align: left;
+  overflow: auto;
+  width:500px;
+  height: 500px;
+  position: relative;
+  resize: both;
+}
+-webkit-resizer {
+  background-color: red;
+}
+
+
+
+
+/**********************************************************************************************************************/
+/*                                                                                                                    */
+/*                                                intra component css                                                  */
+/*                                                                                                                    */
+/**********************************************************************************************************************/
+
+
+/*second column*/
+
+
+
+
+.bottom-5 {
+  bottom: 5px !important;
+}
+
+table tr td, table tr th{
+  background-color: rgba(34,35,41, 0) !important;
+
+}
+.table_messages{
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+.chat_icon{
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  margin-top: 1px;
+
+}
+.chat_user_icon{
+  content:  url("../../assets/avatar_user.png");
+
+
+}
+.chat_assistant_icon{
+  content:  url("../../assets/logo.png");
+  background-color: #0FA47F;
+
+  padding-top: 2px;
+
+}
+
+.chat_icon_content{
+  width: 35px;
+  padding-top: 13px;
+}
+
+.chat_text_content{
+  color: white;
+  padding-top: 13px;
+}
+
+
+/*All*/
+
+
+
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+  color: white;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #343541;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #343541;
+  border-radius: 3px;
+  border: 3px solid #444654 ;
+}
+
+
+.h-90 {
+  height: 90% !important;
+}
+
+.example-handle {
+  background-image: url("../../assets/draggable-svgrepo-com.svg");
+  z-index: 100;
+  width: 24px;
+  height: 24px;
+
+  background-size: 24px, auto, contain;
+}

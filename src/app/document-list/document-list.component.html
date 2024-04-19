@@ -1,0 +1,26 @@
+<table class="table table-borderless table_documnents">
+  <thead>
+  <tr>
+    <th class="document_header_content">Document</th>
+    <th class="document_header_content">User</th>
+  </tr>
+  </thead>
+  <tbody>
+
+
+    @for (message of getDocuments(); track message; let index = $index) {
+      <tr class=".bg-transparent mt-5">
+        <td class="document_text_content">
+          <a href (click)="onDisplayPDF($event,  message[0])">{{ message[1] }} </a>
+        </td>
+        <td class="document_text_content">
+          {{ message[2] }}
+        </td>
+      </tr>
+    }
+
+  </tbody>
+</table>
+
+
+

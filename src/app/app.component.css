@@ -1,0 +1,98 @@
+host {
+  height: 100%;
+}
+
+.app-toolbar {
+  height: 40px;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+.row {
+  height: 100%;
+  margin: 0px;
+}
+
+#sidebar {
+  background-color: lightgray;
+  overflow-x: hidden;
+  transition: width 0.5s;
+  margin: 0px;
+}
+
+.full-height-minus-menu {
+  height: calc(100% - 40px);
+  padding: 0px;
+}
+
+.app_content {
+  background-color: #444654;
+  color: white;
+  border-bottom: white solid 1px;
+  border :0px
+}
+
+
+.main-content{
+  padding:0px;
+}
+
+.shared{
+  width:60%;
+}
+
+.sidebar{
+  padding: 0px;
+}
+.sidebar-content {
+  transition: opacity 0.5s;
+  height: 100%;
+
+}
+
+
+.collapsed_side {
+  width: 0;
+}
+
+.collapsed_side .sidebar-content {
+  opacity: 0;
+  display: none;
+}
+
+
+.full {
+  width: 100%;
+}
+
+
+.shared_side {
+  width: 40%;
+}
+
+
+.chat_assistant_icon {
+  /* Specify the URL of the image */
+  background-image: url('../assets/chatgpt.png');
+
+  /* Set the size of the background image */
+  background-size: cover; /* Cover the entire div */
+  /* or */
+  background-size: contain; /* Fit the entire image inside the div */
+
+  /* Specify other properties like background position and repeat if needed */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Do not repeat the background image */
+  /* or */
+  background-repeat: repeat; /* Repeat the background image */
+
+
+  margin-right: 20px;
+  border: none;
+
+  /* Set the width and height of the div */
+  width: 24px;
+  height: 24px;
+
+}

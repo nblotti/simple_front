@@ -1,0 +1,32 @@
+  <div class=" h-100 position-relative justify-content-center align-items-center ">
+    <div class="h-90 overflow-auto" #scrollMe>
+      <table class="table table-borderless table_messages">
+        <tbody>
+          @for (message of getMessages(); track message.id) {
+            <tr class=".bg-transparent mt-5">
+              <td class="chat_icon_content ">
+                @if (message.role == "assistant") {
+                  <img class="chat_icon chat_assistant_icon">
+                } @else {
+                  <img class="chat_icon chat_user_icon">
+                }
+              </td>
+              <td class="chat_text_content">
+                {{ message.content.toString() }}
+              </td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+    <div class="position-absolute bottom-5 w-100 start-50 translate-middle">
+      <input type="text" class="form-control  chat_input_component " [(ngModel)]="inputMessage"
+             (keyup)="onKeyUp($event)">
+    </div>
+  </div>
+
+
+
+
+

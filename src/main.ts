@@ -1,6 +1,15 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
+/// <reference types="@angular/localize" />
 
-bootstrapApplication(AppComponent, appConfig)
+import {bootstrapApplication} from '@angular/platform-browser';
+
+import {AppComponent} from './app/app.component';
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import {provideHttpClient} from "@angular/common/http";
+import {PreloadAllModules, provideRouter, withDebugTracing, withPreloading} from "@angular/router";
+import {APP_ROUTES} from "./app/app.routes";
+
+bootstrapApplication(AppComponent, {
+  providers: [provideAnimationsAsync(), provideAnimationsAsync(), provideHttpClient(),
+    provideRouter(APP_ROUTES, withPreloading(PreloadAllModules), withDebugTracing())],
+})
   .catch((err) => console.error(err));

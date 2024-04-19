@@ -1,0 +1,21 @@
+
+.table_documnents{
+  margin-top: 30px;
+  width: 100%;
+}
+
+
+
+.document_header_content{
+  background-color: #444654;
+  color:white;
+  border-bottom: white solid 1px;
+  padding-top: 13px;
+}
+
+
+.document_text_content{
+  background-color: #444654;
+
+}
+
