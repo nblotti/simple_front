@@ -51,6 +51,7 @@ web_modules/
 #intellij
 .idea/
 .nx/
+.vscode
 
 # TypeScript cache
 *.tsbuildinfo
