@@ -13,7 +13,7 @@ export class FileUploadService {
   uploadFile(file: File): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
-
+    formData.append('userid', "1");
     const headers = new HttpHeaders();
     // If you need to add custom headers, you can do so here
     // headers.append('Authorization', 'Bearer token');

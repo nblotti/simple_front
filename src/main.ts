@@ -10,6 +10,7 @@ import {APP_ROUTES} from "./app/app.routes";
 
 bootstrapApplication(AppComponent, {
   providers: [provideAnimationsAsync(), provideAnimationsAsync(), provideHttpClient(),
-    provideRouter(APP_ROUTES, withPreloading(PreloadAllModules), withDebugTracing())],
+    //provideRouter(APP_ROUTES, withPreloading(PreloadAllModules), withDebugTracing())],
+    provideRouter(APP_ROUTES, withPreloading(PreloadAllModules))],
 })
   .catch((err) => console.error(err));

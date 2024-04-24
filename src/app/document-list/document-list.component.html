@@ -1,26 +1,112 @@
-<table class="table table-borderless table_documnents">
-  <thead>
-  <tr>
-    <th class="document_header_content">Document</th>
-    <th class="document_header_content">User</th>
-  </tr>
-  </thead>
-  <tbody>
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Conversations
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <table class="table table-borderless table_documnents">
+          <thead>
+          <tr>
+            <th class="document_header_content">Name</th>
+            <th class="document_header_content">Created</th>
+            <th class="document_header_content">Document name</th>
+            <th class="document_header_content">Action</th>
+          </tr>
+          </thead>
+          <tbody>
 
 
-    @for (message of getDocuments(); track message; let index = $index) {
-      <tr class=".bg-transparent mt-5">
-        <td class="document_text_content">
-          <a href (click)="onDisplayPDF($event,  message[0])">{{ message[1] }} </a>
-        </td>
-        <td class="document_text_content">
-          {{ message[2] }}
-        </td>
-      </tr>
-    }
+            @for (message of getConverations(); track message; let index = $index) {
+              <tr class=".bg-transparent mt-5">
+                <td class="document_text_content document_text_content_selectable">
+                  <p (click)="setConversation(message.id,message.pdf_id)">{{ message.description}}</p>
+                </td>
+                <td class="document_text_content">
+                  {{ message.created_on}}
+                </td>
+                <td class="document_text_content">
+                  {{ message.pdf_name}}
+                </td>
+                <td class="document_text_content"><button class="btn btn-danger" [disabled]="isCurrentConversation(message.id) "
+                                                          (click)="deleteConversation(message.id)">Delete</button></td>
+              </tr>
+            }
 
-  </tbody>
-</table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        My Documents
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+
+        <table class="table table-borderless table_documnents">
+          <thead>
+          <tr>
+            <th class="document_header_content">Document</th>
+            <th class="document_header_content">Date uploaded</th>
+            <th class="document_header_content">User</th>
+            <th class="document_header_content">Action</th>
+          </tr>
+          </thead>
+          <tbody>
 
 
+            @for (message of getDocuments(); track message; let index = $index) {
+              <tr class=".bg-transparent mt-5">
+                <td class="document_text_content">
+                  {{ message[1] }}
+                </td>
+                <td class="document_text_content">
+                  {{message[3] }}
+                </td>
+                <td class="document_text_content">
+                  {{ message[2] }}
+                </td>
+                <td class="document_text_content"><button class="btn btn-danger" (click)="deleteItem(message[0])">Delete</button></td>
+              </tr>
+            }
 
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        Search perimeter
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked>
+          <label class="form-check-label" for="flexSwitchCheckDefault">My documents</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+          <label class="form-check-label" for="flexSwitchCheckChecked">Academy</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDisabled" >
+          <label class="form-check-label" for="flexSwitchCheckDisabled">Documentation informatique</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDisabled">
+          <label class="form-check-label" for="flexSwitchCheckCheckedDisabled">JIRA</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

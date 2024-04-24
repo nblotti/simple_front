@@ -35,7 +35,7 @@ host {
 
 
 .main-content{
-  padding:0px;
+  padding:5px;
 }
 
 .shared{
@@ -43,7 +43,8 @@ host {
 }
 
 .sidebar{
-  padding: 0px;
+  padding: 5px;
+  border-right: lightgray 1px solid;
 }
 .sidebar-content {
   transition: opacity 0.5s;
@@ -96,3 +97,5 @@ host {
   height: 24px;
 
 }
+
+

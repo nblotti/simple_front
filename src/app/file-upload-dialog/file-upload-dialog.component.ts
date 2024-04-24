@@ -1,6 +1,7 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {FileUploadService} from "../file-upload.service";
 import {HttpEventType} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -14,7 +15,7 @@ export class FileUploadDialogComponent {
 
   uploadProgress: number = 0;
 
-  constructor(private fileUploadService: FileUploadService) {
+  constructor(private fileUploadService: FileUploadService,private router: Router) {
   }
 
   onFileSelected(event: any) {
@@ -35,6 +36,7 @@ export class FileUploadDialogComponent {
           this.closeModal.emit();
           // Reset upload progress after successful upload
           this.uploadProgress = 0;
+          this.router.navigate(['/docs',event.body.blob_id.blob_id,event.body.blob_id.conversation_id]);
         }
       });
 

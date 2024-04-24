@@ -3,6 +3,7 @@ import {ActivatedRoute, Event} from "@angular/router";
 import {PdfJsViewerComponent, PdfJsViewerModule} from "ng2-pdfjs-viewer";
 import {map} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {NgEventBus} from "ng-event-bus";
 
 
 @Component({
@@ -21,14 +22,15 @@ export class DocumentContainerComponent implements AfterViewInit {
   @ViewChild('pdfViewerOnDemand') protected pdfViewerOnDemand!: any
 
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private eventBus: NgEventBus) {
   }
 
   ngAfterViewInit(): void {
     this.route.params.subscribe(params => {
 
+      let url = this.base_url + params['document_id'] + "/"
 
-      this.openPdf(this.base_url + params['id'])
+      this.openPdf(url)
     });
   }
 
@@ -42,7 +44,7 @@ export class DocumentContainerComponent implements AfterViewInit {
       );
   }
 
-  public openPdf(url:string) {
+  public openPdf(url: string) {
 
     this.downloadFile(url).subscribe(
       (res: any) => {

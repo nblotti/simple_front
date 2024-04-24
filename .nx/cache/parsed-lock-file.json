@@ -4122,6 +4122,15 @@
         "hash": "sha512-MK9V6NzAS1+Ud7JV9lJLFqW85VbC9dq3LmwZCuBe4wBDgKC0Kj/jd8Xl+nSviU+Qc3+m7umHHyHg//2KSa0a0Q=="
       }
     },
+    "npm:@types/sprintf-js": {
+      "type": "npm",
+      "name": "npm:@types/sprintf-js",
+      "data": {
+        "version": "1.1.4",
+        "packageName": "@types/sprintf-js",
+        "hash": "sha512-aWK1reDYWxcjgcIIPmQi3u+OQDuYa9b+lr6eIsGWrekJ9vr1NSjr4Eab8oQ1iKuH1ltFHpXGyerAv1a3FMKxzQ=="
+      }
+    },
     "npm:@types/stack-utils": {
       "type": "npm",
       "name": "npm:@types/stack-utils",
@@ -4606,6 +4615,24 @@
         "version": "4.1.3",
         "packageName": "arg",
         "hash": "sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA=="
+      }
+    },
+    "npm:sprintf-js@1.0.3": {
+      "type": "npm",
+      "name": "npm:sprintf-js@1.0.3",
+      "data": {
+        "version": "1.0.3",
+        "packageName": "sprintf-js",
+        "hash": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="
+      }
+    },
+    "npm:sprintf-js": {
+      "type": "npm",
+      "name": "npm:sprintf-js",
+      "data": {
+        "version": "1.1.3",
+        "packageName": "sprintf-js",
+        "hash": "sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA=="
       }
     },
     "npm:array-flatten": {
@@ -7342,24 +7369,6 @@
         "version": "9.0.5",
         "packageName": "ip-address",
         "hash": "sha512-zHtQzGojZXTwZTHQqra+ETKd4Sn3vgi7uBmlPoXVWZqYvuKmtI0l/VZTjqGmJY9x88GGOaZ9+G9ES8hC4T4X8g=="
-      }
-    },
-    "npm:sprintf-js@1.1.3": {
-      "type": "npm",
-      "name": "npm:sprintf-js@1.1.3",
-      "data": {
-        "version": "1.1.3",
-        "packageName": "sprintf-js",
-        "hash": "sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA=="
-      }
-    },
-    "npm:sprintf-js": {
-      "type": "npm",
-      "name": "npm:sprintf-js",
-      "data": {
-        "version": "1.0.3",
-        "packageName": "sprintf-js",
-        "hash": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="
       }
     },
     "npm:ipaddr.js": {
@@ -17310,7 +17319,7 @@
     },
     {
       "source": "npm:argparse",
-      "target": "npm:sprintf-js",
+      "target": "npm:sprintf-js@1.0.3",
       "type": "static"
     },
     {
@@ -20585,7 +20594,7 @@
     },
     {
       "source": "npm:ip-address",
-      "target": "npm:sprintf-js@1.1.3",
+      "target": "npm:sprintf-js",
       "type": "static"
     },
     {

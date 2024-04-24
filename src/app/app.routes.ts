@@ -4,8 +4,9 @@ import {DocumentListComponent} from "./document-list/document-list.component";
 
 
 export const APP_ROUTES: Route[] = [
+  { path: '', redirectTo: 'docslist', pathMatch: 'full' },
   {
-    path: 'docs/:id',
+    path: 'docs/:document_id/:conversation_id',
     loadComponent: () => import('./document-container/document-container.component').then(mod => mod.DocumentContainerComponent)
   },
   {
