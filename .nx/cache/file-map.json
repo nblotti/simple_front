@@ -42,6 +42,7 @@
   "pathMappings": {},
   "nxJsonPlugins": [],
   "fileMap": {
+    "nonProjectFiles": [],
     "projectFileMap": {
       "simple_front": [
         {
@@ -50,7 +51,7 @@
         },
         {
           "file": ".gitignore",
-          "hash": "13044518069027839699"
+          "hash": "12209782110428047944"
         },
         {
           "file": ".vscode/extensions.json",
@@ -65,8 +66,12 @@
           "hash": "5336636969995539451"
         },
         {
+          "file": "LICENSE",
+          "hash": "12649885980860800067"
+        },
+        {
           "file": "README.md",
-          "hash": "7968305999349250762"
+          "hash": "6039614583426936823"
         },
         {
           "file": "angular.json",
@@ -217,15 +222,15 @@
         },
         {
           "file": "src/app/document-list/document-list.component.css",
-          "hash": "1131099448754957456"
+          "hash": "10470399136136884498"
         },
         {
           "file": "src/app/document-list/document-list.component.html",
-          "hash": "18124770286923416619"
+          "hash": "12348979346365307253"
         },
         {
           "file": "src/app/document-list/document-list.component.ts",
-          "hash": "11205176937975540098",
+          "hash": "195970987565967944",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/forms",
@@ -386,7 +391,6 @@
           "hash": "8544468366590402334"
         }
       ]
-    },
-    "nonProjectFiles": []
+    }
   }
 }
