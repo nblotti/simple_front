@@ -4,12 +4,13 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {ScreenReadyMessage} from "./SreenReadyMessage";
 import {MetaData, NgEventBus} from 'ng-event-bus';
 import {sprintf} from 'sprintf-js';
+import {LineBreakPipe} from "./line-break.pipe";
 
 
 @Component({
   selector: 'chat-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [FormsModule, HttpClientModule, LineBreakPipe],
   providers: [],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
@@ -17,11 +18,12 @@ import {sprintf} from 'sprintf-js';
 export class ChatComponent {
 
   inputMessage: string = "";
+  private searchPerimeter = "1";
 
   private current_conversation: string = ""
   private screenReadyMessages: Array<ScreenReadyMessage> = new Array<ScreenReadyMessage>()
 
-  private chat_command_url: string = "https://assistmeai.nblotti.org/chat/command/?command=%s&conversation_id=%s"
+  private chat_command_url: string = "https://assistmeai.nblotti.org/chat/command/?command=%s&conversation_id=%s&perimeter=%s"
   private chat_messages_url: string = "https://assistmeai.nblotti.org/chat/messages/?conversation_id=%s"
 
   @ViewChild('scrollMe') private myScrollContainer: any;
@@ -33,10 +35,12 @@ export class ChatComponent {
 
       this.current_conversation = meta.data
       this.screenReadyMessages = [];
-      this.screenReadyMessages.push(new ScreenReadyMessage("1", "assistant", "How can I help you"));
+      this.screenReadyMessages.push(new ScreenReadyMessage("1", "assistant", "How can I help you ?"));
       this.loadConversationMessages()
     });
-
+    this.eventBus.on("command:perimeterchanged").subscribe((meta: MetaData) => {
+      this.searchPerimeter = meta.data;
+    });
   }
 
   loadConversationMessages() {
@@ -77,7 +81,7 @@ export class ChatComponent {
     if ($event.key === 'Enter') {
 
 
-      let call_url = sprintf(this.chat_command_url, this.inputMessage, this.current_conversation);
+      let call_url = sprintf(this.chat_command_url, this.inputMessage, this.current_conversation, this.searchPerimeter);
       this.screenReadyMessages.push(new ScreenReadyMessage("1", "user", this.inputMessage));
       this.inputMessage = "";
 
@@ -85,7 +89,7 @@ export class ChatComponent {
         next: (result) => {
           this.screenReadyMessages.push(new ScreenReadyMessage("1", "assistant", result));
         },
-        error:(result:string)=>{
+        error: (result: string) => {
           console.log(result)
         }
       })

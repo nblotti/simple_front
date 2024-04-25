@@ -16,11 +16,14 @@ import {DatePipe, JsonPipe} from "@angular/common";
 export class DocumentListComponent implements AfterViewInit {
 
 
+  isJiraChecked: boolean = false;
+  isDocumentInformatiqueChecked: boolean = false;
+  isAcademyChecked: boolean = false;
+  isMyDocumentsChecked: boolean = true;
   private _documents: string[][] = [];
   private _conversations: Conversation[] = [];
   private current_conversation: String = "";
-  private user_id = "1"
-
+  private perimeter = "1"
 
   constructor(private router: Router, private route: ActivatedRoute, protected httpClient: HttpClient, private datePipe: DatePipe, private eventBus: NgEventBus) {
 
@@ -49,7 +52,7 @@ export class DocumentListComponent implements AfterViewInit {
   }
 
 
-  public getConverations(): Conversation[] {
+  public getConversations(): Conversation[] {
 
     return this._conversations;
   }
@@ -65,7 +68,7 @@ export class DocumentListComponent implements AfterViewInit {
   }
 
   loadConversations() {
-    let url = this.getConversationsBaseUrl() + this.user_id + "/"
+    let url = this.getConversationsBaseUrl() + this.perimeter + "/"
     return this.httpClient.get<any>(url).subscribe({
       next: (result) => {
         this._conversations = result;
@@ -75,7 +78,7 @@ export class DocumentListComponent implements AfterViewInit {
           let current_date = this.datePipe.transform(new Date(), 'dd.MM.yyyy');
           this._conversations.forEach((conversation) => {
 
-            if (conversation.pdf_id == "-1" && conversation.created_on == current_date) {
+            if ((conversation.pdf_id == null || conversation.pdf_id == "-1") && conversation.created_on == current_date) {
               if (this.current_conversation.length == 0 || this.current_conversation > conversation.id) {
                 this.current_conversation = conversation.id
               }
@@ -85,7 +88,7 @@ export class DocumentListComponent implements AfterViewInit {
         }
         if (this.current_conversation.length == 0) {
           this.createConversation();
-        }else{
+        } else {
           this.eventBus.cast("command:conversationchange", this.current_conversation)
 
         }
@@ -135,13 +138,38 @@ export class DocumentListComponent implements AfterViewInit {
 
     this.eventBus.cast("command:conversationchange", conversation_id)
 
-    if (document_id != "-1") this.router.navigate(['/docs', document_id, conversation_id], {relativeTo: this.route});
+    if (document_id != null && document_id != "-1") this.router.navigate(['/docs', document_id, conversation_id], {relativeTo: this.route});
     else
       this.current_conversation = conversation_id;
   }
 
+  handleJiraChange($event: Event) {
+    this.getUserString();
+  }
+
+  handleDocumentInformatiqueChange($event: Event) {
+    this.getUserString();
+  }
+
+  handleAcademyChange($event: Event) {
+    this.getUserString();
+  }
+
+  handleMyDocumentsChange($event: Event) {
+    this.getUserString();
+  }
+
+  private getUserString() {
+    let documentPerimeter = this.isMyDocumentsChecked?this.perimeter:""
+    documentPerimeter += this.isJiraChecked ? " J" : "";
+    documentPerimeter += this.isDocumentInformatiqueChecked ? " D" : "";
+    documentPerimeter += this.isAcademyChecked ? " A" : "";
+
+    this.eventBus.cast("command:perimeterchanged", documentPerimeter.trim())
+  }
+
   private createConversation() {
-    let conversation = new Conversation(this.user_id);
+    let conversation = new Conversation(this.perimeter);
     let url = this.getConversationsBaseUrl()
     this.httpClient.post<Conversation>(url, conversation).subscribe({
       next: (result) => {
@@ -156,7 +184,8 @@ export class DocumentListComponent implements AfterViewInit {
   }
 
   private loadDocuments() {
-    this.fetchDocuments().subscribe(value => this._documents = value);
+    this.fetchDocuments().subscribe(value =>
+      this._documents = value);
   }
 
   private fetchDocuments(): Observable<string[][]> {
@@ -167,15 +196,15 @@ export class DocumentListComponent implements AfterViewInit {
 
 class Conversation {
   id: string;
-  user_id: string;
+  perimeter: string;
   description: string
   pdf_id: string;
   pdf_name: string;
   created_on: string;
 
-  public constructor(user_id: string, id: string = "", description: string = "", pdf_id: string = "", pdf_name: string = "", created_on: string = "") {
+  public constructor(perimeter: string, id: string = "", description: string = "", pdf_id: string = "", pdf_name: string = "", created_on: string = "") {
     this.id = id;
-    this.user_id = user_id;
+    this.perimeter = perimeter;
     this.description = description;
     this.pdf_id = pdf_id;
     this.pdf_name = pdf_name;

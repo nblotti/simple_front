@@ -26,7 +26,7 @@ export class FileUploadDialogComponent {
   }
 
   uploadFile(file: File) {
-    this.fileUploadService.uploadFile(file)
+    this.fileUploadService.uploadFile(file,"1")
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)
@@ -36,7 +36,7 @@ export class FileUploadDialogComponent {
           this.closeModal.emit();
           // Reset upload progress after successful upload
           this.uploadProgress = 0;
-          this.router.navigate(['/docs',event.body.blob_id.blob_id,event.body.blob_id.conversation_id]);
+          this.router.navigate(['/docs',event.body.blob_id,event.body.conversation_id]);
         }
       });
 
