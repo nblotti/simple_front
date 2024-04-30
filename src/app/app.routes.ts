@@ -1,17 +1,17 @@
 import {Route, Routes} from '@angular/router';
 import {PmsContainerComponent} from "./pms-container/pms-container.component";
-import {DocumentListComponent} from "./document-list/document-list.component";
+import {DashboardComponent} from "./dashboard/dashboard.component";
 
 
 export const APP_ROUTES: Route[] = [
-  { path: '', redirectTo: 'docslist', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
-    path: 'docs/:document_id/:conversation_id',
-    loadComponent: () => import('./document-container/document-container.component').then(mod => mod.DocumentContainerComponent)
+    path: 'docs/:document_id/:page_number',
+    loadComponent: () => import('./document-screen/document-screen').then(mod => mod.DocumentScreen)
   },
   {
-    path: 'docslist',
-    loadComponent: () => import('./document-list/document-list.component').then(mod => mod.DocumentListComponent)
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(mod => mod.DashboardComponent)
   },
   {
     path: 'pms',

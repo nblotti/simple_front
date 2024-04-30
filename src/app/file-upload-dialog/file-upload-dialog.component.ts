@@ -36,7 +36,7 @@ export class FileUploadDialogComponent {
           this.closeModal.emit();
           // Reset upload progress after successful upload
           this.uploadProgress = 0;
-          this.router.navigate(['/docs',event.body.blob_id,event.body.conversation_id]);
+          this.router.navigate(['/docs',event.body.blob_id,0]);
         }
       });
 

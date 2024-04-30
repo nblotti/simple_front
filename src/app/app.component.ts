@@ -1,7 +1,7 @@
 import {
   Component, ComponentRef, ElementRef, inject, Injector, OnInit, ViewChild, ViewContainerRef,
 } from '@angular/core';
-import {CommonModule, DatePipe, JsonPipe} from "@angular/common";
+import {CommonModule, DatePipe} from "@angular/common";
 import {MetaData, NgEventBus} from "ng-event-bus"
 
 import {ChatComponent} from "./chat/chat.component";
@@ -9,13 +9,15 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {FileUploadDialogComponent} from "./file-upload-dialog/file-upload-dialog.component";
 import {ActivatedRoute, NavigationEnd, Route, Router, RouterLink, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
+import {ConversationService} from "./conversation.service";
+import {StatemanagerService} from "./statemanager.service";
 
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink],
-  providers: [NgEventBus, HttpClientModule, DatePipe],
+  providers: [NgEventBus, HttpClientModule,ConversationService, DatePipe,StatemanagerService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 

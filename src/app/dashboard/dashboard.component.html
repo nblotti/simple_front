@@ -1,0 +1,138 @@
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+              aria-expanded="false" aria-controls="collapseOne">
+        Conversations
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+      <div style="display: inline-flex">
+        <div (click)="addConversation()" class="addconversation">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+            <path
+              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
+          </svg>
+        </div>
+        <div class="addconversationtext">Add conversation</div>
+      </div>
+      <div class="accordion-body">
+        <table class="table table-borderless table_documnents">
+          <thead>
+          <tr>
+            <th class="document_header_content">Name</th>
+            <th class="document_header_content">Created</th>
+            <th class="document_header_content">Document name</th>
+            <th class="document_header_content">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+
+            @for (message of conversations(); track message; let index = $index) {
+              <tr class=".bg-transparent mt-5">
+                <td class="document_text_content document_text_content_selectable">
+                  @if (message.pdf_id == null) {
+                    <p (click)="setConversation(message.id)">{{ message.description }}</p>
+                  } @else {
+                    <p (click)="setDocumentConversation(message.id,message.pdf_id)">{{ message.description }}</p>
+
+                  }
+                </td>
+                <td class="document_text_content">
+                  {{ message.created_on }}
+                </td>
+                <td class="document_text_content">
+                  {{ message.pdf_name }}
+                </td>
+                <td class="document_text_content">
+                  <button class="btn btn-danger" [disabled]="isCurrentConversation(message.id) "
+                          (click)="deleteConversation(message.id)">Delete
+                  </button>
+                </td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+              aria-expanded="true" aria-controls="collapseTwo">
+        My Documents
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+
+        <table class="table table-borderless table_documnents">
+          <thead>
+          <tr>
+            <th class="document_header_content">Document</th>
+            <th class="document_header_content">Date uploaded</th>
+            <th class="document_header_content">User</th>
+            <th class="document_header_content">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+
+
+            @for (message of documents(); track message; let index = $index) {
+              <tr class=".bg-transparent mt-5">
+                <td class="document_text_content">
+                  <a href (click)="onDisplayPDF($event,  message[0])">{{ message[1] }} </a>
+                </td>
+                <td class="document_text_content">
+                  {{ message[3] }}
+                </td>
+                <td class="document_text_content">
+                  {{ message[2] }}
+                </td>
+                <td class="document_text_content">
+                  <button class="btn btn-danger" (click)="deleteDocument(message[0])">Delete</button>
+                </td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+              aria-expanded="false" aria-controls="collapseThree">
+        Search perimeter
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isMyDocumentsChecked"
+                 (change)="handleMyDocumentsChange($event)" role="switch" id="flexSwitchCheckDefault" checked>
+          <label class="form-check-label" for="flexSwitchCheckDefault">My documents</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isAcademyChecked"
+                 (change)="handleAcademyChange($event)" role="switch" id="flexSwitchCheckChecked">
+          <label class="form-check-label" for="flexSwitchCheckChecked">Academy</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isDocumentInfoChecked"
+                 (change)="handleDocumentInfoChange($event)" role="switch" id="flexSwitchCheckDisabled">
+          <label class="form-check-label" for="flexSwitchCheckDisabled">Documentation informatique</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isJiraChecked"
+                 (change)="handleJiraChange($event)" role="switch" id="flexSwitchCheckCheckedDisabled">
+          <label class="form-check-label" for="flexSwitchCheckCheckedDisabled">JIRA</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
