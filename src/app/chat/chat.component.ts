@@ -32,10 +32,7 @@ export class ChatComponent {
               private httpClient: HttpClient,
               private conversationService: ConversationService,
               private statemanagerService: StatemanagerService) {
-
-
-    this.screenReadyMessages.set([new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?")]);
-
+    this.resetMessages();
     this.eventBus.on("load_conversation").subscribe(value => {
       this.screenReadyMessages.set([new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?")]);
 
@@ -44,6 +41,10 @@ export class ChatComponent {
     })
 
 
+  }
+
+  private resetMessages() {
+    this.screenReadyMessages.set([new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?")]);
   }
 
   /*********************************************************************************************
@@ -123,6 +124,11 @@ export class ChatComponent {
   }
 
 
+  clearConversation() {
+    this.conversationService.clearConversation().subscribe(value => {
+      this.resetMessages();
+    })
+  }
 }
 
 export class Source {

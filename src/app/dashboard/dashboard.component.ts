@@ -7,6 +7,7 @@ import {ConversationService} from "../conversation.service";
 import {StatemanagerService} from "../statemanager.service";
 import {Conversation} from "../Conversation";
 import {DatePipe} from "@angular/common";
+import {NgEventBus} from "ng-event-bus";
 
 
 @Component({
@@ -32,14 +33,17 @@ export class DashboardComponent {
   constructor(private router: Router, private route: ActivatedRoute, protected httpClient: HttpClient,
               private conversationService: ConversationService,
               private stateManagerService: StatemanagerService,
+              private eventBus: NgEventBus,
               private datePipe: DatePipe) {
 
 
     this.route.params.subscribe(params => {
-      this.loadDocuments();
-      this.reloadConversations();
-
+      this.reload();
     });
+
+    eventBus.on("reload_data").subscribe(value => {
+      this.reload();
+    })
 
   }
 
@@ -85,14 +89,12 @@ export class DashboardComponent {
     return "https://assistmeai.nblotti.org/files/";
   }
 
-
   onDisplayPDF($event: MouseEvent, documentId: string) {
     let page_number = 0
     this.stateManagerService.loadDocument(documentId)
 
     $event.preventDefault()
   }
-
 
   /*********************************************************************************************
    /*Gestion des documents
@@ -108,6 +110,7 @@ export class DashboardComponent {
         console.error('Delete failed:', error);
       }, complete: () => {
         this.loadDocuments();
+        this.reloadConversations();
       }
     });
 
@@ -157,6 +160,17 @@ export class DashboardComponent {
     this.getUserString();
   }
 
+  addConversation() {
+    this.conversationService.createConversation().subscribe(value => {
+      this.reloadConversations();
+    })
+  }
+
+  private reload() {
+    this.loadDocuments();
+    this.reloadConversations();
+  }
+
   private loadDocuments() {
     this.fetchDocuments().subscribe(value =>
       this.documents.set(value));
@@ -167,18 +181,10 @@ export class DashboardComponent {
     return this.httpClient.get<any>(url).pipe(map(response => JSON.parse(response)));
   }
 
-
   private getUserString() {
     let documentPerimeter = this.isJiraChecked ? " J" : "";
     documentPerimeter += this.isDocumentInfoChecked ? " D" : "";
     documentPerimeter += this.isAcademyChecked ? " A" : "";
     this.conversationService.setDocumentPerimeter(this.isMyDocumentsChecked, documentPerimeter)
-  }
-
-
-  addConversation() {
-    this.conversationService.createConversation().subscribe(value => {
-      this.reloadConversations();
-    })
   }
 }

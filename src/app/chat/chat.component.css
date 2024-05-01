@@ -180,4 +180,14 @@ table tr td, table tr th{
 .accordion-collapse:not(collapsed){
   background-color: #444654 !important;
 }
+.inputcontent{
+  display: inline-flex;
+}
+.clearconversation{
+  width:24px;
+  height: 24px;
+  margin-left: 10px;
+  margin-right: 3px;
+  margin-top : 5px;
+}
 

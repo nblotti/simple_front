@@ -26,6 +26,10 @@ export class ConversationService {
     return "https://assistmeai.nblotti.org/chat/conversations/";
   }
 
+  private getCMessagesForConversationsBaseUrl() {
+    return "https://assistmeai.nblotti.org/chat/messages/%s/";
+  }
+
 
   loadConversations() {
     let url = this.getConversationsBaseUrl() + "perimeter/" + this.current_user + "/"
@@ -89,6 +93,15 @@ export class ConversationService {
     return this.httpClient.post<Conversation>(url, conversation);
 
   }
+
+  clearConversation() {
+
+    let call_url = sprintf(this.getCMessagesForConversationsBaseUrl(),this.current_conversation);
+    let obser = this.httpClient.delete<any>(call_url);
+    return obser;
+  }
+
+
 }
 
 class Result {

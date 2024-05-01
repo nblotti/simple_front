@@ -1,7 +1,8 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FileUploadService} from "../file-upload.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {NgEventBus} from "ng-event-bus";
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -15,7 +16,9 @@ export class FileUploadDialogComponent {
 
   uploadProgress: number = 0;
 
-  constructor(private fileUploadService: FileUploadService,private router: Router) {
+  constructor(private fileUploadService: FileUploadService,
+              private router: Router,
+              private eventBus: NgEventBus) {
   }
 
   onFileSelected(event: any) {
@@ -26,7 +29,7 @@ export class FileUploadDialogComponent {
   }
 
   uploadFile(file: File) {
-    this.fileUploadService.uploadFile(file,"1")
+    this.fileUploadService.uploadFile(file, "1")
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)
@@ -36,7 +39,8 @@ export class FileUploadDialogComponent {
           this.closeModal.emit();
           // Reset upload progress after successful upload
           this.uploadProgress = 0;
-          this.router.navigate(['/docs',event.body.blob_id,0]);
+          this.eventBus.cast("reload_data");
+          //this.router.navigate(['/docs', event.body.blob_id, 0]);
         }
       });
 
