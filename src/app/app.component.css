@@ -42,6 +42,11 @@ host {
   width:60%;
 }
 
+.notshared{
+  width:100%;
+
+}
+
 .sidebar{
   padding: 5px;
   border-right: lightgray 1px solid;

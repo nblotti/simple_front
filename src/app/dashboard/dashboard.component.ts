@@ -1,4 +1,4 @@
-import {Component, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Signal, signal, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {map, Observable} from "rxjs";
@@ -6,14 +6,16 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ConversationService} from "../conversation.service";
 import {StatemanagerService} from "../statemanager.service";
 import {Conversation} from "../Conversation";
-import {DatePipe} from "@angular/common";
+import {DatePipe, NgIf} from "@angular/common";
 import {NgEventBus} from "ng-event-bus";
+import {UserContextService} from "../user-context.service";
+import {DocumentService} from "../document.service";
 
 
 @Component({
   selector: 'dashboard-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [FormsModule, HttpClientModule, NgIf],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -28,15 +30,25 @@ export class DashboardComponent {
   readonly conversations: WritableSignal<Conversation[]> = signal([])
   readonly documents: WritableSignal<string[][]> = signal([])
 
+  readonly isIT: Signal<boolean> = signal(false);
+  readonly isHelpDesk: Signal<boolean> = signal(false);
   private perimeter = "1"
 
   constructor(private router: Router, private route: ActivatedRoute, protected httpClient: HttpClient,
               private conversationService: ConversationService,
+              private userContextService: UserContextService,
+              private documentService: DocumentService,
               private stateManagerService: StatemanagerService,
               private eventBus: NgEventBus,
               private datePipe: DatePipe) {
 
 
+    this.isIT = computed<boolean>(() => {
+      return userContextService.userGroup().includes("IT")
+    });
+    this.isHelpDesk = computed<boolean>(() => {
+      return userContextService.userGroup().includes("HD")
+    });
     this.route.params.subscribe(params => {
       this.reload();
     });
@@ -85,9 +97,6 @@ export class DashboardComponent {
     }
   }
 
-  getDocumentsBaseUrl() {
-    return "https://assistmeai.nblotti.org/files/";
-  }
 
   onDisplayPDF($event: MouseEvent, documentId: string) {
     let page_number = 0
@@ -102,8 +111,8 @@ export class DashboardComponent {
    */
 
   deleteDocument(blobId: string) {
-    let url = this.getDocumentsBaseUrl() + blobId + "/"
-    return this.httpClient.delete<any>(url).subscribe({
+
+    return this.documentService.deleteDocument(blobId).subscribe({
       next: (result) => {
         console.log('Delete successful:', result);
       }, error: (error) => {
@@ -177,8 +186,11 @@ export class DashboardComponent {
   }
 
   private fetchDocuments(): Observable<string[][]> {
-    let url = this.getDocumentsBaseUrl()
-    return this.httpClient.get<any>(url).pipe(map(response => JSON.parse(response)));
+    return this.documentService.fetchDocuments().pipe(map(response => {
+      if(response.length==0)
+        return []
+      return response
+    }));
   }
 
   private getUserString() {

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FileUploadService} from "../file-upload.service";
+import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {NgEventBus} from "ng-event-bus";
@@ -16,7 +16,7 @@ export class FileUploadDialogComponent {
 
   uploadProgress: number = 0;
 
-  constructor(private fileUploadService: FileUploadService,
+  constructor(private fileUploadService: DocumentService,
               private router: Router,
               private eventBus: NgEventBus) {
   }

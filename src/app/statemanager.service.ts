@@ -1,16 +1,15 @@
-import {Injectable} from '@angular/core';
+import {Injectable, signal, WritableSignal} from '@angular/core';
 import {ConversationService} from "./conversation.service";
 import {Router} from "@angular/router";
-import {NgEventBus} from "ng-event-bus";
 
 @Injectable({
   providedIn: 'root'
 })
 export class StatemanagerService {
 
+
   constructor(private conversationService: ConversationService,
-              private router: Router,
-              private eventBus: NgEventBus ) {
+              private router: Router) {
   }
 
   /*********************************************************************************************
@@ -32,12 +31,6 @@ export class StatemanagerService {
 
   }
 
-  /*********************************************************************************************
-   /*un changement de conversation a été demandé.Cela peut venir du menu ou du dashboard
-   /* 1. on set la conversation courante dans le service
-   /* 2. on (re)charge le Dashboard
-   * /2. on envoie le messages  au chat et au dasbhoard de se mettre à jour
-   */
   /*
   loadConversationOnly(conversationId: string) {
 
@@ -65,33 +58,17 @@ export class StatemanagerService {
         //on a pas trouvé de conversation, on la crée
         if (result.length == 0) {
           this.conversationService.createConversation(documentId).subscribe(value => {
-            this.loadConversationAndDocument(value.id,documentId)
+              this.loadConversationAndDocument(value.id, documentId)
             }
           )
         } else {
-          this.loadConversationAndDocument(result[0].id,documentId)
+          this.loadConversationAndDocument(result[0].id, documentId)
         }
       }, error: (error) => {
         console.error('Delete failed:', error);
       }, complete: () => {
       }
     });
-  }
-  /*********************************************************************************************
-   /*Procédure pour gérer la partie création du cas 1 de loadDocument. Une fois la conversation + le document
-   /*connu on envoie les messages
-   */
-  private createConversation(documentId: string){
-    this.conversationService.createConversation(documentId).subscribe({
-      next: (result) => {
-        //on a la conversation + le document on envoie les événements
-        this.loadConversationAndDocument(result.id,documentId)
-      }, error: (error) => {
-        console.error('Delete failed:', error);
-      }, complete: () => {
-      }
-    });
-
   }
 
   /*********************************************************************************************
@@ -105,6 +82,22 @@ export class StatemanagerService {
     this.conversationService.setCurrentConversation(conversationId)
 
     this.router.navigate(['/docs', documentId, 0]);
+
+  }
+
+  createConversation(documentId
+                       :
+                       string
+  ) {
+    this.conversationService.createConversation(documentId).subscribe({
+      next: (result) => {
+        //on a la conversation + le document on envoie les événements
+        this.loadConversationAndDocument(result.id, documentId)
+      }, error: (error) => {
+        console.error('Delete failed:', error);
+      }, complete: () => {
+      }
+    });
 
   }
 

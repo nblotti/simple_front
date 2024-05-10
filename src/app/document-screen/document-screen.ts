@@ -18,7 +18,7 @@ import {NgEventBus} from "ng-event-bus";
 export class DocumentScreen implements AfterViewInit {
 
   @ViewChild('pdfViewerOnDemand') protected pdfViewerOnDemand!: any
-  private base_url = "https://assistmeai.nblotti.org/files/";
+  private base_url = "https://assistmeai.nblotti.org/document/";
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private eventBus: NgEventBus) {
   }

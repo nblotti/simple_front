@@ -1,14 +1,12 @@
-import {Component, signal, ViewChild, WritableSignal} from '@angular/core';
+import {AfterViewChecked, Component, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {ScreenReadyMessage} from "./SreenReadyMessage";
 import {NgEventBus} from 'ng-event-bus';
-import {sprintf} from 'sprintf-js';
 import {LineBreakPipe} from "./line-break.pipe";
 import {v4 as uuidv4} from 'uuid';
 import {ConversationService} from "../conversation.service";
 import {StatemanagerService} from "../statemanager.service";
-import {Subject, takeUntil, timer} from "rxjs";
 
 
 @Component({
@@ -18,15 +16,15 @@ import {Subject, takeUntil, timer} from "rxjs";
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent {
+export class ChatComponent implements AfterViewChecked {
 
   inputMessage: string = "";
 
-  //private screenReadyMessages: Array<ScreenReadyMessage> = new Array<ScreenReadyMessage>()
-  readonly screenReadyMessages: WritableSignal<ScreenReadyMessage[]> = signal([])
+  private screenReadyMessages: ScreenReadyMessage[] = []
 
-  private chat_messages_url: string = "https://assistmeai.nblotti.org/chat/messages/?conversation_id=%s"
+  //private chat_messages_url: string = "https://assistmeai.nblotti.org/chat/messages/?conversation_id=%s"
   @ViewChild('scrollMe') private myScrollContainer: any;
+
 
   constructor(private eventBus: NgEventBus,
               private httpClient: HttpClient,
@@ -34,8 +32,7 @@ export class ChatComponent {
               private statemanagerService: StatemanagerService) {
     this.resetMessages();
     this.eventBus.on("load_conversation").subscribe(value => {
-      this.screenReadyMessages.set([new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?")]);
-
+      this.resetMessages();
       this.loadConversationMessages();
 
     })
@@ -43,23 +40,21 @@ export class ChatComponent {
 
   }
 
-  private resetMessages() {
-    this.screenReadyMessages.set([new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?")]);
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
   /*********************************************************************************************
    /*On a detecté qu'une nouvelle conversation a été selectionnée, on charge les message dans le chat
    */
   loadConversationMessages() {
-    let call_url = sprintf(this.chat_messages_url, this.conversationService.getCurrentConversation());
-    console.log("loadConversationMessages : " + call_url)
-    this.httpClient.get<Messages[]>(call_url).subscribe({
+    this.conversationService.loadConversationMessages().subscribe({
       next: (result) => {
         result.forEach((message) => {
           if (message.type == "ai") {
-            this.screenReadyMessages().push(new ScreenReadyMessage(uuidv4(), "assistant", message.content));
+            this.screenReadyMessages.push(new ScreenReadyMessage(uuidv4(), "assistant", message.content));
           } else if (message.type == "human") {
-            this.screenReadyMessages().push(new ScreenReadyMessage(uuidv4(), "user", message.content));
+            this.screenReadyMessages.push(new ScreenReadyMessage(uuidv4(), "user", message.content));
           }
         });
         this.scrollToBottom();
@@ -77,17 +72,17 @@ export class ChatComponent {
       let current_message = this.inputMessage
       this.inputMessage = "";
 
-      this.screenReadyMessages().push(new ScreenReadyMessage(uuidv4(), "user", current_message));
+      this.screenReadyMessages.push(new ScreenReadyMessage(uuidv4(), "user", current_message));
 
       this.conversationService.sendCommand(current_message).subscribe({
         next: (result) => {
           let sources: Source[] = this.buildSources(result.sources)
-          this.screenReadyMessages().push(new ScreenReadyMessage(uuidv4(), "assistant", result.result, sources));
+          this.screenReadyMessages.push(new ScreenReadyMessage(uuidv4(), "assistant", result.result, sources));
         },
         error: (result: string) => {
           console.log(result)
         },
-        complete:()=>{
+        complete: () => {
           this.scrollToBottom();
 
         }
@@ -102,7 +97,6 @@ export class ChatComponent {
     this.statemanagerService.loadDocument(documentId)
     $event.preventDefault()
   }
-
 
   scrollToBottom(): void {
     try {
@@ -123,11 +117,19 @@ export class ChatComponent {
     return source_http_url;
   }
 
-
   clearConversation() {
     this.conversationService.clearConversation().subscribe(value => {
       this.resetMessages();
     })
+  }
+
+  getScreenReadyMessages() {
+    return this.screenReadyMessages;
+  }
+
+  private resetMessages() {
+    this.screenReadyMessages = []
+    this.screenReadyMessages.push(new ScreenReadyMessage(uuidv4(), "assistant", "How can I help you ?"));
   }
 }
 

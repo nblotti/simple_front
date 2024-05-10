@@ -1,8 +1,8 @@
 <div class=" h-100 position-relative justify-content-center align-items-center ">
-  <div class="h-90 overflow-auto" #scrollMe>
+  <div class="h-90 overflow-auto" #scrollMe scroll-to-bottom>
     <table class="table table-borderless table_messages">
       <tbody>
-        @for (message of screenReadyMessages(); track message.id) {
+        @for (message of getScreenReadyMessages(); track message.id) {
           <tr class=".bg-transparent mt-5">
             <td class="chat_icon_content ">
               @if (message.role == "assistant") {

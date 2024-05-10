@@ -1,0 +1,18 @@
+<div class="container d-flex login_container">
+  <div class="row justify-content-center align-items-center login_container">
+    <div class="col-md-6">
+      <form>
+        <h2>Login</h2>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="username" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
+        </div>
+        <button type="submit" (click)="doLogin()" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+  </div>
+</div>

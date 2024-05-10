@@ -1,32 +1,28 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary toolbar app-toolbar">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"></a>
+
     <button class="chat_assistant_icon" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
-            aria-expanded="false"
-            (click)="toggleCollapse()" aria-controls="collapseWidthExample">
+            aria-expanded="false" routerLink="/dashboard/" routerLinkActive="active-link" aria-controls="collapseWidthExample">
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" *ngIf="isLoggedIn()">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Documents
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" routerLink="/dashboard/" routerLinkActive="active">Dashboard</a></li>
+            <li><a class="dropdown-item" routerLink="/dashboard/" routerLinkActive="active-link">Dashboard</a></li>
             <li><a class="dropdown-item" (click)="openFileUploadDialog()">Add document</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/pms/" routerLinkActive="active">Pms</a>
+          <a class="nav-link" routerLink="/login/" (click)="login()">Logout</a>
         </li>
 
 
       </ul>
-      <!-- Add Button for Sidebar Toggle -->
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      </form>
+
     </div>
   </div>
 
@@ -35,7 +31,7 @@
 <div class="container-fluid full-height-minus-menu app_content">
   <div class="row">
     <!-- Left Sidebar -->
-    <div class="h-100 sidebar shared_side" #sidebar>
+    <div class="h-100 sidebar shared_side" #sidebar *ngIf="isLoggedIn()">
       <div class="sidebar-content">
         <chat-component></chat-component>
 
@@ -43,26 +39,19 @@
     </div>
 
     <!-- Right Content -->
-    <div class="main-content shared" #mainContent>
+    <div [ngClass]="{'main-content shared': isLoggedIn(), 'main-content notshared': !isLoggedIn()}" #mainContent>
       <router-outlet></router-outlet>
 
     </div>
+
   </div>
+
+
+
+
+
 
   <app-file-upload-dialog [showModal]="showModal" (closeModal)="showModal = false"></app-file-upload-dialog>
 
 </div>
 
-
-<!--
-<div class="example-container">
-  <ng-container #container></ng-container>
-
-  <div class="chat_container">
-    <div class="collapse collapse-horizontal chat_container" id="collapseWidthExample">
-      <chat-component></chat-component>
-  </div>
-  <app-file-upload-dialog></app-file-upload-dialog>
-
-</div>
--->
