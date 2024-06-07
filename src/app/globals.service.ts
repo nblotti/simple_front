@@ -5,6 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class GlobalsService {
 
-  public serverBase: string = 'REPLACE ME WITH YOUR SERVER BASE URL';
+  public serverBase: string = 'http://localhost:8010/proxy/';
   constructor() { }
 }
