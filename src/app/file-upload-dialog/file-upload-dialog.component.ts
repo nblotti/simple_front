@@ -40,7 +40,6 @@ export class FileUploadDialogComponent {
           // Reset upload progress after successful upload
           this.uploadProgress = 0;
           this.eventBus.cast("reload_data");
-          //this.router.navigate(['/docs', event.body.blob_id, 0]);
         }
       });
 

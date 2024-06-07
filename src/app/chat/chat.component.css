@@ -1,12 +1,10 @@
 /**********************************************************************************************************************/
-/*                                                                                                                    */
 /*                                                position of the buttons & windows                                   */
-/*                                                                                                                    */
 /**********************************************************************************************************************/
 
 .button_container {
 
-  margin-top: 430px;;
+  margin-top: 430px;
 }
 
 
@@ -15,14 +13,10 @@
   height: 20px;
   float: right;
 
-  font-family: "Inter Semi Bold";
+  font-family: "Inter Semi Bold,sans-serif";
 
 }
 
-.chatcontent {
-
-
-}
 
 .maincontainer {
 
@@ -30,44 +24,40 @@
   background-color: #444654;
   text-align: left;
   overflow: auto;
-  width:500px;
+  width: 500px;
   height: 500px;
   position: relative;
   resize: both;
 }
+
 -webkit-resizer {
   background-color: red;
 }
 
 
-
-
 /**********************************************************************************************************************/
-/*                                                                                                                    */
 /*                                                intra component css                                                  */
-/*                                                                                                                    */
 /**********************************************************************************************************************/
 
 
 /*second column*/
 
 
-
-
 .bottom-5 {
   bottom: 5px !important;
 }
 
-table tr td, table tr th{
-  background-color: rgba(34,35,41, 0) !important;
+table tr td, table tr th {
+  background-color: rgba(34, 35, 41, 0) !important;
 
 }
-.table_messages{
+
+.table_messages {
   table-layout: fixed;
   word-wrap: break-word;
 }
 
-.chat_icon{
+.chat_icon {
   width: 25px;
   height: 25px;
   background-color: transparent;
@@ -75,25 +65,27 @@ table tr td, table tr th{
   margin-top: 1px;
 
 }
-.chat_user_icon{
-  content:  url("../../assets/avatar_user.png");
+
+.chat_user_icon {
+  content: url("../../assets/avatar_user.png");
 
 
 }
-.chat_assistant_icon{
-  content:  url("../../assets/logo.png");
+
+.chat_assistant_icon {
+  content: url("../../assets/logo.png");
   background-color: #0FA47F;
 
   padding-top: 2px;
 
 }
 
-.chat_icon_content{
+.chat_icon_content {
   width: 35px;
   padding-top: 13px;
 }
 
-.chat_text_content{
+.chat_text_content {
   color: white;
   padding-top: 13px;
   width: 100%;
@@ -101,8 +93,6 @@ table tr td, table tr th{
 
 
 /*All*/
-
-
 
 
 .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -130,7 +120,7 @@ table tr td, table tr th{
 *::-webkit-scrollbar-thumb {
   background-color: #343541;
   border-radius: 3px;
-  border: 3px solid #444654 ;
+  border: 3px solid #444654;
 }
 
 
@@ -163,7 +153,6 @@ table tr td, table tr th{
   height: 5px;
 
 
-
 }
 
 .accordion-button.collapsed::after {
@@ -177,17 +166,19 @@ table tr td, table tr th{
   color: #444654;
 }
 
-.accordion-collapse:not(collapsed){
+.accordion-collapse:not(collapsed) {
   background-color: #444654 !important;
 }
-.inputcontent{
+
+.inputcontent {
   display: inline-flex;
 }
-.clearconversation{
-  width:24px;
+
+.clearconversation {
+  width: 24px;
   height: 24px;
   margin-left: 10px;
   margin-right: 3px;
-  margin-top : 5px;
+  margin-top: 5px;
 }
 

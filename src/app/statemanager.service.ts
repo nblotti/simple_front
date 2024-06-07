@@ -1,4 +1,4 @@
-import {Injectable, signal, WritableSignal} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ConversationService} from "./conversation.service";
 import {Router} from "@angular/router";
 
@@ -8,8 +8,7 @@ import {Router} from "@angular/router";
 export class StatemanagerService {
 
 
-  constructor(private conversationService: ConversationService,
-              private router: Router) {
+  constructor(private conversationService: ConversationService, private router: Router) {
   }
 
   /*********************************************************************************************
@@ -58,9 +57,8 @@ export class StatemanagerService {
         //on a pas trouvé de conversation, on la crée
         if (result.length == 0) {
           this.conversationService.createConversation(documentId).subscribe(value => {
-              this.loadConversationAndDocument(value.id, documentId)
-            }
-          )
+            this.loadConversationAndDocument(value.id, documentId)
+          })
         } else {
           this.loadConversationAndDocument(result[0].id, documentId)
         }
@@ -85,10 +83,7 @@ export class StatemanagerService {
 
   }
 
-  createConversation(documentId
-                       :
-                       string
-  ) {
+  createConversation(documentId: string) {
     this.conversationService.createConversation(documentId).subscribe({
       next: (result) => {
         //on a la conversation + le document on envoie les événements

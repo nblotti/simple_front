@@ -17,9 +17,6 @@ export class DocumentService {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('perimeter', perimeter);
-    const headers = new HttpHeaders();
-    // If you need to add custom headers, you can do so here
-    // headers.append('Authorization', 'Bearer token');
 
     return this.http.post<any>(this.documents_base_url, formData, {
       reportProgress: true, observe: 'events'

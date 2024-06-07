@@ -27,7 +27,6 @@ export class DocumentScreen implements AfterViewInit {
     this.route.params.subscribe(params => {
 
       let url = this.base_url + params['document_id'] + "/"
-      let page = params['page_number']
       this.openPdf(url)
 
     });

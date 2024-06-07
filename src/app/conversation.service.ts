@@ -78,7 +78,7 @@ export class ConversationService {
 
 
   createConversation(pdf_id: string = "") {
-    let conversation = new Conversation(this.current_user, pdf_id = pdf_id);
+    let conversation = new Conversation(this.current_user,  pdf_id);
 
     let url = this.conversation_url
     return this.httpClient.post<Conversation>(url, conversation);

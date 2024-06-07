@@ -1,21 +1,11 @@
-import {
-  Component, ComponentRef, computed, ElementRef, inject, Injector, OnInit, ViewChild, ViewContainerRef,
-} from '@angular/core';
+import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
-import {MetaData, NgEventBus} from "ng-event-bus"
+import {NgEventBus} from "ng-event-bus"
 
 import {ChatComponent} from "./chat/chat.component";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {HttpClientModule} from "@angular/common/http";
 import {FileUploadDialogComponent} from "./file-upload-dialog/file-upload-dialog.component";
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Route,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet
-} from "@angular/router";
+import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
 import {ConversationService} from "./conversation.service";
 import {StatemanagerService} from "./statemanager.service";
@@ -26,7 +16,7 @@ import {UserContextService} from "./user-context.service";
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  providers: [NgEventBus, HttpClientModule,ConversationService, DatePipe,StatemanagerService],
+  providers: [NgEventBus, HttpClientModule, ConversationService, DatePipe, StatemanagerService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -38,17 +28,15 @@ export class AppComponent implements OnInit {
   @ViewChild('sidebar') sidebarRef!: ElementRef;
   @ViewChild('mainContent') mainContentRef!: ElementRef;
   isCollapsed: boolean = false;
-
-
-  constructor(private router: Router,private usercontextService :UserContextService) {
-
-  }
-
   isLoggedIn = computed<boolean>(() => {
-    const result =this.usercontextService.isLogged() ;
+    const result = this.usercontextService.isLogged();
     console.log('In computed: ' + result);
     return result;
   });
+
+  constructor(private router: Router, private usercontextService: UserContextService) {
+
+  }
 
   toggleCollapse(): void {
     const sidebar = this.sidebarRef.nativeElement;
@@ -68,14 +56,11 @@ export class AppComponent implements OnInit {
 
       sidebar.classList.add('shared_side');
       mainContent.classList.add('shared');
-      //mainContent.style.marginLeft = '25%'; // Adjust the margin based on the width of the collapsed sidebar
     }
   }
 
   ngOnInit(): void {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(value => console.log('Current Route:', value.type));
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(value => console.log('Current Route:', value.type));
   }
 
   openFileUploadDialog(): void {
