@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {Source} from "./chat/chat.component";
 import {sprintf} from "sprintf-js";
 import {NgEventBus} from "ng-event-bus";
+import {GlobalsService} from "./globals.service";
 
 
 @Injectable({
@@ -13,14 +14,18 @@ import {NgEventBus} from "ng-event-bus";
 export class ConversationService {
 
 
-  private chat_command_url: string = "https:///assistmeai.nblotti.org/chat/command/?command=%s&conversation_id=%s&perimeter=%s"
-  private conversation_url: string = "https://assistmeai.nblotti.org/conversation/"
-  private message_url: string = "https://assistmeai.nblotti.org/message/?conversation_id=%s"
+  private chat_command_url: string
+  private conversation_url: string
+  private message_url: string
   private current_conversation: string = "";
   private current_user: string = "1";
   private documentPerimeter: string = "1";
 
-  constructor(protected httpClient: HttpClient, private router: Router, private eventBus: NgEventBus) {
+  constructor(protected httpClient: HttpClient, private router: Router, private eventBus: NgEventBus, private globalsService: GlobalsService) {
+
+  this.chat_command_url = globalsService.serverBase+"chat/command/?command=%s&conversation_id=%s&perimeter=%s"
+  this.conversation_url = globalsService.serverBase+"conversation/"
+  this.message_url = globalsService.serverBase+"message/?conversation_id=%s"
   }
 
 

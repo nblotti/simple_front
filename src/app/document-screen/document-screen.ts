@@ -4,6 +4,7 @@ import {PdfJsViewerModule} from "ng2-pdfjs-viewer";
 import {catchError, map, throwError} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {NgEventBus} from "ng-event-bus";
+import {GlobalsService} from "../globals.service";
 
 
 @Component({
@@ -18,9 +19,11 @@ import {NgEventBus} from "ng-event-bus";
 export class DocumentScreen implements AfterViewInit {
 
   @ViewChild('pdfViewerOnDemand') protected pdfViewerOnDemand!: any
-  private base_url = "https://assistmeai.nblotti.org/document/";
+  private base_url;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private eventBus: NgEventBus) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private eventBus: NgEventBus, private globalsService : GlobalsService) {
+
+    this.base_url = globalsService.serverBase+"document/"
   }
 
   ngAfterViewInit(): void {

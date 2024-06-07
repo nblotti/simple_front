@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
+import {GlobalsService} from "./globals.service";
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,11 @@ import {Observable} from "rxjs";
 export class DocumentService {
 
 
-  documents_base_url = "https://assistmeai.nblotti.org/document/";
+  documents_base_url :string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private globalsService: GlobalsService) {
+
+    this.documents_base_url = globalsService.serverBase+"document/"
   }
 
   uploadFile(file: File, perimeter: string): Observable<HttpEvent<any>> {

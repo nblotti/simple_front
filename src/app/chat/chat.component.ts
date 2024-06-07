@@ -22,7 +22,6 @@ export class ChatComponent implements AfterViewChecked {
 
   private screenReadyMessages: ScreenReadyMessage[] = []
 
-  //private chat_messages_url: string = "https://assistmeai.nblotti.org/chat/messages/?conversation_id=%s"
   @ViewChild('scrollMe') private myScrollContainer: any;
 
 
