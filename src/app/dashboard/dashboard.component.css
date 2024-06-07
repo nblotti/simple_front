@@ -40,7 +40,7 @@
 
 }
 
-.accordion-button:not(collapsed) {
+.accordion-button:not(.collapsed) {
 
   color: white;
 }
