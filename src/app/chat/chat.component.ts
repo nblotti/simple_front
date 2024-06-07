@@ -159,8 +159,8 @@ class Messages {
   id: string
   example: boolean
 
-  public constructor(content: string, additional_kwargs: any = {}, response_metadata: any = {},
-                     type: string, name: string = "", id: string = "", example: boolean = false) {
+  public constructor(content: string, type: string, additional_kwargs: any = {}, response_metadata: any = {},
+                      name: string = "", id: string = "", example: boolean = false) {
     this.content = content
     this.additional_kwargs = additional_kwargs
     this.response_metadata = response_metadata
