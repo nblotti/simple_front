@@ -18,9 +18,9 @@ import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks'
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  password: string = "";
-  username: string = "";
-  private userUrl: string = 'http://4.226.10.52:8080/';
+  private password: string = "";
+  private username: string = "";
+  private userUrl:string  = '';
 
   private oauthService = inject(OAuthService)
 
