@@ -93,7 +93,7 @@ export class ChatComponent implements AfterViewChecked {
    /*Click sur une référence de document  dans le chat
    */
   displaySource($event: MouseEvent, documentId: string, page_number: number) {
-    this.statemanagerService.loadDocument(documentId)
+    this.statemanagerService.loadDocument(Number(documentId))
     $event.preventDefault()
   }
 
@@ -107,11 +107,12 @@ export class ChatComponent implements AfterViewChecked {
   buildSources(sources: Source[]): Source[] {
     let source_http_url: Source[] = []
 
-    sources.forEach(item => {
+    if (sources != null)
+      sources.forEach(item => {
 
-      let loc_source = new Source(item.blob_id, item.file_name, item.page, item.perimeter)
-      source_http_url.push(loc_source)
-    });
+        let loc_source = new Source(item.blob_id, item.file_name, item.page, item.perimeter)
+        source_http_url.push(loc_source)
+      });
 
     return source_http_url;
   }
@@ -159,7 +160,7 @@ class Messages {
   example: boolean
 
   public constructor(content: string, type: string, additional_kwargs: any = {}, response_metadata: any = {},
-                      name: string = "", id: string = "", example: boolean = false) {
+                     name: string = "", id: string = "", example: boolean = false) {
     this.content = content
     this.additional_kwargs = additional_kwargs
     this.response_metadata = response_metadata

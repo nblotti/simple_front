@@ -3,6 +3,7 @@ import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {NgEventBus} from "ng-event-bus";
+import {UserContextService} from "../user-context.service";
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -18,7 +19,8 @@ export class FileUploadDialogComponent {
 
   constructor(private fileUploadService: DocumentService,
               private router: Router,
-              private eventBus: NgEventBus) {
+              private eventBus: NgEventBus,
+              private userContextService: UserContextService) {
   }
 
   onFileSelected(event: any) {
@@ -29,7 +31,7 @@ export class FileUploadDialogComponent {
   }
 
   uploadFile(file: File) {
-    this.fileUploadService.uploadFile(file, "1")
+    this.fileUploadService.uploadFile(file, this.userContextService.userName)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)

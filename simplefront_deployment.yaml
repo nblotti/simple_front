@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: simple-front
+  name: simple-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-front
+  template:
+    metadata:
+      labels:
+        app: simple-front
+    spec:
+      containers:
+      - image: nblotti/simple-front
+        name: simple-front
+        ports:
+        - containerPort: 8080
+          name: http
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred

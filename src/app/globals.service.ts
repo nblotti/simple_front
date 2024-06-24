@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class GlobalsService {
 
-  public serverBase: string = 'http://localhost:8010/proxy/';
+  public serverBase: string = '';
+
   constructor() { }
 }

@@ -1,4 +1,4 @@
-import {Component, computed, Signal, signal, WritableSignal} from '@angular/core';
+import {AfterViewInit, Component, computed, Signal, signal, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {map, Observable} from "rxjs";
@@ -19,44 +19,59 @@ import {DocumentService} from "../document.service";
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements AfterViewInit {
 
 
-  isJiraChecked: boolean = false;
-  isDocumentInfoChecked: boolean = false;
-  isAcademyChecked: boolean = false;
-  isMyDocumentsChecked: boolean = true;
-
+  userCategories: Signal<Map<number, string>> = signal(new Map<number, string>());
   readonly conversations: WritableSignal<Conversation[]> = signal([])
   readonly documents: WritableSignal<string[][]> = signal([])
-
   readonly isIT: Signal<boolean> = signal(false);
   readonly isHelpDesk: Signal<boolean> = signal(false);
-  private perimeter = "1"
+  private perimeter = new Map<string, boolean>();
 
   constructor(private router: Router, private route: ActivatedRoute, protected httpClient: HttpClient,
               private conversationService: ConversationService,
-              private userContextService: UserContextService,
+              protected userContextService: UserContextService,
               private documentService: DocumentService,
               private stateManagerService: StatemanagerService,
               private eventBus: NgEventBus,
               private datePipe: DatePipe) {
 
 
-    this.isIT = computed<boolean>(() => {
-      return userContextService.userGroup().includes("IT")
-    });
-    this.isHelpDesk = computed<boolean>(() => {
-      return userContextService.userGroup().includes("HD")
-    });
-    this.route.params.subscribe(params => {
-      this.reload();
-    });
-
     eventBus.on("reload_data").subscribe(value => {
+
       this.reload();
     })
 
+  }
+
+  setPerimeter() {
+    let perimeter = ""
+    for (let [key, value] of this.perimeter) {
+      if (value)
+        perimeter = `${perimeter} ${key}`
+    }
+    return this.conversationService.setDocumentPerimeter(perimeter);
+  }
+
+  ngAfterViewInit() {
+
+
+    let derivedCounter = computed(() => {
+
+      this.userContextService.userCategories().forEach((value, key) => {
+        this.perimeter.set(key, false);
+      })
+      let perimeter = ""
+      for (let [key, value] of this.perimeter) {
+        if (value)
+          perimeter = `${perimeter} ${key}`
+      }
+
+      return perimeter;
+    });
+
+    this.reload();
   }
 
   reloadConversations() {
@@ -75,20 +90,20 @@ export class DashboardComponent {
 
   selectCurrentConversation() {
 
-    let current_conversation = ""
+    let current_conversation: number = 0
 
 
     let current_date = this.datePipe.transform(new Date(), 'dd.MM.yyyy');
     this.conversations().forEach((loc_conversation) => {
 
-      if ((loc_conversation.pdf_id == null || loc_conversation.pdf_id == "-1") && loc_conversation.created_on == current_date) {
-        if (current_conversation.length == 0 || current_conversation < loc_conversation.id) {
+      if ((loc_conversation.pdf_id == 0) && loc_conversation.created_on == current_date) {
+        if (current_conversation != 0 || current_conversation < loc_conversation.id) {
           current_conversation = loc_conversation.id;
         }
       }
     });
 
-    if (current_conversation.length == 0) {
+    if (current_conversation == 0) {
       this.conversationService.createConversation().subscribe(value => {
         this.setConversation(value.id);
       })
@@ -100,7 +115,7 @@ export class DashboardComponent {
 
   onDisplayPDF($event: MouseEvent, documentId: string) {
     let page_number = 0
-    this.stateManagerService.loadDocument(documentId)
+    this.stateManagerService.loadDocument(Number(documentId))
 
     $event.preventDefault()
   }
@@ -112,7 +127,7 @@ export class DashboardComponent {
 
   deleteDocument(blobId: string) {
 
-    return this.documentService.deleteDocument(blobId).subscribe({
+    return this.documentService.deleteDocument(Number(blobId)).subscribe({
       next: (result) => {
         console.log('Delete successful:', result);
       }, error: (error) => {
@@ -129,21 +144,21 @@ export class DashboardComponent {
    /*Gestion des conversations
    /*
    */
-  deleteConversation(id: string) {
+  deleteConversation(id: number) {
     this.conversationService.deleteConversation(id).subscribe(value => {
       this.reloadConversations();
     })
   }
 
-  isCurrentConversation(id: string) {
+  isCurrentConversation(id: number) {
     return this.conversationService.getCurrentConversation() == id;
   }
 
-  setConversation(conversation_id: string) {
+  setConversation(conversation_id: number) {
     this.conversationService.setCurrentConversation(conversation_id);
   }
 
-  setDocumentConversation(conversation_id: string, pdf_id: string) {
+  setDocumentConversation(conversation_id: number, pdf_id: number) {
     this.stateManagerService.loadConversationAndDocument(conversation_id, pdf_id);
   }
 
@@ -153,20 +168,19 @@ export class DashboardComponent {
    */
 
 
-  handleJiraChange($event: Event) {
-    this.getUserString();
+  getInput(categoryKey: string): any {
+    return this.perimeter.get(categoryKey);
   }
 
-  handleDocumentInfoChange($event: Event) {
-    this.getUserString();
-  }
+  setInput( event: any,categoryKey: string = ""): void {
 
-  handleAcademyChange($event: Event) {
-    this.getUserString();
-  }
-
-  handleMyDocumentsChange($event: Event) {
-    this.getUserString();
+    const inputElement = event.target as HTMLInputElement;
+    const isChecked = inputElement.checked;
+    if (categoryKey.length == 0)
+      this.perimeter.set(this.userContextService.userName, isChecked);
+    else
+      this.perimeter.set(categoryKey, isChecked);
+    this.setPerimeter();
   }
 
   addConversation() {
@@ -178,6 +192,7 @@ export class DashboardComponent {
   private reload() {
     this.loadDocuments();
     this.reloadConversations();
+    this.perimeter.set(this.userContextService.userName, true);
   }
 
   private loadDocuments() {
@@ -187,16 +202,11 @@ export class DashboardComponent {
 
   private fetchDocuments(): Observable<string[][]> {
     return this.documentService.fetchDocuments().pipe(map(response => {
-      if(response.length==0)
+      if (response.length == 0)
         return []
       return response
     }));
   }
 
-  private getUserString() {
-    let documentPerimeter = this.isJiraChecked ? " J" : "";
-    documentPerimeter += this.isDocumentInfoChecked ? " D" : "";
-    documentPerimeter += this.isAcademyChecked ? " A" : "";
-    this.conversationService.setDocumentPerimeter(this.isMyDocumentsChecked, documentPerimeter)
-  }
+
 }

@@ -1,13 +1,13 @@
 
 export class Conversation {
-  id: string;
+  id: number;
   perimeter: string;
   description: string
-  pdf_id: string;
+  pdf_id: number;
   pdf_name: string;
   created_on: string;
 
-  public constructor(perimeter: string, pdf_id: string, id: string = "", description: string = "",  pdf_name: string = "", created_on: string = "") {
+  public constructor(perimeter: string, pdf_id: number = 0, id: number = 0, description: string = "",  pdf_name: string = "", created_on: string = "") {
     this.id = id;
     this.perimeter = perimeter;
     this.description = description;

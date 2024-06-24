@@ -6,6 +6,7 @@ import {Source} from "./chat/chat.component";
 import {sprintf} from "sprintf-js";
 import {NgEventBus} from "ng-event-bus";
 import {GlobalsService} from "./globals.service";
+import {UserContextService} from "./user-context.service";
 
 
 @Injectable({
@@ -14,34 +15,37 @@ import {GlobalsService} from "./globals.service";
 export class ConversationService {
 
 
-  private chat_command_url: string
+  private chat_command_no_perimeter_url: string
+  private chat_command_perimeter_url: string
   private conversation_url: string
   private message_url: string
-  private current_conversation: string = "";
-  private current_user: string = "1";
+  private current_conversation: number = 0;
+  //private current_user: string = "1";
   private documentPerimeter: string = "1";
 
-  constructor(protected httpClient: HttpClient, private router: Router, private eventBus: NgEventBus, private globalsService: GlobalsService) {
+  constructor(protected httpClient: HttpClient, private router: Router, private eventBus: NgEventBus, private globalsService: GlobalsService,
+              private userContextService: UserContextService) {
 
-  this.chat_command_url = globalsService.serverBase+"chat/command/?command=%s&conversation_id=%s&perimeter=%s"
-  this.conversation_url = globalsService.serverBase+"conversation/"
-  this.message_url = globalsService.serverBase+"message/?conversation_id=%s"
+    this.chat_command_no_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s"
+    this.chat_command_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s&perimeter=%s"
+    this.conversation_url = globalsService.serverBase + "conversation/"
+    this.message_url = globalsService.serverBase + "message/?conversation_id=%s"
   }
 
 
   loadConversations() {
-    let url = this.conversation_url + "perimeter/" + this.current_user + "/"
+    let url = this.conversation_url + "perimeter/" + this.userContextService.userName + "/"
     return this.httpClient.get<any>(url);
 
   }
 
 
-  loadOrCreateConversationsByDocumentId(documentId: string) {
-    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.current_user
+  loadOrCreateConversationsByDocumentId(documentId: number) {
+    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.userContextService.userName
     return this.httpClient.get<any>(url);
   }
 
-  deleteConversation(id: string) {
+  deleteConversation(id: number) {
     let url = this.conversation_url + id + "/"
     let obser = this.httpClient.delete<any>(url);
     return obser;
@@ -49,7 +53,13 @@ export class ConversationService {
   }
 
   sendCommand(command: string) {
-    let call_url = sprintf(this.chat_command_url, command, this.current_conversation, this.documentPerimeter);
+
+    let call_url: string
+    if (this.documentPerimeter.length == 0)
+      call_url = sprintf(this.chat_command_no_perimeter_url, command, this.current_conversation);
+    else
+      call_url = sprintf(this.chat_command_perimeter_url, command, this.current_conversation, this.documentPerimeter);
+
     console.log(call_url);
     return this.httpClient.get<Result>(call_url);
 
@@ -60,7 +70,7 @@ export class ConversationService {
   }
 
 
-  setCurrentConversation(current_conversation: string) {
+  setCurrentConversation(current_conversation: number = 0) {
     this.current_conversation = current_conversation;
     this.eventBus.cast("load_conversation")
     console.log("current conversation : " + current_conversation);
@@ -72,9 +82,8 @@ export class ConversationService {
 
   }
 
-  setDocumentPerimeter(is_my_documentsChecked: boolean, documentPerimeter: string) {
-
-    this.documentPerimeter = is_my_documentsChecked ? this.current_user + " " + documentPerimeter : documentPerimeter;
+  setDocumentPerimeter(perimeter: string) {
+    this.documentPerimeter = perimeter;
   }
 
   getDocumentPerimeter() {
@@ -82,8 +91,8 @@ export class ConversationService {
   }
 
 
-  createConversation(pdf_id: string = "") {
-    let conversation = new Conversation(this.current_user,  pdf_id);
+  createConversation(pdf_id: number = 0) {
+    let conversation = new Conversation(this.userContextService.userName, pdf_id);
 
     let url = this.conversation_url
     return this.httpClient.post<Conversation>(url, conversation);

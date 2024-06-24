@@ -20,7 +20,7 @@ export class StatemanagerService {
   init() {
 
     //1 on set la conversation courante dans le service
-    this.conversationService.setCurrentConversation("")
+    this.conversationService.setCurrentConversation()
 
     //2. on (re)charge le Dashboard
     this.router.navigate(['/dashboard']);
@@ -50,7 +50,7 @@ export class StatemanagerService {
    /* 1a. on a pas de numéro de chat existant pour ce document, on en crée un -> createConversationt
    * /2. on envoie les deux messages -> a au chat. b au pdf viewer
    */
-  loadDocument(documentId: string) {
+  loadDocument(documentId: number) {
     // 1. on charge le numéro de chat ou on le crée
     this.conversationService.loadOrCreateConversationsByDocumentId(documentId).subscribe({
       next: (result) => {
@@ -75,7 +75,7 @@ export class StatemanagerService {
    /* 2. on charge le pdf viewer
    * /2. on envoie les deux messages ->  au chat. + au pdf viewer
    */
-  loadConversationAndDocument(conversationId: string, documentId: string) {
+  loadConversationAndDocument(conversationId: number, documentId: number) {
 
     this.conversationService.setCurrentConversation(conversationId)
 
@@ -83,7 +83,7 @@ export class StatemanagerService {
 
   }
 
-  createConversation(documentId: string) {
+  createConversation(documentId: number) {
     this.conversationService.createConversation(documentId).subscribe({
       next: (result) => {
         //on a la conversation + le document on envoie les événements

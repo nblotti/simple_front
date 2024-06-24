@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
+import {Component, computed, ElementRef, importProvidersFrom, OnInit, ViewChild,} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
@@ -10,13 +10,13 @@ import {filter} from "rxjs";
 import {ConversationService} from "./conversation.service";
 import {StatemanagerService} from "./statemanager.service";
 import {UserContextService} from "./user-context.service";
-
+import {LoginComponent} from "./login/login.component";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  providers: [NgEventBus, HttpClientModule, ConversationService, DatePipe, StatemanagerService],
+  providers: [NgEventBus, HttpClientModule, ConversationService, DatePipe, StatemanagerService,LoginComponent],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -35,7 +35,6 @@ export class AppComponent implements OnInit {
   });
 
   constructor(private router: Router, private usercontextService: UserContextService) {
-
   }
 
   toggleCollapse(): void {

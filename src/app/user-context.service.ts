@@ -1,4 +1,7 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
+import {GlobalsService} from "./globals.service";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 
 @Injectable({
@@ -8,21 +11,18 @@ export class UserContextService {
 
   readonly isLogged: WritableSignal<boolean> = signal(false);
 
-  userGroup: WritableSignal<string[]> = signal([]);
+  userCategories: WritableSignal<Map<string, string>> = signal(new Map<string, string>());
+  public _userName = "1"
 
-  constructor() {
-  }
 
-  setLoggedIn(isLogged: boolean, username: string = "", password: string = "") {
-    let groups: string[] = this.getGroups(username)
-    this.userGroup.set(groups);
+  setLoggedIn(isLogged: boolean,  username: string = "", userGroup = new Map<string, string>()) {
     this.isLogged.set(isLogged);
+    this._userName =username;
+    this.userCategories.set(userGroup);
   }
 
 
-  getGroups(username:string) {
-    let group: string[] = ["A", username];
-    return group;
+  get userName(): string {
+    return this._userName;
   }
-
 }

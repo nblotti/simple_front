@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-front
+spec:
+  type: NodePort
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 80
+      nodePort: 31364
+  selector:
+    app: simple-front

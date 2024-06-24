@@ -26,7 +26,7 @@ export class DocumentService {
     });
   }
 
-  deleteDocument(blobId: string): Observable<any> {
+  deleteDocument(blobId: number): Observable<any> {
     let url = this.documents_base_url + blobId + "/"
     return this.http.delete<any>(url);
   }
