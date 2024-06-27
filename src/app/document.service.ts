@@ -31,8 +31,8 @@ export class DocumentService {
     return this.http.delete<any>(url);
   }
 
-  fetchDocuments(): Observable<any> {
-    let url = this.documents_base_url
+  fetchDocuments(perimeter: string): Observable<any> {
+    let url = this.documents_base_url+"?user="+perimeter
     return this.http.get<any>(url);
   }
 

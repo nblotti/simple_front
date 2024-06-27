@@ -59,8 +59,9 @@ export class DashboardComponent implements AfterViewInit {
 
     let derivedCounter = computed(() => {
 
-      this.userContextService.userCategories().forEach((value, key) => {
-        this.perimeter.set(key, false);
+
+      this.userContextService.userCategories().forEach((value) => {
+        this.perimeter.set(value, false);
       })
       let perimeter = ""
       for (let [key, value] of this.perimeter) {
@@ -70,9 +71,11 @@ export class DashboardComponent implements AfterViewInit {
 
       return perimeter;
     });
-
+    this.perimeter.set(this.userContextService.userID, true);
+    this.setPerimeter();
     this.reload();
   }
+
 
   reloadConversations() {
     this.conversationService.loadConversations().subscribe({
@@ -172,12 +175,10 @@ export class DashboardComponent implements AfterViewInit {
     return this.perimeter.get(categoryKey);
   }
 
-  setInput( event: any,categoryKey: string = ""): void {
+  setInput(isChecked: boolean, categoryKey: string = "", categoryName: string = ""): void {
 
-    const inputElement = event.target as HTMLInputElement;
-    const isChecked = inputElement.checked;
     if (categoryKey.length == 0)
-      this.perimeter.set(this.userContextService.userName, isChecked);
+      this.perimeter.set(this.userContextService.userID, isChecked);
     else
       this.perimeter.set(categoryKey, isChecked);
     this.setPerimeter();
@@ -192,7 +193,7 @@ export class DashboardComponent implements AfterViewInit {
   private reload() {
     this.loadDocuments();
     this.reloadConversations();
-    this.perimeter.set(this.userContextService.userName, true);
+    this.perimeter.set(this.userContextService.userID, true);
   }
 
   private loadDocuments() {
@@ -201,7 +202,7 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   private fetchDocuments(): Observable<string[][]> {
-    return this.documentService.fetchDocuments().pipe(map(response => {
+    return this.documentService.fetchDocuments(this.userContextService.userID).pipe(map(response => {
       if (response.length == 0)
         return []
       return response

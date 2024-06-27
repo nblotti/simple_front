@@ -18,8 +18,8 @@ import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks'
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  private password: string = "";
-  private username: string = "";
+  protected password: string = "";
+  protected username: string = "";
   private userUrl:string  = '';
 
   private oauthService = inject(OAuthService)
@@ -43,34 +43,7 @@ export class LoginComponent {
  */
   }
 
-  getUserCategories(userIds: string[]): void {
 
-    const userIdList = userIds.join(',');
-
-    let params = new HttpParams();
-    userIds.forEach(userId => {
-      params = params.append('user_ids', userId);
-    });
-
-    this.httpClient.get<CategoryType[]>(this.userUrl, {params})
-      .subscribe({
-        next: (categories) => {
-          const categoryMap = new Map<string, string>();
-
-          // Assuming categories is an array of objects with properties `id` and `name`
-          categories.forEach(category => {
-            categoryMap.set("" + category[0], category[1]);
-          });
-
-          this.userContext.setLoggedIn(true, this.username); // Assuming username and password are defined somewhere in the service or received via args
-          this.userContext.userCategories.set(categoryMap);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
-  }
 
 
 }

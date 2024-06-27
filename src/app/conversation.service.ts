@@ -34,14 +34,14 @@ export class ConversationService {
 
 
   loadConversations() {
-    let url = this.conversation_url + "perimeter/" + this.userContextService.userName + "/"
+    let url = this.conversation_url + "perimeter/" + this.userContextService.userID + "/"
     return this.httpClient.get<any>(url);
 
   }
 
 
   loadOrCreateConversationsByDocumentId(documentId: number) {
-    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.userContextService.userName
+    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.userContextService.userID
     return this.httpClient.get<any>(url);
   }
 
@@ -92,7 +92,7 @@ export class ConversationService {
 
 
   createConversation(pdf_id: number = 0) {
-    let conversation = new Conversation(this.userContextService.userName, pdf_id);
+    let conversation = new Conversation(this.userContextService.userID, pdf_id);
 
     let url = this.conversation_url
     return this.httpClient.post<Conversation>(url, conversation);

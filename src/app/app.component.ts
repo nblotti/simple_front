@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
     this.showModal = true;
   }
 
-  login() {
-    this.usercontextService.setLoggedIn(false);
+  logout() {
+
   }
 }

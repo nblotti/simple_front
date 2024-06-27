@@ -31,7 +31,7 @@ export class FileUploadDialogComponent {
   }
 
   uploadFile(file: File) {
-    this.fileUploadService.uploadFile(file, this.userContextService.userName)
+    this.fileUploadService.uploadFile(file, this.userContextService.userID)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)

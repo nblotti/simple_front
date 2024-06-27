@@ -46,6 +46,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   oauthService.tokenValidationHandler = new JwksValidationHandler();
   oauthService.setupAutomaticSilentRefresh();
 
+  let groups: string[] = [];
+  groups.push("1");
+
   return oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
     if (oauthService.hasValidAccessToken() && oauthService.hasValidIdToken()) {
       // Ensure the user profile is loaded
@@ -53,7 +56,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         .then((userProfile) => {
           const profile = userProfile as GoogleUserProfile;
 
-          userContext.setLoggedIn(true, profile.info.sub)
+          userContext.setLoggedIn(true, profile.info.sub, groups)
           return true;
         }).catch(err => {
           console.error('Error loading user profile', err);
@@ -71,3 +74,4 @@ export const authGuard: CanActivateFn = (route, state) => {
     return router.navigate(['/login']).then(() => false);
   });
 };
+
