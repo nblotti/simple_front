@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.custom-select-container {
+  width: 100%;
+}
+
+.custom-select {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+select {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.assistant-btn-class {
+  border-color: lightgray;
+  width: 100%;
+  color: lightgray;
+
+  height: 40px;
+  border-radius: 5px; /* You can adjust the value as needed */
+  padding: 5px; /* Adding some padding can help with the overall look */
+  border: none; /* Adding a border to ensure visibility */
+  text-align: left;
+}
+
+
+.custom-option {
+  /*background-color: #dc3545; /* Background color of dropdown options */
+  background-color:#444654;;
+  color: lightgray; /* Text color of dropdown options */
+  height: 50px;
+
+}

@@ -17,7 +17,7 @@ export class AssistantService {
 
     this.assistant_base_url = globalsService.serverBase + "assistant/"
     let assistants = []
-    assistants.push(new Assistant("1", this.userContextService.userID, "Default", "You are a usefull assistant", true));
+    assistants.push(new Assistant("1", this.userContextService.userID, "Default", "You are a usefull assistant"));
     assistants.push(new Assistant("2", this.userContextService.userID, "Traductor", "You are an english professor, translate and rephrase when required"));
     assistants.push(new Assistant("3", this.userContextService.userID, "Professor", "You are a speicalist in geology helping me writting an article"));
 
@@ -40,10 +40,8 @@ export class AssistantService {
 
     for (const assistant of this.assistants()) {
       if (assistant.id == newAssistant.id) {
-        newAssistant.selected = true;
         assistants.push(newAssistant);
       } else {
-        newAssistant.selected = false;
         assistants.push(assistant);
       }
     }
@@ -58,11 +56,10 @@ export class AssistantService {
     let assistants = []
 
     for (const assistant of this.assistants()) {
-      assistant.selected = false;
       assistants.push(assistant);
     }
     let id = uuidv4().toString()
-    assistants.push(new Assistant(id, this.userContextService.userID, "", "", true)
+    assistants.push(new Assistant(id, this.userContextService.userID, "", "")
     );
     this.assistants.set(assistants.reverse());
   }
@@ -74,14 +71,12 @@ export class Assistant {
   userid: string
   name: string
   description: string;
-  selected: boolean;
 
-  public constructor(id: string, userid: string = "", name: string, description: string, selected: boolean = false) {
+  public constructor(id: string, userid: string = "", name: string, description: string) {
     this.id = id;
     this.userid = userid;
     this.description = description;
     this.name = name;
-    this.selected = selected;
   }
 }
 
