@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, importProvidersFrom, OnInit, ViewChild,} from '@angular/core';
+import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
@@ -7,16 +7,19 @@ import {HttpClientModule} from "@angular/common/http";
 import {FileUploadDialogComponent} from "./file-upload-dialog/file-upload-dialog.component";
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
-import {ConversationService} from "./conversation.service";
-import {StatemanagerService} from "./statemanager.service";
+import {ConversationService} from "./dashboard/conversation.service";
+import {StateManagerService} from "./state-manager.service";
 import {UserContextService} from "./user-context.service";
 import {LoginComponent} from "./login/login.component";
+import {DashboardState} from "./dashboard/DashboardState";
+import {AssistantState} from "./assistant/AssistantState";
+import {AssistantService} from "./assistant/assistant.service";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  providers: [NgEventBus, HttpClientModule, ConversationService, DatePipe, StatemanagerService,LoginComponent],
+  providers: [NgEventBus, HttpClientModule,  DatePipe, DashboardState, AssistantState, StateManagerService, ConversationService,AssistantService, LoginComponent],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -34,7 +37,7 @@ export class AppComponent implements OnInit {
     return result;
   });
 
-  constructor(private router: Router, private usercontextService: UserContextService) {
+  constructor(private router: Router, private usercontextService: UserContextService, private stateManagerService: StateManagerService,) {
   }
 
   toggleCollapse(): void {
@@ -69,4 +72,9 @@ export class AppComponent implements OnInit {
   logout() {
 
   }
+
+  loadAssistant() {
+    this.stateManagerService.loadAssistant();
+  }
+
 }

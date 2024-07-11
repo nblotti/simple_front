@@ -10,7 +10,7 @@ import {APP_ROUTES} from "./app/app.routes";
 import {provideOAuthClient} from "angular-oauth2-oidc";
 
 bootstrapApplication(AppComponent, {
-  providers: [provideAnimationsAsync(), provideAnimationsAsync(), provideHttpClient(), // provideRouter(APP_ROUTES,withComponentInputBinding(), withPreloading(PreloadAllModules), withDebugTracing())]
+  providers: [provideAnimationsAsync(), provideAnimationsAsync(), provideHttpClient(),
     provideRouter(APP_ROUTES, withComponentInputBinding(), withPreloading(PreloadAllModules)),
     provideOAuthClient()]
 })

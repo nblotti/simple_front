@@ -2,7 +2,7 @@
   <div class="h-90 overflow-auto" #scrollMe scroll-to-bottom>
     <table class="table table-borderless table_messages">
       <tbody>
-        @for (message of getScreenReadyMessages(); track message.id) {
+        @for (message of  statemanagerService.getScreenReadyMessages()(); track message.id) {
           <tr class=".bg-transparent mt-5">
             <td class="chat_icon_content ">
               @if (message.role == "assistant") {

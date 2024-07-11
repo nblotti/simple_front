@@ -2,11 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Conversation} from "./Conversation";
 import {Router} from "@angular/router";
-import {Source} from "./chat/chat.component";
 import {sprintf} from "sprintf-js";
-import {NgEventBus} from "ng-event-bus";
-import {GlobalsService} from "./globals.service";
-import {UserContextService} from "./user-context.service";
+import {GlobalsService} from "../globals.service";
+import {UserContextService} from "../user-context.service";
 
 
 @Injectable({
@@ -23,7 +21,7 @@ export class ConversationService {
   //private current_user: string = "1";
   private documentPerimeter: string = "1";
 
-  constructor(protected httpClient: HttpClient, private router: Router, private eventBus: NgEventBus, private globalsService: GlobalsService,
+  constructor(protected httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
 
     this.chat_command_no_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s"
@@ -72,8 +70,6 @@ export class ConversationService {
 
   setCurrentConversation(current_conversation: number = 0) {
     this.current_conversation = current_conversation;
-    this.eventBus.cast("load_conversation")
-    console.log("current conversation : " + current_conversation);
   }
 
   setDocumentConversation(conversation_id: any, pdf_id: string) {
@@ -127,3 +123,42 @@ class Result {
     this.sources = sources
   }
 }
+
+export class Source {
+  blob_id: string
+  file_name: string
+  page: number
+  perimeter: string
+
+
+  public constructor(blob_id: string, file_name: string, page: number, perimeter: string) {
+    this.blob_id = blob_id;
+    this.file_name = file_name;
+    this.page = page;
+    this.perimeter = perimeter;
+
+  }
+}
+
+
+export class Messages {
+  content: string
+  additional_kwargs: any
+  response_metadata: any
+  type: string
+  name: string
+  id: string
+  example: boolean
+
+  public constructor(content: string, type: string, additional_kwargs: any = {}, response_metadata: any = {},
+                     name: string = "", id: string = "", example: boolean = false) {
+    this.content = content
+    this.additional_kwargs = additional_kwargs
+    this.response_metadata = response_metadata
+    this.type = type
+    this.name = name
+    this.id = id
+    this.example = example
+  }
+}
+

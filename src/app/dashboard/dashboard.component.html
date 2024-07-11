@@ -113,15 +113,17 @@
     </h2>
     <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionPerimeter">
       <div class="accordion-body">
-        @for (category of userContextService.userCategories(); track category[0]; let index = $index) {
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox"
-                     [ngModel]="getInput(category[0])"
-                     (ngModelChange)="setInput($event,category[0],category[1])"
-                     role="switch" id="flexSwitchCheck{{index}}">
-              <label class="form-check-label" for="flexSwitchCheck{{index}}">{{ category[1] }}</label>
-            </div>
-        }
+        <form [formGroup]="form">
+          <div formArrayName="checkboxes" class="form-check form-switch">
+            @for (checkbox of checkboxesFormArray.controls; track checkbox; let index = $index) {
+              <div [formGroupName]="index">
+                <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
+                <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
+              </div>
+            }
+          </div>
+        </form>
+
       </div>
     </div>
   </div>

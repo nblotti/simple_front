@@ -1,0 +1,109 @@
+.title-block {
+  margin: 30px;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 30px;
+  color: #0d6efd;
+}
+
+.assistant-main-class {
+  display: flex;
+  flex-direction: column;
+  gap: 80px; /* Optional: to add space between elements */
+  margin: 30px;
+
+}
+
+.assistant-block-class {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Optional: to add space between elements */
+}
+
+#dropdownAssistant{
+  font-size: 15px;
+  border: none;
+}
+.assistant-block-class label{
+  color: #0d6efd;
+  font-size: 17px;
+}
+.assistant-btn-class {
+  border-color: lightgray;
+  width: 100%;
+  color: lightgray;
+
+  height: 40px;
+  border-radius: 5px; /* You can adjust the value as needed */
+  padding: 5px; /* Adding some padding can help with the overall look */
+  border: 2px solid; /* Adding a border to ensure visibility */
+  text-align: left;
+}
+
+.assistant-name{
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  color: #0d6efd;
+
+}
+
+.assistant-name select{
+  color: #0d6efd;
+  font-size: 20px;
+}
+.assistant-name-input{
+  width: 100%;
+  background-color:#444654;
+  color: lightgray;
+  height: 40px;
+  border-radius: 5px; /* You can adjust the value as needed */
+  padding: 5px; /* Adding some padding can help with the overall look */
+  /* Adding a border to ensure visibility */
+  border-color:  lightgray;
+  border-width: 1px;
+
+}
+
+select optgroup {
+ /* background-color: #dc3545; /* Background color of dropdown options */
+  background-color:#444654;;
+  font-size: 17px;
+  padding :10px;
+}
+
+.assistant-txtarea-class {
+
+  color: #444654;
+  width: 90%;
+  height: 120px;
+  text-align: left;
+}
+
+.custom-option {
+  /*background-color: #dc3545; /* Background color of dropdown options */
+  background-color:#444654;;
+  color: lightgray; /* Text color of dropdown options */
+  height: 50px;
+
+}
+
+.assistant-button-class {
+  width: 100%;
+  display: flex;
+
+  gap: 10px;
+  justify-content: flex-end; /* Align children to the right */
+
+}
+
+
+.assistant-button-command-class {
+  border-radius: 5px; /* You can adjust the value as needed */
+  border: 2px solid; /* Adding a border to ensure visibility */
+
+}
