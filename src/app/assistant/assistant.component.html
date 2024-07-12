@@ -40,7 +40,7 @@
   </div>
   <div class="assistant-block-class">
     <label for="dropdownModel">Model</label>
-    <select class="bootstrap-select btn btn-sm assistant-btn-class " id="dropdownModel">
+    <select class="bootstrap-select btn btn-sm assistant-btn-class assistant-model-select" id="dropdownModel">
       <optgroup>
         <option class="custom-option" value="1" selected="selected">gpt-3.5-turbo-0125</option>
         <option class="custom-option" value="2">gpt-4</option>
@@ -55,8 +55,9 @@
     <hr class="hr"/>
     <div class="assistant-button-class">
       <button type="button" (click)="deleteAssistant()"
-              class="btn btn-disabled btn-disabled-style btn-sm btn-filled btn-neutral assistant-button-command-class"
-              disabled=""><span class="btn-label-wrap"><span class="btn-label-inner"><svg
+              class="btn btn-sm btn-filled btn-neutral assistant-button-command-class"
+              [disabled]="assistants().length === 1"
+              ><span class="btn-label-wrap"><span class="btn-label-inner"><svg
         xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
         fill="lightgray"
         viewBox="0 0 24 24"><path fill-rule="evenodd"
@@ -64,8 +65,8 @@
                                   clip-rule="evenodd"></path></svg></span></span>
       </button>
       <button type="button" (click)="cloneAssistant()"
-              class="btn btn-disabled btn-disabled-style btn-sm btn-filled btn-neutral assistant-button-command-class"
-              disabled=""><span class="btn-label-wrap"><span class="btn-label-inner"><svg
+              class="btn  btn-sm btn-filled btn-neutral assistant-button-command-class"
+              ><span class="btn-label-wrap"><span class="btn-label-inner"><svg
         xmlns="http://www.w3.org/2000/svg" width="18px" height="18px"
         fill="lightgray"
         viewBox="0 0 24 24"><path fill-rule="evenodd"
@@ -73,7 +74,7 @@
                                   clip-rule="evenodd"></path></svg></span><span
 
 
-        class="btn-label-inner">Clone</span></span></button>
+        class="btn-label-inner"></span></span></button>
       <button type="button" (click)="addAssistant()"
               class="btn  btn-sm btn-filled btn-neutral assistant-button-command-class"><span
         class="btn-label-wrap"><span class="btn-label-inner"><svg

@@ -9,6 +9,7 @@ import {v4 as uuidv4} from "uuid";
 })
 export class AssistantService {
 
+
   public assistants: WritableSignal<Assistant[]> = signal([]);
 
   assistant_base_url: string;
@@ -59,8 +60,41 @@ export class AssistantService {
       assistants.push(assistant);
     }
     let id = uuidv4().toString()
-    assistants.push(new Assistant(id, this.userContextService.userID, "", "")
+    assistants.push(new Assistant(id, this.userContextService.userID, "New Assistant", "You are a usefull assistant")
     );
+    this.assistants.set(assistants.reverse());
+  }
+
+  cloneAssistant(id: string) {
+    let cur_assistant:any
+    let assistants = []
+
+    for (const assistant of this.assistants()) {
+      if(assistant.id == id) {
+        cur_assistant = assistant
+      }
+      assistants.push(assistant);
+
+    }
+    let newid = uuidv4().toString()
+    assistants.push(new Assistant(newid, this.userContextService.userID, "Clone of "+ cur_assistant.name, cur_assistant.description)
+    );
+    this.assistants.set(assistants.reverse());
+  }
+
+  deleteAssistant(id: string) {
+    let cur_assistant:any
+    let assistants = []
+
+    for (const assistant of this.assistants()) {
+      if(assistant.id == id) {
+        cur_assistant = assistant
+      }
+      else
+        assistants.push(assistant);
+    }
+    let newid = uuidv4().toString()
+
     this.assistants.set(assistants.reverse());
   }
 }

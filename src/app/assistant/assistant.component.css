@@ -88,3 +88,17 @@ select optgroup {
   border: 2px solid; /* Adding a border to ensure visibility */
 
 }
+
+.assistant-model-select{
+
+  background-color:#444654;
+  color: lightgray;
+
+  height: 40px;
+  border-radius: 5px; /* You can adjust the value as needed */
+  padding: 5px; /* Adding some padding can help with the overall look */
+  /* Adding a border to ensure visibility */
+  border-color:  lightgray;
+  border-width: 1px;
+
+}

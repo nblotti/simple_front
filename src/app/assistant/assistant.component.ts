@@ -4,7 +4,6 @@ import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 import {Assistant, AssistantService} from "./assistant.service";
 import {FormsModule} from "@angular/forms";
 import {CustomAssistantSelectComponent} from "../custom-assistant-select/custom-assistant-select.component";
-import {UserContextService} from "../user-context.service";
 
 
 @Component({
@@ -17,19 +16,18 @@ import {UserContextService} from "../user-context.service";
 export class AssistantComponent implements OnInit {
 
   readonly models: WritableSignal<Map<string, string>> = signal(new Map<string, string>())
-
-  protected assistants: Signal<Assistant[]> = computed((): Assistant[] => {
-    return this.assistantService.getAssistants()();
-
-  });
   @ViewChild(CustomAssistantSelectComponent) customSelectComponent!: CustomAssistantSelectComponent;
-  selectedCategory: WritableSignal<Assistant> = signal<Assistant>(this.assistants()[0])
   assistantName: Signal<string> = computed(() => {
     return this.selectedCategory().name;
   });
   textareaValue: Signal<string> = computed(() => {
     return this.selectedCategory().description;
   });
+  protected assistants: Signal<Assistant[]> = computed((): Assistant[] => {
+    return this.assistantService.getAssistants()();
+
+  });
+  selectedCategory: WritableSignal<Assistant> = signal<Assistant>(this.assistants()[0])
 
   constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService) {
   }
@@ -54,17 +52,13 @@ export class AssistantComponent implements OnInit {
     this.assistantService.createAssistant();
   }
 
-  removeCategory() {
-    this.customSelectComponent.removeCategory(this.selectedCategory().id);
-  }
-
 
   deleteAssistant() {
-
+    this.assistantService.deleteAssistant(this.selectedCategory().id);
   }
 
   cloneAssistant() {
-
+    this.assistantService.cloneAssistant(this.selectedCategory().id);
   }
 
   updateDescription($event: any) {
@@ -75,21 +69,10 @@ export class AssistantComponent implements OnInit {
 
   }
 
-  /*
-    onSelect(object?: any) {
-
-      let assistant = this.getAssistant(object.target.value)
-      if (assistant) {
-        this.textareaValue = assistant.description;
-        this.assistantName = assistant.name;
-      }
-
-    }
-  */
   addAssistant() {
 
     this.addCategory();
-    //this.assistantService.createAssistant();
+
 
   }
 
@@ -101,14 +84,5 @@ export class AssistantComponent implements OnInit {
     }
   }
 
-  /*
-    getAssistant(id: string) {
-      for (const assistant of this.assistants()) {
-        if (assistant.id == id) {
-          return assistant;
-        }
-      }
-      return null;
-    }
-  */
+
 }

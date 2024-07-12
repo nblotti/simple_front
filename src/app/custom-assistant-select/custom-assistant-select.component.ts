@@ -33,7 +33,7 @@ export class CustomAssistantSelectComponent {
     this.selectedCategoryId.emit(this.selectedId);
   }
 
-  removeCategory(id: string) {
+  deleteAssistant(id: string) {
     const index = this.categories.findIndex(cat => cat.id === id);
     if (index !== -1) {
       this.categories.splice(index, 1);
@@ -45,4 +45,6 @@ export class CustomAssistantSelectComponent {
       this.selectedCategoryId.emit(this.selectedId);
     }
   }
+
+
 }

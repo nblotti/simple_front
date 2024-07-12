@@ -28,7 +28,7 @@ select {
   border-radius: 5px; /* You can adjust the value as needed */
   padding: 5px; /* Adding some padding can help with the overall look */
   border: none; /* Adding a border to ensure visibility */
-  text-align: left;
+  text-align: center;
 }
 
 
