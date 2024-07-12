@@ -17,24 +17,25 @@ export class AssistantComponent implements OnInit {
 
   readonly models: WritableSignal<Map<string, string>> = signal(new Map<string, string>())
   @ViewChild(CustomAssistantSelectComponent) customSelectComponent!: CustomAssistantSelectComponent;
+  protected assistants: WritableSignal<Assistant[]>;
+  protected selectedCategory: WritableSignal<Assistant>;
   assistantName: Signal<string> = computed(() => {
     return this.selectedCategory().name;
   });
   textareaValue: Signal<string> = computed(() => {
     return this.selectedCategory().description;
   });
-  protected assistants: Signal<Assistant[]> = computed((): Assistant[] => {
-    return this.assistantService.getAssistants()();
-
-  });
-  selectedCategory: WritableSignal<Assistant> = signal<Assistant>(this.assistants()[0])
 
   constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService) {
+    this.assistants = this.assistantService.getAssistants();
+    this.selectedCategory = signal<Assistant>(this.assistants()[0]);
+
   }
 
   ngOnInit(): void {
 
     this.stateManagerService.setCurrentState(STATES.Assistant);
+    this.assistantService.loadAssistants();
 
   }
 

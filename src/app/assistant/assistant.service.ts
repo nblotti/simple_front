@@ -1,5 +1,5 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GlobalsService} from "../globals.service";
 import {UserContextService} from "../user-context.service";
 import {v4 as uuidv4} from "uuid";
@@ -16,13 +16,7 @@ export class AssistantService {
 
   constructor(private httpClient: HttpClient, private globalsService: GlobalsService, private userContextService: UserContextService) {
 
-    this.assistant_base_url = globalsService.serverBase + "assistant/"
-    let assistants = []
-    assistants.push(new Assistant("1", this.userContextService.userID, "Default", "You are a usefull assistant"));
-    assistants.push(new Assistant("2", this.userContextService.userID, "Traductor", "You are an english professor, translate and rephrase when required"));
-    assistants.push(new Assistant("3", this.userContextService.userID, "Professor", "You are a speicalist in geology helping me writting an article"));
-
-    this.assistants.set(assistants);
+    this.assistant_base_url = globalsService.serverBase + "assistants/"
   }
 
 
@@ -30,9 +24,28 @@ export class AssistantService {
     return this.httpClient.get<string>(this.assistant_base_url);
   }
 
+  loadAssistants() {
+    let url = this.assistant_base_url + this.userContextService.userID + "/"
+
+    this.httpClient.get<Assistant[]>(url)
+      .subscribe({
+        next: (results) => {
+          const assistants: Assistant[] = [];
+          results.forEach(assist => {
+            assistants.push(assist);
+          });
+
+          this.assistants.set(assistants);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+
+  }
+
   getAssistants() {
     return this.assistants;
-
   }
 
   saveAssistant(newAssistant: Assistant) {
@@ -54,48 +67,48 @@ export class AssistantService {
 
   createAssistant() {
 
-    let assistants = []
+    let assistant = new Assistant("", this.userContextService.userID, "New Assistant", "", "You are a usefull assistant")
 
-    for (const assistant of this.assistants()) {
-      assistants.push(assistant);
-    }
-    let id = uuidv4().toString()
-    assistants.push(new Assistant(id, this.userContextService.userID, "New Assistant", "You are a usefull assistant")
-    );
-    this.assistants.set(assistants.reverse());
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    this.httpClient.post(this.assistant_base_url, assistant, {headers: headers}).subscribe(value => {
+        this.loadAssistants();
+      }
+    )
+
+
   }
 
   cloneAssistant(id: string) {
-    let cur_assistant:any
+    let cur_assistant: any
     let assistants = []
 
     for (const assistant of this.assistants()) {
-      if(assistant.id == id) {
+      if (assistant.id == id) {
         cur_assistant = assistant
       }
       assistants.push(assistant);
 
     }
     let newid = uuidv4().toString()
-    assistants.push(new Assistant(newid, this.userContextService.userID, "Clone of "+ cur_assistant.name, cur_assistant.description)
+    assistants.push(new Assistant(
+      newid,
+      this.userContextService.userID,
+      "Clone of " + cur_assistant.name,
+      "",
+      cur_assistant.description)
     );
     this.assistants.set(assistants.reverse());
   }
 
   deleteAssistant(id: string) {
-    let cur_assistant:any
-    let assistants = []
 
-    for (const assistant of this.assistants()) {
-      if(assistant.id == id) {
-        cur_assistant = assistant
+    let url = this.assistant_base_url + id + "/"
+
+
+    this.httpClient.delete(url).subscribe(value => {
+        this.loadAssistants();
       }
-      else
-        assistants.push(assistant);
-    }
-    let newid = uuidv4().toString()
-
-    this.assistants.set(assistants.reverse());
+    )
   }
 }
 
@@ -104,12 +117,14 @@ export class Assistant {
   id: string
   userid: string
   name: string
+  conversation_id: string
   description: string;
 
-  public constructor(id: string, userid: string = "", name: string, description: string) {
+  public constructor(id: string, userid: string = "", name: string, conversation_id: string = "", description: string) {
     this.id = id;
     this.userid = userid;
     this.description = description;
+    this.conversation_id = conversation_id
     this.name = name;
   }
 }

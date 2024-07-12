@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Assistant} from "../assistant/assistant.service";
+import {AsyncPipe} from "@angular/common";
 
 
 
@@ -7,6 +8,9 @@ import {Assistant} from "../assistant/assistant.service";
   standalone: true,
   selector: 'app-custom-assistant-select',
   templateUrl: './custom-assistant-select.component.html',
+  imports: [
+    AsyncPipe
+  ],
   styleUrls: ['./custom-assistant-select.component.css']
 })
 export class CustomAssistantSelectComponent {
