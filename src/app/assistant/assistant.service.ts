@@ -2,7 +2,6 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GlobalsService} from "../globals.service";
 import {UserContextService} from "../user-context.service";
-import {v4 as uuidv4} from "uuid";
 
 @Injectable({
   providedIn: 'root'
@@ -48,19 +47,19 @@ export class AssistantService {
     return this.assistants;
   }
 
-  saveAssistant(newAssistant: Assistant) {
+  updateAssistant(assistant: Assistant) {
 
-    let assistants = []
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    this.httpClient.put(this.assistant_base_url, assistant, {headers: headers})
+      .subscribe({
+        next: (assistant) => {
+          this.loadAssistants();
+        },
+        error: (err) => {
+          console.error(err);
+        }
 
-    for (const assistant of this.assistants()) {
-      if (assistant.id == newAssistant.id) {
-        assistants.push(newAssistant);
-      } else {
-        assistants.push(assistant);
-      }
-    }
-    this.assistants.set(assistants);
-    console.log('Value saved: ', newAssistant.name, " / ", newAssistant.description);
+      });
 
 
   }
@@ -68,36 +67,29 @@ export class AssistantService {
   createAssistant() {
 
     let assistant = new Assistant("", this.userContextService.userID, "New Assistant", "", "You are a usefull assistant")
-
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    this.httpClient.post(this.assistant_base_url, assistant, {headers: headers}).subscribe(value => {
-        this.loadAssistants();
-      }
-    )
+    this.saveAssistant(assistant);
 
 
   }
 
   cloneAssistant(id: string) {
-    let cur_assistant: any
-    let assistants = []
+    let cur_assistant: any = null;
 
     for (const assistant of this.assistants()) {
       if (assistant.id == id) {
         cur_assistant = assistant
       }
-      assistants.push(assistant);
-
     }
-    let newid = uuidv4().toString()
-    assistants.push(new Assistant(
-      newid,
+    if (cur_assistant == null)
+      return;
+    this.saveAssistant(new Assistant(
+      "",
       this.userContextService.userID,
       "Clone of " + cur_assistant.name,
       "",
       cur_assistant.description)
     );
-    this.assistants.set(assistants.reverse());
+
   }
 
   deleteAssistant(id: string) {
@@ -109,6 +101,20 @@ export class AssistantService {
         this.loadAssistants();
       }
     )
+  }
+
+  private saveAssistant(assistant: Assistant) {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    this.httpClient.post(this.assistant_base_url, assistant, {headers: headers})
+      .subscribe({
+        next: (assistant) => {
+          this.loadAssistants();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+
+      });
   }
 }
 

@@ -1,9 +1,9 @@
 <div class="custom-select-container">
-  <select (change)="onSelect($event)" class="bootstrap-select btn btn-sm assistant-btn-class custom-select">
+  <select #selectElement  (change)="onSelect($event)" class="bootstrap-select btn btn-sm assistant-btn-class custom-select">
 
     @for (category of categories; track category; let index = $index) {
       <option [value]="category.id" [selected]="category.id === selectedId" class="custom-option">
-        {{ category.name }}
+          {{ category.name }}
       </option>
 
     }

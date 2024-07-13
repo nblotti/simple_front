@@ -1,4 +1,14 @@
-import {Component, computed, OnInit, Signal, signal, ViewChild, WritableSignal} from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  Signal,
+  signal,
+  ViewChild,
+  WritableSignal
+} from '@angular/core';
 import {StateManagerService, STATES} from "../state-manager.service";
 import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 import {Assistant, AssistantService} from "./assistant.service";
@@ -17,20 +27,29 @@ export class AssistantComponent implements OnInit {
 
   readonly models: WritableSignal<Map<string, string>> = signal(new Map<string, string>())
   @ViewChild(CustomAssistantSelectComponent) customSelectComponent!: CustomAssistantSelectComponent;
+  @ViewChild('inputName') inputName!: ElementRef;
+
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
+
   assistantName: Signal<string> = computed(() => {
-    return this.selectedCategory().name;
+    if (this.selectedCategory() != undefined)
+      return this.selectedCategory().name;
+    else return "";
   });
   textareaValue: Signal<string> = computed(() => {
-    return this.selectedCategory().description;
+    if (this.selectedCategory() != undefined)
+      return this.selectedCategory().description;
+    else return "";
   });
 
-  constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService) {
+  constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService,
+              private renderer: Renderer2) {
     this.assistants = this.assistantService.getAssistants();
     this.selectedCategory = signal<Assistant>(this.assistants()[0]);
 
   }
+
 
   ngOnInit(): void {
 
@@ -45,34 +64,33 @@ export class AssistantComponent implements OnInit {
         this.selectedCategory.set(category);
       }
     }
-
     console.log('Selected Category ID:', id);
   }
 
-  addCategory() {
-    this.assistantService.createAssistant();
-  }
-
-
   deleteAssistant() {
+    this.customSelectComponent.deleteAssistant(this.selectedCategory().id);
     this.assistantService.deleteAssistant(this.selectedCategory().id);
+    this.customSelectComponent.selectElement.nativeElement.focus();
   }
 
   cloneAssistant() {
+    this.customSelectComponent.addAssistant();
     this.assistantService.cloneAssistant(this.selectedCategory().id);
+    this.inputName.nativeElement.focus();
   }
 
   updateDescription($event: any) {
     if (this.textareaValue() !== $event.target.value) {
-      this.selectedCategory.update(value => value.description = $event.target.value);
-      this.assistantService.saveAssistant(this.selectedCategory())
+      let assistant: Assistant = this.selectedCategory();
+      assistant.description = $event.target.value;
+      this.assistantService.updateAssistant(this.selectedCategory())
     }
-
   }
 
   addAssistant() {
-
-    this.addCategory();
+    this.customSelectComponent.addAssistant();
+    this.assistantService.createAssistant();
+    this.inputName.nativeElement.focus();
 
 
   }
@@ -80,9 +98,15 @@ export class AssistantComponent implements OnInit {
   updateName($event: any) {
 
     if (this.textareaValue() !== $event.target.value) {
-      this.selectedCategory.update(value => value.name = $event.target.value);
-      this.assistantService.saveAssistant(this.selectedCategory())
+      let assistant: Assistant = this.selectedCategory();
+      assistant.name = $event.target.value;
+      this.assistantService.updateAssistant(this.selectedCategory())
     }
+  }
+
+  onTextAreaFocused($event: any){
+    const textarea = $event.target as HTMLTextAreaElement;
+    setTimeout(() => textarea.select(), 0);
   }
 
 

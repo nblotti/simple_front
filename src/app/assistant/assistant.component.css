@@ -58,6 +58,10 @@
 
 }
 
+.assistant-name-input:focus{
+  color: #0d6efd;
+}
+
 select optgroup {
  /* background-color: #dc3545; /* Background color of dropdown options */
   background-color:#444654;;
@@ -71,6 +75,9 @@ select optgroup {
   width: 90%;
   height: 120px;
   text-align: left;
+}
+.assistant-txtarea-class:focus{
+  color: #0d6efd;
 }
 
 .assistant-button-class {
@@ -88,6 +95,12 @@ select optgroup {
   border: 2px solid; /* Adding a border to ensure visibility */
 
 }
+.assistant-button-command-class:focus{
+
+  border-color: #0d6efd;
+
+
+}
 
 .assistant-model-select{
 
@@ -101,4 +114,9 @@ select optgroup {
   border-color:  lightgray;
   border-width: 1px;
 
+}
+
+.assistant-model-select:focus{
+
+  color: #0d6efd;
 }
