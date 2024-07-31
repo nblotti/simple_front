@@ -32,6 +32,11 @@ export class AssistantComponent implements OnInit {
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
 
+  options = [
+    { value: '3.5', label: 'gpt-3.5' },
+    { value: '4o', label: 'gpt4o' },
+  ];
+
   assistantName: Signal<string> = computed(() => {
     if (this.selectedCategory() != undefined)
       return this.selectedCategory().name;
@@ -61,6 +66,7 @@ export class AssistantComponent implements OnInit {
   onCategorySelect(id: string) {
     for (let category of this.assistants()) {
       if (category.id == id) {
+        this.stateManagerService.setCurrentConversation(Number.parseInt(category.conversation_id))
         this.selectedCategory.set(category);
       }
     }
@@ -110,4 +116,10 @@ export class AssistantComponent implements OnInit {
   }
 
 
+  modelValueChanged(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    let assistant: Assistant = this.selectedCategory();
+    assistant.gpt_model_number = selectElement.value;
+    this.assistantService.updateAssistant(this.selectedCategory())
+  }
 }

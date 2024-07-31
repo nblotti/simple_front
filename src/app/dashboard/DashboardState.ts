@@ -2,6 +2,7 @@ import {StateInterface} from "../StateInterface";
 import {Component, signal, WritableSignal} from "@angular/core";
 import {ScreenReadyMessage} from "../chat/SreenReadyMessage";
 import {ConversationService, Source} from "./conversation.service";
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -23,9 +24,9 @@ export class DashboardState implements StateInterface {
     return this.screenReadyMessages;
   }
 
-  public clearConversation(): void {
+  public clearConversation(): Observable<any> {
     this.screenReadyMessages.set([new ScreenReadyMessage(1, "assistant", "How can I help you ?")]);
-
+    return this.conversationService.clearConversation();
   }
 
   /*********************************************************************************************
@@ -87,6 +88,10 @@ export class DashboardState implements StateInterface {
       });
 
     return source_http_url;
+  }
+
+  setCurrentConversation(conversation_id: number): void {
+    this.conversationService.setCurrentConversation(conversation_id);
   }
 
 }

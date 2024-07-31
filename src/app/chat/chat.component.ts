@@ -1,9 +1,10 @@
-import {Component, computed, OnInit, Signal, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, computed, OnInit, Signal, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {NgEventBus} from 'ng-event-bus';
 import {LineBreakPipe} from "./line-break.pipe";
 import {StateManagerService} from "../state-manager.service";
+import {ScreenReadyMessage} from "./SreenReadyMessage";
 
 
 @Component({
@@ -13,10 +14,15 @@ import {StateManagerService} from "../state-manager.service";
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit,AfterViewChecked {
 
   inputMessage: string = "";
   @ViewChild('scrollMe') private myScrollContainer: any;
+
+  protected screenReadyMessage= computed(() => {
+
+      return this.statemanagerService.getScreenReadyMessages()();
+  });
 
   constructor(private eventBus: NgEventBus,
               private httpClient: HttpClient,
@@ -27,8 +33,9 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     this.scrollToBottom();
-
-
+  }
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
 
@@ -37,13 +44,8 @@ export class ChatComponent implements OnInit {
    */
   onKeyUp($event: KeyboardEvent) {
 
-    if ($event.key === 'Enter') {
-
-      let current_message = this.inputMessage
-      this.inputMessage = "";
-
-      this.statemanagerService.sendCommand(current_message);
-
+    if ($event.key === 'Enter' && $event.shiftKey) {
+      this.runAction();
     }
   }
 
@@ -64,9 +66,20 @@ export class ChatComponent implements OnInit {
 
 
   clearConversation() {
-    this.statemanagerService.clearConversation();
+
 
   }
 
+  runAction(): void {
+
+    let current_message = this.inputMessage
+    this.inputMessage = "";
+
+    this.statemanagerService.sendCommand(current_message);
+  }
+
+  clearInput() {
+    this.statemanagerService.clearConversation();
+  }
 }
 

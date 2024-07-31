@@ -2,7 +2,7 @@
   <div class="container-fluid">
 
     <button class="chat_assistant_icon" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
-            aria-expanded="false" routerLink="/dashboard/" routerLinkActive="active-link" aria-controls="collapseWidthExample">
+            aria-expanded="false" routerLink="/" routerLinkActive="active-link" aria-controls="collapseWidthExample">
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -12,16 +12,12 @@
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Search
+            Documents
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" routerLink="/dashboard/" routerLinkActive="active-link">Dashboard</a></li>
             <li><a class="dropdown-item" (click)="openFileUploadDialog()">Add document</a></li>
           </ul>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login/" (click)="logout()">Logout</a>
         </li>
 
 

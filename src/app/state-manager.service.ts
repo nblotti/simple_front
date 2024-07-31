@@ -10,7 +10,7 @@ import {AssistantState} from "./assistant/AssistantState";
   providedIn: 'root'
 })
 export class StateManagerService implements OnInit {
-  public stateManager: WritableSignal<StateInterface> = signal(this.assistantdState);
+  public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
 
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     console.log(this.stateManager().getScreenReadyMessages()());
@@ -19,7 +19,7 @@ export class StateManagerService implements OnInit {
 
   constructor(private conversationService: ConversationService, private router: Router,
               private dashboardState: DashboardState,
-              private assistantdState: AssistantState
+              private assistantState: AssistantState
   ) {
   }
 
@@ -86,20 +86,22 @@ export class StateManagerService implements OnInit {
   }
 
   public clearConversation() {
-    this.conversationService.clearConversation().subscribe(value => {
+    this.stateManager().clearConversation().subscribe(value => {
       this.resetMessages();
     })
   }
 
   public setCurrentConversation(conversation_id: number) {
-    this.conversationService.setCurrentConversation(conversation_id);
+
+    this.stateManager().setCurrentConversation(conversation_id);
+
     this.loadConversationMessages();
   }
 
   public setCurrentState(state: STATES) {
     switch (state) {
       case STATES.Assistant:
-        this.stateManager.set(this.assistantdState);
+        this.stateManager.set(this.assistantState);
         this.stateManager().loadConversationMessages();
         break;
       case STATES.Dashboard:

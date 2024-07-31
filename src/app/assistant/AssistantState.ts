@@ -3,6 +3,8 @@ import {Component, signal, WritableSignal} from "@angular/core";
 import {ScreenReadyMessage} from "../chat/SreenReadyMessage";
 
 import {AssistantService} from "./assistant.service";
+import {ConversationService} from "../dashboard/conversation.service";
+import {Observable} from "rxjs";
 
 @Component({
   standalone: true,
@@ -11,11 +13,10 @@ import {AssistantService} from "./assistant.service";
 export class AssistantState implements StateInterface {
 
   public screenReadyMessages: WritableSignal<ScreenReadyMessage[]> = signal([]);
+  private conversation_id: number = 0;
 
-  private currentAssistant: number = 0;
 
-
-  constructor(private assistantService: AssistantService) {
+  constructor(private assistantService: AssistantService, private conversationService: ConversationService) {
     this.assistantService = assistantService;
   }
 
@@ -24,8 +25,9 @@ export class AssistantState implements StateInterface {
     return this.screenReadyMessages;
   }
 
-  public clearConversation(): void {
+  public clearConversation(): Observable<any> {
     this.screenReadyMessages.set([new ScreenReadyMessage(1, "assistant", "How can I help you ?")]);
+    return this.conversationService.clearConversation(this.conversation_id);
 
   }
 
@@ -36,35 +38,53 @@ export class AssistantState implements StateInterface {
   sendCommand(current_message: string): void {
 
     console.log(current_message);
-    /*
+
+    this.screenReadyMessages.update(values => {
+      return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
+    });
+
+    this.assistantService.sendCommand(current_message, this.conversation_id).subscribe({
+      next: (result) => {
+
         this.screenReadyMessages.update(values => {
-          return [...values, new ScreenReadyMessage(uuidv4(), "user", current_message)];
+          return [...values, new ScreenReadyMessage(values.length, "assistant", result.result)];
         });
+      },
+      error: (result: string) => {
+        console.log(result)
+      },
+      complete: () => {
 
-        this.assistantService.sendCommand(current_message, this.currentAssistant).subscribe({
-          next: (result) => {
+      }
+    })
 
-            this.screenReadyMessages.update(values => {
-              return [...values, new ScreenReadyMessage(uuidv4(), "assistant", result)];
-            });
-          },
-          error: (result: string) => {
-            console.log(result)
-          },
-          complete: () => {
 
-          }
-        })
-
-     */
   }
+
 
   public loadConversationMessages() {
 
     const screenMessages: ScreenReadyMessage[] = []
-    screenMessages.push(new ScreenReadyMessage(1, "assistant", "How can I help you ?"));
-    this.screenReadyMessages.set(screenMessages);
 
+    this.assistantService.loadConversationMessages(this.conversation_id).subscribe({
+      next: (result) => {
+        result.forEach((message, index) => {
+          if (message.type == "ai") {
+            screenMessages.push(new ScreenReadyMessage(message.id, "assistant", message.content));
+          } else if (message.type == "human") {
+            screenMessages.push(new ScreenReadyMessage(message.id, "user", message.content));
+          }
+        });
+        this.screenReadyMessages.set(screenMessages);
+      }
+
+    })
+
+
+  }
+
+  setCurrentConversation(conversation_id: number): void {
+    this.conversation_id = conversation_id;
   }
 
 }

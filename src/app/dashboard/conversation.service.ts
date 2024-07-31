@@ -19,7 +19,7 @@ export class ConversationService {
   private message_url: string
   private current_conversation: number = 0;
   //private current_user: string = "1";
-  private documentPerimeter: string = "1";
+  private documentPerimeter: string = "";
 
   constructor(protected httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
@@ -95,7 +95,10 @@ export class ConversationService {
 
   }
 
-  clearConversation() {
+  clearConversation(conversation_id =-1) {
+
+    if(conversation_id != -1)
+      this.current_conversation = conversation_id;
 
     let call_url = sprintf(this.message_url, this.current_conversation);
     let obser = this.httpClient.delete<any>(call_url);

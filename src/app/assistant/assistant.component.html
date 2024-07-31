@@ -41,12 +41,14 @@
   </div>
   <div class="assistant-block-class">
     <label for="dropdownModel">Model</label>
-    <select tabindex="-1" class="bootstrap-select btn btn-sm assistant-btn-class assistant-model-select disabled" id="dropdownModel">
-      <optgroup>
-        <option class="custom-option" value="1" selected="selected">gpt-3.5-turbo-0125</option>
-        <option class="custom-option" value="2">gpt-4</option>
-        <option class="custom-option" value="3">gpt-4o</option>
-      </optgroup>
+    <select (change)="modelValueChanged($event)" tabindex="-1" class="bootstrap-select btn btn-sm assistant-btn-class assistant-model-select" id="dropdownModel">
+      @for (option of this.options; track option.value) {
+        @if (this.selectedCategory() != undefined && this.selectedCategory().gpt_model_number != undefined && this.selectedCategory().gpt_model_number== option.value){
+        <option class="custom-option" selected [value]="option.value">{{ option.label }}</option>
+        } @else {
+          <option class="custom-option" [value]="option.value">{{ option.label }}</option>
+        }
+      }
     </select>
   </div>
 
