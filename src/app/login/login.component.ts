@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {Router} from "@angular/router";
-import {UserContextService} from "../user-context.service";
+import {UserContextService} from "../auth/user-context.service";
 import {FormsModule} from "@angular/forms";
 import {GlobalsService} from "../globals.service";
 import {HttpClient, HttpParams} from "@angular/common/http";

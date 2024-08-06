@@ -9,7 +9,7 @@ import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from 
 import {filter} from "rxjs";
 import {ConversationService} from "./dashboard/conversation.service";
 import {StateManagerService} from "./state-manager.service";
-import {UserContextService} from "./user-context.service";
+import {UserContextService} from "./auth/user-context.service";
 import {LoginComponent} from "./login/login.component";
 import {DashboardState} from "./dashboard/DashboardState";
 import {AssistantState} from "./assistant/AssistantState";
@@ -33,7 +33,6 @@ export class AppComponent implements OnInit {
   isCollapsed: boolean = false;
   isLoggedIn = computed<boolean>(() => {
     const result = this.usercontextService.isLogged();
-    console.log('In computed: ' + result);
     return result;
   });
 

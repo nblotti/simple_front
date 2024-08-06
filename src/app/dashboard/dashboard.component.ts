@@ -8,7 +8,7 @@ import {StateManagerService, STATES} from "../state-manager.service";
 import {Conversation} from "./Conversation";
 import {DatePipe, NgIf} from "@angular/common";
 import {NgEventBus} from "ng-event-bus";
-import {UserCategory, UserContextService} from "../user-context.service";
+import {UserCategory, UserContextService} from "../auth/user-context.service";
 import {DocumentService} from "../document.service";
 
 @Component({

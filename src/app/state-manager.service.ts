@@ -13,7 +13,6 @@ export class StateManagerService implements OnInit {
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
 
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
-    console.log(this.stateManager().getScreenReadyMessages()());
     return this.stateManager().getScreenReadyMessages()();
   });
 

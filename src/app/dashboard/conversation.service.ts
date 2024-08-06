@@ -4,7 +4,7 @@ import {Conversation} from "./Conversation";
 import {Router} from "@angular/router";
 import {sprintf} from "sprintf-js";
 import {GlobalsService} from "../globals.service";
-import {UserContextService} from "../user-context.service";
+import {UserContextService} from "../auth/user-context.service";
 
 
 @Injectable({

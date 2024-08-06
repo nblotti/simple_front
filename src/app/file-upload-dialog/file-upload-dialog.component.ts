@@ -3,7 +3,7 @@ import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {NgEventBus} from "ng-event-bus";
-import {UserContextService} from "../user-context.service";
+import {UserContextService} from "../auth/user-context.service";
 
 @Component({
   selector: 'app-file-upload-dialog',

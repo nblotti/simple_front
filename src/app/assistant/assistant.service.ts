@@ -1,7 +1,7 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GlobalsService} from "../globals.service";
-import {UserContextService} from "../user-context.service";
+import {UserContextService} from "../auth/user-context.service";
 import {sprintf} from "sprintf-js";
 
 @Injectable({
