@@ -4,6 +4,7 @@ import {UserCategory, UserContextService} from "./user-context.service";
 import {GlobalsService} from "../globals.service";
 import {firstValueFrom} from "rxjs";
 
+/*for Google*/
 interface GoogleUserProfile {
   info: {
     iss: string; // Subject - Unique identifier for the user (required)
@@ -20,6 +21,24 @@ interface GoogleUserProfile {
   }
 }
 
+/**/
+interface AzqoreUserProfile {
+  info: {
+    at_hash: string,
+    aud: string,
+    c_hash: string,
+    sub: string,
+    nbf: number
+    azp: string,
+    amr: string[],
+    iss: string,
+    exp: number,
+    iat: number,
+    nonce: string,
+  }
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,45 +49,49 @@ export class LoginService {
   constructor(private globalsService: GlobalsService, private http: HttpClient, private userContext: UserContextService) {
     this.userUrl = globalsService.serverBase + "category/?group_ids="
     this.jwtTokenUrl = globalsService.serverBase + "user/login"
-
+    //this.jwtTokenUrl = "http://localhost:8000/user/login";
   }
 
   async doLogin(jwt: object) {
-    let groups: string[] = [];
-    groups.push("1");
+
 
     console.log(JSON.stringify(jwt, null, 2));
-    const jwttoken = await firstValueFrom(this.http.post<string[]>(this.jwtTokenUrl,jwt));
-    console.log("Jwttoken Retrieved:", jwttoken);
+    const jwttoken: LoginToken = await firstValueFrom(this.http.post<LoginToken>(this.jwtTokenUrl, jwt));
 
-    const profile = jwt as GoogleUserProfile;
+    if (jwttoken.groups.includes("agp_prod_users")) {
+      this.userContext.setLoggedIn(jwttoken.user, this.extractTokens(jwttoken.categories));
 
-
-    let userCategories = await this.getUserCategories(['group1', 'group2'], profile.info.sub);
-
-    this.userContext.setLoggedIn(true, profile.info.sub, userCategories)
-
-    return true;
-  }
-
-  async getUserCategories(groups: string[], userID:string): Promise<UserCategory[]> {
-    const userIdList = groups.join(',');
-    const url = `${this.userUrl}${userIdList}`;
-
-    try {
-      const results = await firstValueFrom(this.http.get<string[]>(url));
-
-      const categories: UserCategory[] = [];
-      categories.push(new UserCategory(userID, "My Documents", true));
-
-      results.forEach(category => {
-        categories.push(new UserCategory(category[1], category[2]));
-      });
-
-      return categories;
-    } catch (error) {
-      console.error(error);
-      return []; // Return an empty array in case of error
+      return true;
+    } else {
+      this.userContext.logoff();
+      return false;
     }
   }
+
+
+  extractTokens(data: any[]) {
+    return data.map(item => {
+      const id = item[1].toString();
+      const label = item[2].toString();
+      const enabled = item[3] && item[3] == true ? true : false;
+      return new UserCategory(id, label, enabled);
+    });
+  }
+
 }
+
+export class LoginToken {
+
+  user: string;
+  groups: string[];
+  categories: UserCategory[];
+  jwt: string
+
+  constructor(user: string, groups: string[], categories: UserCategory[], jwt: string) {
+    this.user = user;
+    this.groups = groups;
+    this.categories = categories;
+    this.jwt = jwt;
+  }
+}
+

@@ -32,7 +32,7 @@ export class AssistantService {
   }
 
   loadAssistants() {
-    let url = this.assistant_base_url + this.userContextService.userID + "/"
+    let url = this.assistant_base_url + this.userContextService.getUserID()() + "/"
 
     this.httpClient.get<Assistant[]>(url)
       .subscribe({
@@ -80,7 +80,7 @@ export class AssistantService {
 
   createAssistant() {
 
-    let assistant = new Assistant("", this.userContextService.userID, "New Assistant", "", "You are a usefull assistant","3.5")
+    let assistant = new Assistant("", this.userContextService.getUserID()(), "New Assistant", "", "You are a usefull assistant","3.5")
     this.saveAssistant(assistant);
 
 
@@ -98,7 +98,7 @@ export class AssistantService {
       return;
     this.saveAssistant(new Assistant(
       "",
-      this.userContextService.userID,
+      this.userContextService.getUserID()(),
       "Clone of " + cur_assistant.name,
       "",
       cur_assistant.description,

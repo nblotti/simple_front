@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
@@ -14,6 +14,7 @@ import {UserContextService} from "../auth/user-context.service";
 export class FileUploadDialogComponent {
   @Input() showModal: boolean = false;
   @Output() closeModal: EventEmitter<void> = new EventEmitter<void>();
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
 
   uploadProgress: number = 0;
 
@@ -23,15 +24,37 @@ export class FileUploadDialogComponent {
               private userContextService: UserContextService) {
   }
 
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    // You can do something with the selected file here, like store it in a variable
-    // For now, let's upload the file immediately
-    this.uploadFile(file);
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input && input.files) {
+      const file = input.files[0];
+
+      if (file) {
+        if (file.type !== 'application/pdf') {
+          alert('Please select a PDF file.');
+          this.resetFileInput();
+          return;
+        }
+
+        // Proceed with your file handling (e.g., uploading the file)
+        console.log('Selected file:', file);
+
+        // Reset the file input
+        this.uploadFile(file);
+        this.resetFileInput();
+      }
+    }
   }
 
+
+  resetFileInput(): void {
+    this.fileInput.nativeElement.value = '';
+  }
+
+
   uploadFile(file: File) {
-    this.fileUploadService.uploadFile(file, this.userContextService.userID)
+    this.fileUploadService.uploadFile(file, this.userContextService.getUserID()())
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)

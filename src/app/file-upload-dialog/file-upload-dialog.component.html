@@ -5,7 +5,7 @@
         <h5 class="modal-title">Upload File</h5>
       </div>
       <div class="modal-body">
-        <input type="file" (change)="onFileSelected($event)">
+        <input type="file" accept=".pdf" (change)="onFileSelected($event)" #fileInput>
         <div class="progress">
           <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100">{{ uploadProgress }}%</div>
 

@@ -48,9 +48,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     effect(() => {
       this.initialCheckboxes = this.userContextService.userCategories();
+
+      //on ajoute les checkbox dans la forme
       this.addCheckboxes(this.initialCheckboxes);
+      //on s'inscrit pour le changement
       this.initializeValueChangesSubscription();
+      //on set le perimêtre initial au profil de l'utilisateur
+      this.conversationService.setDocumentPerimeter(this.userContextService.getUserID()())
     });
+
   }
 
   get checkboxesFormArray() {
@@ -71,8 +77,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-
   addCheckboxes(items: UserCategory[]) {
+    this.checkboxesFormArray.clear();
     items.forEach(item => {
       this.checkboxesFormArray.push(this.createCheckboxControl(item));
     });
@@ -91,56 +97,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.checkboxesFormArray.controls.some(control => control.get('value')?.value);
   }
 
-  // Method to reset checkboxes based on initial values and specific rules
-  resetCheckboxes() {
-    this.unsubscribeFromFormValueChanges();
-    this.removeAllCheckboxes(); // Clear current checkboxes
-    this.initialCheckboxes.forEach((item, index) => {
-      // Override the value for the first and third checkboxes
-      if (index === 0) {
-        item.value = true;
-      } else {
-        item.value = false;
-      }
-      this.checkboxesFormArray.push(this.createCheckboxControl(item));
-      // Optionally, mark for redrawing to ensure the UI is updated
-      this.form.markAsDirty();   // Mark form as dirty to reflect the changes
-      this.form.updateValueAndValidity();   // Update the form's validity state
-    });
-  }
 
-  removeAllCheckboxes() {
-
-    this.clearFormArray(this.checkboxesFormArray);
-  }
 
   // Method to initialize subscription to form value changes
   initializeValueChangesSubscription() {
     this.formValueChangesSubscription = this.form.valueChanges.subscribe(values => {
-      // Check if at least one checkbox is checked
+      // dans le cas ou aucune checkbox n'est active
       if (!this.anyCheckboxChecked()) {
-        this.resetCheckboxes();
-        this.initializeValueChangesSubscription()
+        const checkboxesArray = this.checkboxesFormArray.controls;
+
+        for (let i = 0; i < this.initialCheckboxes.length; i++) {
+          let currentcb = checkboxesArray[i].get('value');
+          if( currentcb != null)
+            currentcb.setValue(this.initialCheckboxes[i].value); // Setting all checkboxes to checked
+
+        }
+
+      } else {
+        const changedIndex = values.checkboxes.findIndex((checkbox: any, index: number) =>
+          checkbox.value !== this.initialCheckboxes[index].value
+        );
+        if (changedIndex !== -1) {
+          this.initialCheckboxes[changedIndex].value = !this.initialCheckboxes[changedIndex].value;
+          this.setPerimeter()
+        }
       }
-
-
-      const changedIndex = values.checkboxes.findIndex((checkbox: any, index: number) =>
-        checkbox.value !== this.initialCheckboxes[index].value
-      );
-      if (changedIndex !== -1) {
-        this.initialCheckboxes[changedIndex].value = !this.initialCheckboxes[changedIndex].value;
-        this.setPerimeter()
-      }
-
 
     });
   }
 
   setPerimeter() {
-    let perimeter = ""
-    for (let value of this.initialCheckboxes) {
-      if (value.value)
-        perimeter = `${perimeter} ${value.id}`
+    let perimeter = "";
+    for (let i = 0; i < this.initialCheckboxes.length; i++) {
+      const value = this.initialCheckboxes[i];
+      if (value.value) {
+        perimeter = i === 0 ? `${perimeter} ${this.userContextService.getUserID()()}` : `${perimeter} ${value.id}`;
+      }
     }
     return this.conversationService.setDocumentPerimeter(perimeter);
   }
@@ -262,7 +254,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private fetchDocuments(): Observable<string[][]> {
-    return this.documentService.fetchDocuments(this.userContextService.userID).pipe(map(response => {
+    return this.documentService.fetchDocuments(this.userContextService.getUserID()()).pipe(map(response => {
       if (response.length == 0)
         return []
       return response

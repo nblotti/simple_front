@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {computed, effect, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Conversation} from "./Conversation";
 import {Router} from "@angular/router";
@@ -18,8 +18,10 @@ export class ConversationService {
   private conversation_url: string
   private message_url: string
   private current_conversation: number = 0;
-  //private current_user: string = "1";
+
   private documentPerimeter: string = "";
+
+
 
   constructor(protected httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
@@ -28,18 +30,19 @@ export class ConversationService {
     this.chat_command_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s&perimeter=%s"
     this.conversation_url = globalsService.serverBase + "conversation/"
     this.message_url = globalsService.serverBase + "message/?conversation_id=%s"
+
+
   }
 
-
   loadConversations() {
-    let url = this.conversation_url + "perimeter/" + this.userContextService.userID + "/"
+    let url = this.conversation_url + "perimeter/" + this.userContextService.getUserID()() + "/"
     return this.httpClient.get<any>(url);
 
   }
 
 
   loadOrCreateConversationsByDocumentId(documentId: number) {
-    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.userContextService.userID
+    let url = this.conversation_url + "document/" + documentId + "/?user_id=" + this.userContextService.getUserID()()
     return this.httpClient.get<any>(url);
   }
 
@@ -72,32 +75,23 @@ export class ConversationService {
     this.current_conversation = current_conversation;
   }
 
-  setDocumentConversation(conversation_id: any, pdf_id: string) {
-    this.setCurrentConversation(conversation_id);
-    this.router.navigate(['/docs', pdf_id, 0]);
-
-  }
 
   setDocumentPerimeter(perimeter: string) {
     this.documentPerimeter = perimeter;
   }
 
-  getDocumentPerimeter() {
-    return this.documentPerimeter;
-  }
-
 
   createConversation(pdf_id: number = 0) {
-    let conversation = new Conversation(this.userContextService.userID, pdf_id);
+    let conversation = new Conversation(this.userContextService.getUserID()(), pdf_id);
 
     let url = this.conversation_url
     return this.httpClient.post<Conversation>(url, conversation);
 
   }
 
-  clearConversation(conversation_id =-1) {
+  clearConversation(conversation_id = -1) {
 
-    if(conversation_id != -1)
+    if (conversation_id != -1)
       this.current_conversation = conversation_id;
 
     let call_url = sprintf(this.message_url, this.current_conversation);

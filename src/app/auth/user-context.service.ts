@@ -1,6 +1,4 @@
-import {Injectable, signal, WritableSignal} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {GlobalsService} from "../globals.service";
+import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
 
 
 @Injectable({
@@ -11,23 +9,36 @@ export class UserContextService {
   readonly isLogged: WritableSignal<boolean> = signal(false);
   userCategories: WritableSignal<UserCategory[]> = signal([]);
   private userUrl: string = '';
+  private userID: WritableSignal<string> = signal("");
 
   constructor() {
 
   }
-  public _userID = ""
 
-  get userID(): string {
-    return this._userID;
+  getUserID(): Signal<string> {
+    return this.userID.asReadonly()
   }
 
-  setLoggedIn(isLogged: boolean, userID: string, userGroups: UserCategory[]) {
-    this._userID = userID;
-    this.userCategories.set(userGroups);
-    this.isLogged.set(isLogged);
+  public setLoggedIn(user: string, categories: UserCategory[]) {
+    this.userID.set(user);
+    this.userCategories.set(categories);
+    this.isLogged.set(true);
   }
 
+  public logoff() {
+    this.userID.set("");
+    this.userCategories.set([]);
+    this.isLogged.set(false);
+  }
 
+  extractTokens(data: any[]) {
+    return data.map(item => {
+      const id = item[1].toString();
+      const label = item[2].toString();
+      const enabled = item[3] && item[3] == true ? true : false;
+      return new UserCategory(id, label, enabled);
+    });
+  }
 
 }
 
