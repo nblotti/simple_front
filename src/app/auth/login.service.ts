@@ -55,7 +55,7 @@ export class LoginService {
   async doLogin(jwt: object) {
 
 
-    console.log(JSON.stringify(jwt, null, 2));
+    //console.log(JSON.stringify(jwt, null, 2));
     const jwttoken: LoginToken = await firstValueFrom(this.http.post<LoginToken>(this.jwtTokenUrl, jwt));
 
     if (jwttoken.groups.includes("agp_prod_users")) {
