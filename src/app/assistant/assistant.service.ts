@@ -80,7 +80,7 @@ export class AssistantService {
 
   createAssistant() {
 
-    let assistant = new Assistant("", this.userContextService.getUserID()(), "New Assistant", "", "You are a usefull assistant","3.5")
+    let assistant = new Assistant("", this.userContextService.getUserID()(), "New Assistant", "", "You are a useful assistant","3.5")
     this.saveAssistant(assistant);
 
 
