@@ -12,6 +12,8 @@ import {AssistantState} from "./assistant/AssistantState";
 export class StateManagerService implements OnInit {
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
 
+  public chatEnabled : WritableSignal<boolean> =  signal(true);
+
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     return this.stateManager().getScreenReadyMessages()();
   });

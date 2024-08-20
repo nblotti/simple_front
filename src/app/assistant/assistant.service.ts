@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GlobalsService} from "../globals.service";
 import {UserContextService} from "../auth/user-context.service";
 import {sprintf} from "sprintf-js";
+import {StateManagerService} from "../state-manager.service";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AssistantService {
   private assistant_command_url: string;
   private message_url: string
 
-  constructor(private httpClient: HttpClient, private globalsService: GlobalsService, private userContextService: UserContextService) {
+  constructor(private httpClient: HttpClient, private globalsService: GlobalsService,
+              private userContextService: UserContextService) {
 
     this.assistant_base_url = globalsService.serverBase + "assistants/"
     this.assistant_command_url = this.assistant_base_url + "command/?command=%s&conversation_id=%s"
@@ -43,6 +45,9 @@ export class AssistantService {
           });
 
           this.assistants.set(assistants);
+          if(assistants.length == 0)
+            this.createAssistant();
+
         },
         error: (err) => {
           console.error(err);

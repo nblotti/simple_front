@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
+import {Component, computed, ElementRef, OnInit, signal, ViewChild, WritableSignal,} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
@@ -28,12 +28,12 @@ export class AppComponent implements OnInit {
 
   showModal: boolean = false;
 
+
   @ViewChild('sidebar') sidebarRef!: ElementRef;
   @ViewChild('mainContent') mainContentRef!: ElementRef;
   isCollapsed: boolean = false;
   isLoggedIn = computed<boolean>(() => {
-    const result = this.usercontextService.isLogged();
-    return result;
+    return  this.usercontextService.isLogged();
   });
 
   constructor(private router: Router, private usercontextService: UserContextService, private stateManagerService: StateManagerService,) {
@@ -76,4 +76,11 @@ export class AppComponent implements OnInit {
     this.stateManagerService.loadAssistant();
   }
 
+  Share() {
+
+  }
+
+  doShare() {
+    this.router.navigate(['/share']);
+  }
 }

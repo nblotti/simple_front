@@ -2,7 +2,7 @@
   <div class="flex-grow-1 overflow-auto" #scrollMe>
     <table class="table table-borderless table_messages">
       <tbody>
-        @for (message of  this.screenReadyMessage(); track message.id) {
+        @for (message of this.screenReadyMessage(); track message.id) {
           <tr class=".bg-transparent mt-5">
             <td class="chat_icon_content ">
               @if (message.role == "assistant") {
@@ -31,7 +31,8 @@
                          data-bs-parent="#accordionFlushExample">
                       <div class="accordion-body">
                         @for (source of message.sources; track source) {
-                          <a href="" (click)="displaySource($event,  source.blob_id, source.page)">Document : {{ source.file_name }}
+                          <a href="" (click)="displaySource($event,  source.blob_id, source.page)">Document
+                            : {{ source.file_name }}
                             page : {{ source.page }}</a><br>
                         }
                       </div>
@@ -47,10 +48,16 @@
     </table>
   </div>
   <div class="inputcontent">
-    <textarea class="form-control chat_input_component" [(ngModel)]="inputMessage" (keyup)="onKeyUp($event)" rows="3"></textarea>
+    <textarea class="form-control chat_input_component" [(ngModel)]="inputMessage" (keyup)="onKeyUp($event)"
+              rows="3"
+              [disabled]="!statemanagerService.chatEnabled()"></textarea>
     <div class="button-group">
-      <button class="btn btn-secondary" (click)="clearInput()">Clear</button>
-      <button class="btn btn-primary" (click)="runAction()">Run</button>
+      <button class="btn btn-secondary" (click)="clearInput()"
+              [disabled]="!statemanagerService.chatEnabled()">Clear
+      </button>
+      <button class="btn btn-primary" (click)="runAction()" [disabled]="!statemanagerService.chatEnabled()">
+        Run
+      </button>
     </div>
   </div>
 </div>

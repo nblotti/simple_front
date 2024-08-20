@@ -71,6 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.stateManagerService.setCurrentState(STATES.Dashboard);
+    this.stateManagerService.chatEnabled.set(true);
     this.reload();
 
 
