@@ -77,12 +77,4 @@ export class AppComponent implements OnInit {
   loadAssistant() {
     this.stateManagerService.loadAssistant();
   }
-
-  Share() {
-
-  }
-
-  doShare() {
-    this.router.navigate(['/share']);
-  }
 }
