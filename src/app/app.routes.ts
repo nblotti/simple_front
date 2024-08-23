@@ -5,10 +5,7 @@ import {ShareComponent} from "./share/share.component";
 
 export const APP_ROUTES:  Route[]  = [
   { path: 'login', component: LoginComponent },
-  { path: 'share',
-    canActivate: [authGuard],
-    component:ShareComponent
-  },
+
   {
     path: '',
     canActivate: [authGuard],
@@ -16,7 +13,8 @@ export const APP_ROUTES:  Route[]  = [
       { path: '', redirectTo: 'assistant', pathMatch: 'full' }, // Default redirect to assistant
       { path: 'assistant', loadComponent: () => import('./assistant/assistant.component').then(m => m.AssistantComponent) },
       { path: 'docs/:document_id/:page_number', loadComponent: () => import('./document-screen/document-screen').then(m => m.DocumentScreen) },
-      { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent) }
+      { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'share', loadComponent: () => import('./share/share.component').then(m => m.ShareComponent) }
     ]
   },
   { path: '**', redirectTo: 'login' }

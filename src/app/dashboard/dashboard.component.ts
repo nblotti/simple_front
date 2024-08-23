@@ -11,6 +11,7 @@ import {UserCategory, UserContextService} from "../auth/user-context.service";
 import {DocumentService} from "../document.service";
 import {SharedGroup} from "../share/SharedGroup";
 import {GlobalsService} from "../globals.service";
+import {SharedGroupDTO} from "./SharedGroupDTO";
 
 @Component({
   selector: 'dashboard-component',
@@ -42,7 +43,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private httpClient: HttpClient
   ) {
 
-    this.groupUrl = this.globalsService.serverBase + "sharedgroup/"
+    this.groupUrl = this.globalsService.serverBase + "sharedgroupuser/"
 
     this.formLeft = this.fb.group({
       checkboxesLeft: this.fb.array([]) // Initialize the FormArray
@@ -92,13 +93,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   loadGroups() {
 
-    let url = this.groupUrl + "owner/" + this.userContextService.getUserID()() + "/"
-    this.httpClient.get<SharedGroup[]>(url)
+    let url = this.groupUrl + "user/" + this.userContextService.getUserID()() + "/"
+    this.httpClient.get<SharedGroupDTO[]>(url)
       .subscribe({
         next: (groups) => {
           let categories: UserCategory[] = []
           groups.forEach(group => {
-            categories.push(new UserCategory(group.id, group.name, false, group.owner))
+            categories.push(new UserCategory(group.group_id, group.name, false, group.owner))
           })
           this.unsubscribeFromRightFormValueChanges()
           this.initialRightCheckboxes = categories;
