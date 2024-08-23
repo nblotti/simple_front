@@ -16,9 +16,10 @@
 
 .document_text_content {
   background-color: #444654;
-  color:white;
+  color: white;
 
 }
+
 .document_text_content_selectable:hover {
   font-style: italic;
   cursor: pointer;
@@ -45,14 +46,44 @@
   color: white;
 }
 
-.addconversation{
-  width:24px;
+.addconversation {
+  width: 24px;
   height: 24px;
   margin-left: 20px;
-  margin-top : 5px;
+  margin-top: 10px;
+  margin-right: 24px;
 }
-.addconversationtext{
-  margin-top : 7px;
+
+.addconversationtext {
+  margin-top: 13px;
   margin-left: 10px;
   align-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-container form {
+  flex: 1;
+  margin-right: 20px; /* Adjust the margin as needed */
+}
+
+.form-container form:last-child {
+  margin-right: 0;
+}
+
+.line-separator {
+  border-bottom: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.shares_title{
+  font-size: 16px !important;
+
+  text-align: center;
+
 }

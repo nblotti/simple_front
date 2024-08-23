@@ -47,6 +47,9 @@ export class ChatComponent implements OnInit,AfterViewChecked {
     if ($event.key === 'Enter' && $event.shiftKey) {
       this.runAction();
     }
+    if ($event.key === 'Enter' && $event.ctrlKey) {
+      this.runAction();
+    }
   }
 
   /*********************************************************************************************

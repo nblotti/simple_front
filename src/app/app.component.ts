@@ -14,12 +14,14 @@ import {LoginComponent} from "./login/login.component";
 import {DashboardState} from "./dashboard/DashboardState";
 import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
+import {ShareState} from "./share/ShareState";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  providers: [NgEventBus, HttpClientModule,  DatePipe, DashboardState, AssistantState, StateManagerService, ConversationService,AssistantService, LoginComponent],
+  providers: [NgEventBus, HttpClientModule,  DatePipe, DashboardState, AssistantState, ShareState,StateManagerService,
+    ConversationService,AssistantService, LoginComponent],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -33,10 +35,10 @@ export class AppComponent implements OnInit {
   @ViewChild('mainContent') mainContentRef!: ElementRef;
   isCollapsed: boolean = false;
   isLoggedIn = computed<boolean>(() => {
-    return  this.usercontextService.isLogged();
+    return  this.usercontextService.isLogged() && this.stateManagerService.chatEnabled()
   });
 
-  constructor(private router: Router, private usercontextService: UserContextService, private stateManagerService: StateManagerService,) {
+  constructor(private router: Router, protected usercontextService: UserContextService, private stateManagerService: StateManagerService,) {
   }
 
   toggleCollapse(): void {

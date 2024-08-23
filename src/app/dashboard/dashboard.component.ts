@@ -2,7 +2,6 @@ import {Component, effect, OnDestroy, OnInit, signal, WritableSignal} from '@ang
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {map, Observable, Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
 import {ConversationService} from "./conversation.service";
 import {StateManagerService, STATES} from "../state-manager.service";
 import {Conversation} from "./Conversation";
@@ -10,6 +9,8 @@ import {DatePipe, NgIf} from "@angular/common";
 import {NgEventBus} from "ng-event-bus";
 import {UserCategory, UserContextService} from "../auth/user-context.service";
 import {DocumentService} from "../document.service";
+import {SharedGroup} from "../share/SharedGroup";
+import {GlobalsService} from "../globals.service";
 
 @Component({
   selector: 'dashboard-component',
@@ -21,24 +22,33 @@ import {DocumentService} from "../document.service";
 export class DashboardComponent implements OnInit, OnDestroy {
   readonly conversations: WritableSignal<Conversation[]> = signal([]);
   readonly documents: WritableSignal<string[][]> = signal([]);
-  form: FormGroup;
-  initialCheckboxes: UserCategory[] = [];
-  private formValueChangesSubscription: Subscription | undefined;
+  formLeft: FormGroup;
+  formRight: FormGroup;
+  initialLeftCheckboxes: UserCategory[] = [];
+  initialRightCheckboxes: UserCategory[] = [];
+  private formLeftValueChangesSubscription: Subscription | undefined;
+  private formRightValueChangesSubscription: Subscription | undefined;
+  private groupUrl: string;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    protected httpClient: HttpClient,
     private conversationService: ConversationService,
     protected userContextService: UserContextService,
     private documentService: DocumentService,
     private stateManagerService: StateManagerService,
     private eventBus: NgEventBus,
     private datePipe: DatePipe,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private globalsService: GlobalsService,
+    private httpClient: HttpClient
   ) {
-    this.form = this.fb.group({
-      checkboxes: this.fb.array([]) // Initialize the FormArray
+
+    this.groupUrl = this.globalsService.serverBase + "sharedgroup/"
+
+    this.formLeft = this.fb.group({
+      checkboxesLeft: this.fb.array([]) // Initialize the FormArray
+    });
+    this.formRight = this.fb.group({
+      checkboxesRight: this.fb.array([]) // Initialize the FormArray
     });
 
 
@@ -46,46 +56,88 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.reload();
     });
 
-    effect(() => {
-      this.initialCheckboxes = this.userContextService.userCategories();
-
-      //on ajoute les checkbox dans la forme
-      this.addCheckboxes(this.initialCheckboxes);
-      //on s'inscrit pour le changement
-      this.initializeValueChangesSubscription();
-      //on set le perimêtre initial au profil de l'utilisateur
-      this.conversationService.setDocumentPerimeter(this.userContextService.getUserID()())
-    });
-
   }
 
-  get checkboxesFormArray() {
-    return this.form.get('checkboxes') as FormArray;
+  get checkboxesFormLeftArray() {
+    return this.formLeft.get('checkboxesLeft') as FormArray;
+  }
+
+  get checkboxesFormRightArray() {
+    return this.formRight.get('checkboxesRight') as FormArray;
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeFromFormValueChanges();
+    this.unsubscribeFromLeftFormValueChanges();
+    this.unsubscribeFromRightFormValueChanges();
   }
 
 
   ngOnInit() {
 
     this.stateManagerService.setCurrentState(STATES.Dashboard);
-    this.stateManagerService.chatEnabled.set(true);
-    this.reload();
+    this.loadCategories();
+    this.loadGroups();
 
+  }
+
+  loadCategories(){
+    this.unsubscribeFromLeftFormValueChanges();
+    this.initialLeftCheckboxes = this.userContextService.userCategories();
+    //on ajoute les checkbox dans la forme
+    this.addLeftCheckboxes(this.initialLeftCheckboxes);
+    //on s'inscrit pour le changement
+    this.initializeLeftValueChangesSubscription();
+    this.setPerimeter();
+
+  }
+  loadGroups() {
+
+    let url = this.groupUrl + "owner/" + this.userContextService.getUserID()() + "/"
+    this.httpClient.get<SharedGroup[]>(url)
+      .subscribe({
+        next: (groups) => {
+          let categories: UserCategory[] = []
+          groups.forEach(group => {
+            categories.push(new UserCategory(group.id, group.name, false, group.owner))
+          })
+          this.unsubscribeFromRightFormValueChanges()
+          this.initialRightCheckboxes = categories;
+          this.addRightCheckboxes(this.initialRightCheckboxes);
+          this.initializeRightValueChangesSubscription();
+          this.reload();
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
 
   }
 
 
-  addCheckboxes(items: UserCategory[]) {
-    this.checkboxesFormArray.clear();
+  addLeftCheckboxes(items: UserCategory[]) {
+    this.checkboxesFormLeftArray.clear();
     items.forEach(item => {
-      this.checkboxesFormArray.push(this.createCheckboxControl(item));
+      this.checkboxesFormLeftArray.push(this.createLeftCheckboxControl(item));
     });
   }
 
-  createCheckboxControl(item: UserCategory): FormGroup {
+  addRightCheckboxes(items: UserCategory[]) {
+
+    this.checkboxesFormRightArray.clear();
+    items.forEach(item => {
+      this.checkboxesFormRightArray.push(this.createRightCheckboxControl(item));
+    });
+  }
+
+  createLeftCheckboxControl(item: UserCategory): FormGroup {
+    return this.fb.group({
+      id: item.id,
+      label: item.label,
+      value: item.value
+    });
+  }
+
+  createRightCheckboxControl(item: UserCategory): FormGroup {
     return this.fb.group({
       id: item.id,
       label: item.label,
@@ -94,32 +146,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   // Method to check if at least one checkbox is selected
-  anyCheckboxChecked(): boolean {
-    return this.checkboxesFormArray.controls.some(control => control.get('value')?.value);
+  anyCheckboxLeftChecked(): boolean {
+    return this.checkboxesFormLeftArray.controls.some(control => control.get('value')?.value);
   }
 
 
 
   // Method to initialize subscription to form value changes
-  initializeValueChangesSubscription() {
-    this.formValueChangesSubscription = this.form.valueChanges.subscribe(values => {
+  initializeLeftValueChangesSubscription() {
+    this.formLeftValueChangesSubscription = this.formLeft.valueChanges.subscribe(values => {
       // dans le cas ou aucune checkbox n'est active
-      if (!this.anyCheckboxChecked()) {
-        const checkboxesArray = this.checkboxesFormArray.controls;
+      if (!this.anyCheckboxLeftChecked()) {
+        const checkboxesArray = this.checkboxesFormLeftArray.controls;
 
-        for (let i = 0; i < this.initialCheckboxes.length; i++) {
+        for (let i = 0; i < this.initialLeftCheckboxes.length; i++) {
           let currentcb = checkboxesArray[i].get('value');
-          if( currentcb != null)
-            currentcb.setValue(this.initialCheckboxes[i].value); // Setting all checkboxes to checked
+          if (currentcb != null)
+            currentcb.setValue(this.initialLeftCheckboxes[i].value); // Setting all checkboxes to checked
 
         }
 
       } else {
-        const changedIndex = values.checkboxes.findIndex((checkbox: any, index: number) =>
-          checkbox.value !== this.initialCheckboxes[index].value
+        const changedIndex = values.checkboxesLeft.findIndex((checkbox: any, index: number) =>
+          checkbox.value !== this.initialLeftCheckboxes[index].value
         );
         if (changedIndex !== -1) {
-          this.initialCheckboxes[changedIndex].value = !this.initialCheckboxes[changedIndex].value;
+          this.initialLeftCheckboxes[changedIndex].value = !this.initialLeftCheckboxes[changedIndex].value;
           this.setPerimeter()
         }
       }
@@ -127,23 +179,49 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  initializeRightValueChangesSubscription() {
+    this.formRightValueChangesSubscription = this.formRight.valueChanges.subscribe(values => {
+      const changedIndex = values.checkboxesRight.findIndex((checkbox: any, index: number) =>
+        checkbox.value !== this.initialRightCheckboxes[index].value
+      );
+      if (changedIndex !== -1) {
+        this.initialRightCheckboxes[changedIndex].value = !this.initialRightCheckboxes[changedIndex].value;
+        this.setPerimeter()
+      }
+
+    });
+  }
+
+
   setPerimeter() {
     let perimeter = "";
-    for (let i = 0; i < this.initialCheckboxes.length; i++) {
-      const value = this.initialCheckboxes[i];
+    for (let i = 0; i < this.initialLeftCheckboxes.length; i++) {
+      const value = this.initialLeftCheckboxes[i];
       if (value.value) {
         perimeter = i === 0 ? `${perimeter} ${this.userContextService.getUserID()()}` : `${perimeter} ${value.id}`;
       }
     }
-    return this.conversationService.setDocumentPerimeter(perimeter);
+    for (let i = 0; i < this.initialRightCheckboxes.length; i++) {
+      const value = this.initialRightCheckboxes[i];
+      if (value.value) {
+        perimeter = `${perimeter} ${value.id}`;
+      }
+    }
+    console.log(perimeter.trim());
+    return this.conversationService.setDocumentPerimeter(perimeter.trim());
   }
 
-  unsubscribeFromFormValueChanges() {
-    if (this.formValueChangesSubscription) {
-      this.formValueChangesSubscription.unsubscribe();
+  unsubscribeFromLeftFormValueChanges() {
+    if (this.formLeftValueChangesSubscription) {
+      this.formLeftValueChangesSubscription.unsubscribe();
     }
   }
 
+  unsubscribeFromRightFormValueChanges() {
+    if (this.formRightValueChangesSubscription) {
+      this.formRightValueChangesSubscription.unsubscribe();
+    }
+  }
 
   reloadConversations() {
     this.conversationService.loadConversations().subscribe({

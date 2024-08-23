@@ -5,6 +5,7 @@ import {StateInterface} from "./StateInterface";
 import {DashboardState} from "./dashboard/DashboardState";
 import {ScreenReadyMessage} from "./chat/SreenReadyMessage";
 import {AssistantState} from "./assistant/AssistantState";
+import {ShareState} from "./share/ShareState";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class StateManagerService implements OnInit {
 
   constructor(private conversationService: ConversationService, private router: Router,
               private dashboardState: DashboardState,
-              private assistantState: AssistantState
+              private assistantState: AssistantState,
+              private shareState: ShareState
   ) {
   }
 
@@ -104,10 +106,16 @@ export class StateManagerService implements OnInit {
       case STATES.Assistant:
         this.stateManager.set(this.assistantState);
         this.stateManager().loadConversationMessages();
+        this.chatEnabled.set(true);
         break;
       case STATES.Dashboard:
         this.stateManager.set(this.dashboardState);
         this.stateManager().loadConversationMessages();
+        this.chatEnabled.set(true);
+        break;
+      case STATES.Share:
+        this.stateManager.set(this.shareState);
+        this.chatEnabled.set(false);
         break;
     }
 
@@ -126,5 +134,6 @@ export class StateManagerService implements OnInit {
 
 export enum STATES {
   Dashboard = "DASHBOARD",
-  Assistant = "ASSISTANT"
+  Assistant = "ASSISTANT",
+  Share = "SHARE",
 }

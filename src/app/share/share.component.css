@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+h2 {
+  margin-top: 10px; /* Ensure consistent margin at the top of each section */
+  margin-bottom: 20px;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+}
+
+.groupinput{
+  border: none;
+}
+
+.col-md-4 {
+  flex: 1;
+  min-width: calc(33.3333% - 20px); /* Ensures three columns fit within the container */
+  margin: 10px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.label,
+.label + .list-group {
+  margin-top: 20px;
+}
+.hidden{
+  display: none;
+}
+
+.bi-trash {
+  color: red;
+}

@@ -47,10 +47,12 @@ export class UserCategory {
   id: string;
   label: string;
   value: boolean;
+  owner: string;
 
-  constructor(id: string, label: string, value: boolean = false) {
+  constructor(id: string, label: string, value: boolean = false, owner="") {
     this.id = id;
     this.label = label;
     this.value = value;
+    this.owner = owner;
   }
 }
