@@ -64,13 +64,9 @@ export class ShareComponent implements OnInit {
     this.statemanagerService.chatEnabled.set(false);
 
     this.documentService.fetchDocuments(this.userContextService.getUserID()()).subscribe({
-      next: (result: string[][]) => {
+      next: (result: Document[]) => {
 
-        const documents: Document[] = []
-        result.forEach(value => {
-          documents.push(new Document(value[0], value[1]))
-        })
-        this.documentList = documents;
+        this.documentList = result;
       },
       error: (error) => {
         console.error('Load failed:', error);
@@ -203,7 +199,7 @@ export class ShareComponent implements OnInit {
       .subscribe({
         next: (assistant) => {
           this.loadDocumentForGroup(group_id)
-         this.documentAddedModel = "";
+          this.documentAddedModel = "";
         },
         error: (err) => {
           console.error(err);
@@ -301,7 +297,7 @@ export class ShareComponent implements OnInit {
 
   }
 
-  deleteDocument(groupId: string| undefined,documentId: string ) {
+  deleteDocument(groupId: string | undefined, documentId: string) {
     let deleteGroup = this.sharedGroupDocuments.find(groupDocument => {
       return groupDocument.group_id == groupId && groupDocument.document_id == documentId
     });
@@ -310,7 +306,7 @@ export class ShareComponent implements OnInit {
       return;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    this.httpClient.delete(this.sharedGroupDocumentUrl, { headers, body: deleteGroup }).subscribe({
+    this.httpClient.delete(this.sharedGroupDocumentUrl, {headers, body: deleteGroup}).subscribe({
       next: (assistant) => {
         if (groupId != null)
           this.loadDocumentForGroup(groupId)

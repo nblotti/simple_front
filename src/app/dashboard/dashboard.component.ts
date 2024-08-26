@@ -12,6 +12,7 @@ import {DocumentService} from "../document.service";
 import {SharedGroup} from "../share/SharedGroup";
 import {GlobalsService} from "../globals.service";
 import {SharedGroupDTO} from "./SharedGroupDTO";
+import {Document} from "./Document";
 
 @Component({
   selector: 'dashboard-component',
@@ -22,7 +23,7 @@ import {SharedGroupDTO} from "./SharedGroupDTO";
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   readonly conversations: WritableSignal<Conversation[]> = signal([]);
-  readonly documents: WritableSignal<string[][]> = signal([]);
+  readonly documents: WritableSignal<Document[]> = signal([]);
   formLeft: FormGroup;
   formRight: FormGroup;
   initialLeftCheckboxes: UserCategory[] = [];
@@ -333,7 +334,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.fetchDocuments().subscribe(value => this.documents.set(value));
   }
 
-  private fetchDocuments(): Observable<string[][]> {
+  private fetchDocuments(): Observable<Document[]> {
     return this.documentService.fetchDocuments(this.userContextService.getUserID()()).pipe(map(response => {
       if (response.length == 0)
         return []

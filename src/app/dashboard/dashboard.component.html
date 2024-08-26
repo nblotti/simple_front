@@ -81,19 +81,19 @@
           <tbody>
 
 
-            @for (message of documents(); track message; let index = $index) {
+            @for (document of documents(); track document; let index = $index) {
               <tr class=".bg-transparent mt-5">
                 <td class="document_text_content">
-                  <a href (click)="onDisplayPDF($event,  message[0])">{{ message[1] }} </a>
+                  <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name }} </a>
                 </td>
                 <td class="document_text_content">
-                  {{ message[3] }}
+                  {{ document.owner }}
                 </td>
                 <td class="document_text_content">
-                  {{ message[2] }}
+                  {{ document.created_on }}
                 </td>
                 <td class="document_text_content">
-                  <button class="btn btn-danger" (click)="deleteDocument(message[0])">Delete</button>
+                  <button class="btn btn-danger" (click)="deleteDocument(document.id)">Delete</button>
                 </td>
               </tr>
             }

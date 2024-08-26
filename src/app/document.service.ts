@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {GlobalsService} from "./globals.service";
+import {Document} from "./dashboard/Document";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class DocumentService {
   uploadFile(file: File, perimeter: string): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
-    formData.append('perimeter', perimeter);
+    formData.append('owner', perimeter);
 
     return this.http.post<any>(this.documents_base_url, formData, {
       reportProgress: true, observe: 'events'
@@ -31,9 +32,9 @@ export class DocumentService {
     return this.http.delete<any>(url);
   }
 
-  fetchDocuments(perimeter: string): Observable<any> {
+  fetchDocuments(perimeter: string): Observable<Document[]> {
     let url = this.documents_base_url+"?user="+perimeter
-    return this.http.get<any>(url);
+    return this.http.get<Document[]>(url);
   }
 
 

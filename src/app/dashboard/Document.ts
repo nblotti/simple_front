@@ -1,9 +1,12 @@
 export class Document {
 
-  constructor(public name: string, public role: string, public content: string) {
-    this.role = role;
+
+  constructor(public id: string, public name: string, public owner: string, public perimeter: string, public created_on : string) {
+    this.id = id;
     this.name = name;
-    this.content = content;
+    this.owner = owner;
+    this.perimeter = perimeter;
+    this.created_on = created_on;
   }
 
 }
