@@ -26,10 +26,10 @@ export class ConversationService {
   constructor(protected httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
 
-    this.chat_command_no_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s"
-    this.chat_command_perimeter_url = globalsService.serverBase + "chat/command/?command=%s&conversation_id=%s&perimeter=%s"
-    this.conversation_url = globalsService.serverBase + "conversation/"
-    this.message_url = globalsService.serverBase + "message/?conversation_id=%s"
+    this.chat_command_no_perimeter_url = globalsService.serverAssistmeBase + "chat/command/?command=%s&conversation_id=%s"
+    this.chat_command_perimeter_url = globalsService.serverAssistmeBase + "chat/command/?command=%s&conversation_id=%s&perimeter=%s"
+    this.conversation_url = globalsService.serverAssistmeBase + "conversation/"
+    this.message_url = globalsService.serverAssistmeBase + "message/?conversation_id=%s"
 
 
   }

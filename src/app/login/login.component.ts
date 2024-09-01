@@ -27,7 +27,7 @@ export class LoginComponent {
   constructor(private router: Router, private userContext: UserContextService, private globalsService: GlobalsService,
               private httpClient: HttpClient) {
 
-    this.userUrl = globalsService.serverBase + "user"
+    this.userUrl = globalsService.serverAssistmeBase + "user"
 
 
   }

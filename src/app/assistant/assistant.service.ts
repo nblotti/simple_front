@@ -21,9 +21,9 @@ export class AssistantService {
   constructor(private httpClient: HttpClient, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
 
-    this.assistant_base_url = globalsService.serverBase + "assistants/"
+    this.assistant_base_url = globalsService.serverAssistmeBase + "assistants/"
     this.assistant_command_url = this.assistant_base_url + "command/?command=%s&conversation_id=%s"
-    this.message_url = globalsService.serverBase + "message/?conversation_id=%s"
+    this.message_url = globalsService.serverAssistmeBase + "message/?conversation_id=%s"
   }
 
 

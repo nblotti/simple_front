@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class GlobalsService {
 
-  public serverBase: string = 'https://gpt.azqore.com/assistme/';
+  public serverAssistmeBase: string = 'https://gpt.azqore.com/assistme/';
+  public serverJobBase: string = 'https://gpt.azqore.com/jobs/';
 
   constructor() { }
 }

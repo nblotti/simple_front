@@ -9,7 +9,7 @@ import {GlobalsService} from "../globals.service";
 
 import {debounceTime, map, Observable} from "rxjs";
 import {NgbHighlight, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
-import {DocumentService} from "../document.service";
+import {DocumentService, DocumentType} from "../document.service";
 import {UserContextService} from "../auth/user-context.service";
 import {SharedGroupUser} from "./SharedGroupUser";
 import {SharedGroupDocument} from "./SharedGroupDocument";
@@ -52,10 +52,10 @@ export class ShareComponent implements OnInit {
               private globalsService: GlobalsService, private documentService: DocumentService,
               private userContextService: UserContextService,) {
 
-    this.userUrl = this.globalsService.serverBase + "user/"
-    this.groupUrl = this.globalsService.serverBase + "sharedgroup/"
-    this.sharedGroupUserUrl = this.globalsService.serverBase + "sharedgroupuser/"
-    this.sharedGroupDocumentUrl = this.globalsService.serverBase + "sharedgroupdocument/"
+    this.userUrl = this.globalsService.serverAssistmeBase + "user/"
+    this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroup/"
+    this.sharedGroupUserUrl = this.globalsService.serverAssistmeBase + "sharedgroupuser/"
+    this.sharedGroupDocumentUrl = this.globalsService.serverAssistmeBase + "sharedgroupdocument/"
 
   }
 
@@ -63,7 +63,7 @@ export class ShareComponent implements OnInit {
 
     this.statemanagerService.chatEnabled.set(false);
 
-    this.documentService.fetchDocuments(this.userContextService.getUserID()()).subscribe({
+    this.documentService.fetchDocuments(this.userContextService.getUserID()(),DocumentType.DOCUMENT).subscribe({
       next: (result: Document[]) => {
 
         this.documentList = result;

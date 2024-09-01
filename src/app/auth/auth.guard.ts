@@ -20,7 +20,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     if (oauthService.hasValidAccessToken() && oauthService.hasValidIdToken()) {
       try {
         const userProfile = await oauthService.loadUserProfile();
-
+        console.log(oauthService.getAccessToken())
         if (!await loginService.doLogin(userProfile)) {
           await router.navigate(['/login']);
           return false;

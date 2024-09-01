@@ -23,7 +23,7 @@ export class DocumentScreen implements AfterViewInit {
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private eventBus: NgEventBus, private globalsService : GlobalsService) {
 
-    this.base_url = globalsService.serverBase+"document/"
+    this.base_url = globalsService.serverAssistmeBase+"document/"
   }
 
   ngAfterViewInit(): void {

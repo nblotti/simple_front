@@ -1,15 +1,14 @@
-import {Component, effect, OnDestroy, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, OnDestroy, OnInit, signal, WritableSignal} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {map, Observable, Subscription} from "rxjs";
+import {catchError, map, Observable, Subscription, throwError} from "rxjs";
 import {ConversationService} from "./conversation.service";
 import {StateManagerService, STATES} from "../state-manager.service";
 import {Conversation} from "./Conversation";
 import {DatePipe, NgIf} from "@angular/common";
 import {NgEventBus} from "ng-event-bus";
 import {UserCategory, UserContextService} from "../auth/user-context.service";
-import {DocumentService} from "../document.service";
-import {SharedGroup} from "../share/SharedGroup";
+import {DocumentService, DocumentStatus, DocumentType} from "../document.service";
 import {GlobalsService} from "../globals.service";
 import {SharedGroupDTO} from "./SharedGroupDTO";
 import {Document} from "./Document";
@@ -24,10 +23,13 @@ import {Document} from "./Document";
 export class DashboardComponent implements OnInit, OnDestroy {
   readonly conversations: WritableSignal<Conversation[]> = signal([]);
   readonly documents: WritableSignal<Document[]> = signal([]);
+  readonly summaries: WritableSignal<Document[]> = signal([]);
   formLeft: FormGroup;
   formRight: FormGroup;
   initialLeftCheckboxes: UserCategory[] = [];
   initialRightCheckboxes: UserCategory[] = [];
+  protected readonly document = document;
+  protected readonly DocumentStatus = DocumentStatus;
   private formLeftValueChangesSubscription: Subscription | undefined;
   private formRightValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
@@ -44,7 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private httpClient: HttpClient
   ) {
 
-    this.groupUrl = this.globalsService.serverBase + "sharedgroupuser/"
+    this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroupuser/"
 
     this.formLeft = this.fb.group({
       checkboxesLeft: this.fb.array([]) // Initialize the FormArray
@@ -73,7 +75,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.unsubscribeFromRightFormValueChanges();
   }
 
-
   ngOnInit() {
 
     this.stateManagerService.setCurrentState(STATES.Dashboard);
@@ -82,7 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  loadCategories(){
+  loadCategories() {
     this.unsubscribeFromLeftFormValueChanges();
     this.initialLeftCheckboxes = this.userContextService.userCategories();
     //on ajoute les checkbox dans la forme
@@ -92,6 +93,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.setPerimeter();
 
   }
+
   loadGroups() {
 
     let url = this.groupUrl + "user/" + this.userContextService.getUserID()() + "/"
@@ -114,7 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
 
   }
-
 
   addLeftCheckboxes(items: UserCategory[]) {
     this.checkboxesFormLeftArray.clear();
@@ -151,8 +152,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   anyCheckboxLeftChecked(): boolean {
     return this.checkboxesFormLeftArray.controls.some(control => control.get('value')?.value);
   }
-
-
 
   // Method to initialize subscription to form value changes
   initializeLeftValueChangesSubscription() {
@@ -193,7 +192,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     });
   }
-
 
   setPerimeter() {
     let perimeter = "";
@@ -276,8 +274,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.error('Delete failed:', error);
       },
       complete: () => {
-        this.loadDocuments();
-        this.reloadConversations();
+        this.reload();
       }
     });
   }
@@ -309,6 +306,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  protected createSummaryJob($event: MouseEvent, id: string) {
+    return this.documentService.requestSummary(this.userContextService.getUserID()(), id)
+      .pipe(
+      catchError(error => {
+        console.error('An error occurred:', error);
+        return throwError(error);
+      })
+    )
+      .subscribe({
+        next: (response) => {
+          console.log('Job created successfully', response);
+          this.reload();
+
+        },
+        error: (error) => {
+          console.error('An error occurred while creating the job:', error);
+        }
+      });// Make sure to subscribe to the observable to trigger execution.
+  }
+
   /*********************************************************************************************
    /*Changement du périmètre
    /* */
@@ -327,6 +344,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private reload() {
     this.loadDocuments();
     this.reloadConversations();
+    this.loadSummary();
     // this.perimeter.set(this.userContextService.userID, true);
   }
 
@@ -334,12 +352,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.fetchDocuments().subscribe(value => this.documents.set(value));
   }
 
+  private loadSummary() {
+    this.fetchSummaries().subscribe(value => this.summaries.set(value));
+  }
+
   private fetchDocuments(): Observable<Document[]> {
-    return this.documentService.fetchDocuments(this.userContextService.getUserID()()).pipe(map(response => {
+    return this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.DOCUMENT).pipe(map(response => {
       if (response.length == 0)
         return []
       return response
     }));
   }
+
+  private fetchSummaries(): Observable<Document[]> {
+    return this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.SUMMARY).pipe(map(response => {
+      if (response.length == 0)
+        return []
+      return response
+    }));
+  }
+
+
 }
 

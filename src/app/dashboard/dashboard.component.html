@@ -73,8 +73,8 @@
           <thead>
           <tr>
             <th class="document_header_content">Document</th>
+            <th class="document_header_content">Summary</th>
             <th class="document_header_content">Date uploaded</th>
-            <th class="document_header_content">User</th>
             <th class="document_header_content">Action</th>
           </tr>
           </thead>
@@ -87,7 +87,13 @@
                   <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name }} </a>
                 </td>
                 <td class="document_text_content">
-                  {{ document.owner }}
+                  @if (document.summary_status == DocumentStatus.COMPLETED) {
+                    <div class="link_summary" (click)="onDisplayPDF($event,  document.summary_id)">View </div>
+                  } @else if (document.summary_status == DocumentStatus.NONE) {
+                    <div class="link_summary" (click)="createSummaryJob($event,  document.id)">Request </div>
+                  } @else {
+                    {{ document.summary_status }}
+                  }
                 </td>
                 <td class="document_text_content">
                   {{ document.created_on }}
@@ -103,49 +109,96 @@
       </div>
     </div>
   </div>
-</div>
-<div class="accordion" id="accordionPerimeter">
+
+
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
-              aria-expanded="false" aria-controls="collapseThree">
-        Search perimeter
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+              aria-expanded="true" aria-controls="collapseFour">
+        My Summary
       </button>
     </h2>
-    <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionPerimeter">
-      <div class="accordion-body">
+  </div>
+  <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 
-        <div class="form-container">
-
-          <form [formGroup]="formLeft">
-            <div class="shares_title">Groups</div>
-            <div class="line-separator"></div>
-            <div formArrayName="checkboxesLeft" class="form-check form-switch">
-              @for (checkbox of checkboxesFormLeftArray.controls; track checkbox; let index = $index) {
-                <div [formGroupName]="index">
-                  <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
-                  <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
-                </div>
-              }
-            </div>
-          </form>
-          <form [formGroup]="formRight">
-            <div class="shares_title">Shares</div>
-            <div class="line-separator"></div>
-            <div formArrayName="checkboxesRight" class="form-check form-switch">
-              @for (checkbox of checkboxesFormRightArray.controls; track checkbox; let index = $index) {
-                <div [formGroupName]="index">
-                  <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
-                  <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
-                </div>
-              }
-            </div>
-          </form>
-        </div>
+      <table class="table table-borderless table_documnents">
+        <thead>
+        <tr>
+          <th class="document_header_content">Document</th>
+          <th class="document_header_content">Date uploaded</th>
+          <th class="document_header_content">User</th>
+          <th class="document_header_content">Action</th>
+        </tr>
+        </thead>
+        <tbody>
 
 
-      </div>
+          @for (summary of summaries(); track document; let index = $index) {
+            <tr class=".bg-transparent mt-5">
+              <td class="document_text_content">
+                <a href (click)="onDisplayPDF($event,  summary.id)">{{ summary.name }} </a>
+              </td>
+              <td class="document_text_content">
+                {{ summary.owner }}
+              </td>
+              <td class="document_text_content">
+                {{ summary.created_on }}
+              </td>
+              <td class="document_text_content">
+                <button class="btn btn-danger" (click)="deleteDocument(summary.id)">Delete</button>
+              </td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
     </div>
   </div>
 
+  <div class="accordion" id="accordionPerimeter">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                aria-expanded="false" aria-controls="collapseThree">
+          Search perimeter
+        </button>
+      </h2>
+      <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionPerimeter">
+        <div class="accordion-body">
+
+          <div class="form-container">
+
+            <form [formGroup]="formLeft">
+              <div class="shares_title">Groups</div>
+              <div class="line-separator"></div>
+              <div formArrayName="checkboxesLeft" class="form-check form-switch">
+                @for (checkbox of checkboxesFormLeftArray.controls; track checkbox; let index = $index) {
+                  <div [formGroupName]="index">
+                    <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
+                    <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
+                  </div>
+                }
+              </div>
+            </form>
+            <form [formGroup]="formRight">
+              <div class="shares_title">Shares</div>
+              <div class="line-separator"></div>
+              <div formArrayName="checkboxesRight" class="form-check form-switch">
+                @for (checkbox of checkboxesFormRightArray.controls; track checkbox; let index = $index) {
+                  <div [formGroupName]="index">
+                    <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
+                    <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
+                  </div>
+                }
+              </div>
+            </form>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>

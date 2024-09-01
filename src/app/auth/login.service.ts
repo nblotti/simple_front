@@ -47,8 +47,8 @@ export class LoginService {
   private userUrl: string = '';
 
   constructor(private globalsService: GlobalsService, private http: HttpClient, private userContext: UserContextService) {
-    this.userUrl = globalsService.serverBase + "category/?group_ids="
-    this.jwtTokenUrl = globalsService.serverBase + "user/login"
+    this.userUrl = globalsService.serverAssistmeBase + "category/?group_ids="
+    this.jwtTokenUrl = globalsService.serverAssistmeBase + "user/login"
     //this.jwtTokenUrl = "http://localhost:8000/user/login";
   }
 
