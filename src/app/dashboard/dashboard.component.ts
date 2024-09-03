@@ -373,5 +373,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
+  refreshDashboard() {
+    this.reload();
+  }
 }
 

@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {GlobalsService} from "./globals.service";
 import {Document} from "./dashboard/Document";
 import {Conversation} from "./dashboard/Conversation";
+import {FileType} from "./file-upload-dialog/file-upload-dialog.component";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class DocumentService {
     this.jobs_base_url = globalsService.serverJobBase
   }
 
-  uploadFile(file: File, perimeter: string): Observable<HttpEvent<any>> {
+  uploadFile(file: File, fileType : FileType, perimeter: string): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('owner', perimeter);

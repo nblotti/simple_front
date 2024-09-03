@@ -5,10 +5,16 @@
         <h5 class="modal-title">Upload File</h5>
       </div>
       <div class="modal-body">
-        <input type="file" accept=".pdf" (change)="onFileSelected($event)" #fileInput>
+        <input type="file"  accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document" #fileInput/>
         <div class="progress">
-          <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100">{{ uploadProgress }}%</div>
+          <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress"
+               [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100">{{ uploadProgress }}%
+          </div>
 
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="summaryCheck" [(ngModel)]="summaryChecked">
+          <label class="form-check-label" for="summaryCheck">Create summary</label>
         </div>
       </div>
       <div class="modal-footer">

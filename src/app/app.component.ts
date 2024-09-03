@@ -77,4 +77,8 @@ export class AppComponent implements OnInit {
   loadAssistant() {
     this.stateManagerService.loadAssistant();
   }
+
+  openScrapDialog() {
+
+  }
 }

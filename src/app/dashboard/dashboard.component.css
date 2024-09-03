@@ -113,3 +113,15 @@
   cursor: pointer; /* Ensure pointer cursor on focus/active */
 }
 
+.dashboard-container{
+  margin-top: 20px;
+}
+
+.refresh-dashboard{
+  text-align: end;
+  padding-right: 4px !important;
+  padding-bottom: 4px !important;
+  cursor: pointer; /* Ensure pointer cursor on focus/active */
+
+}
+
