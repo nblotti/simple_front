@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal} from '@angular/core';
 import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
@@ -21,8 +21,11 @@ export class FileUploadDialogComponent {
   @Output() closeModal: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('fileInput', {static: false}) fileInput!: ElementRef<HTMLInputElement>;
 
+
   protected uploadProgress: number = 0;
-  protected summaryChecked: boolean = false
+  protected summaryChecked: WritableSignal<boolean> = signal(false);
+  protected isFileSelected: WritableSignal<boolean> = signal(false);
+
 
   constructor(private fileUploadService: DocumentService,
               private documentService: DocumentService,
@@ -34,6 +37,11 @@ export class FileUploadDialogComponent {
 
   resetFileInput(): void {
     this.fileInput.nativeElement.value = '';
+    this.fileInput.nativeElement.value = '';
+    this.summaryChecked.set(false);
+    this.isFileSelected.set(false)
+    this.uploadProgress = 0;
+
   }
 
 
@@ -46,29 +54,36 @@ export class FileUploadDialogComponent {
             this.uploadProgress = Math.round((100 * event.loaded) / event.total);
         } else if (event.type === HttpEventType.Response) {
           console.log('File uploaded successfully:', event.body);
-          this.documentService.requestSummary(user, event.body.id)
-            .pipe(
-              catchError(error => {
-                console.error('An error occurred:', error);
-                return throwError(error);
-              })
-            )
-            .subscribe({
-              next: (response) => {
-                console.log('Job created successfully', response);
-                this.closeModal.emit();
-                // Reset upload progress after successful upload
-                this.uploadProgress = 0;
-                this.eventBus.cast("reload_data");
+          if (this.summaryChecked()) {
+            this.documentService.requestSummary(user, event.body.id)
+              .pipe(
+                catchError(error => {
+                  this.resetFileInput();
+                  console.error('An error occurred:', error);
+                  return throwError(error);
+                })
+              )
+              .subscribe({
+                next: (response) => {
+                  this.resetFileInput();
+                  this.closeModal.emit();
+                  // Reset upload progress after successful upload
+                  this.uploadProgress = 0;
+                  this.eventBus.cast("reload_data");
 
-              },
-              error: (error) => {
-                console.error('An error occurred while creating the job:', error);
-                return throwError(error);
-              }
-            });
+                },
+                error: (error) => {
+                  this.resetFileInput();
+                  console.error('An error occurred while creating the job:', error);
+                  return throwError(error);
+                }
+              });
 
-
+          } else {
+            this.resetFileInput();
+            this.closeModal.emit();
+            this.eventBus.cast("reload_data");
+          }
         }
       });
 
@@ -86,7 +101,6 @@ export class FileUploadDialogComponent {
         // Call the uploadFile method with the file and its type
         this.uploadFile(file, fileType);
         // Reset the file input
-        this.resetFileInput();
       } else {
         // Show alert and reset the file input
         alert('Please select a PDF or DOCX file.');
@@ -94,13 +108,22 @@ export class FileUploadDialogComponent {
       }
 
 
-      this.closeModal.emit();
     }
   }
 
   onCancel() {
-    // If user cancels, emit the closeModal event to notify the parent to close the modal
+    this.resetFileInput();
     this.closeModal.emit();
+  }
+
+  onFileSelected($event: Event) {
+
+    if (this.fileInput && this.fileInput.nativeElement.files) {
+      this.isFileSelected.set(this.fileInput.nativeElement.files.length > 0);
+    } else {
+      this.isFileSelected.set(false);
+    }
+
   }
 }
 
