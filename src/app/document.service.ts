@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpEvent, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
+import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
 import {Document} from "./dashboard/Document";
-import {Conversation} from "./dashboard/Conversation";
 import {FileType} from "./file-upload-dialog/file-upload-dialog.component";
+import {UserCategory} from "./auth/user-context.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class DocumentService {
     this.jobs_base_url = globalsService.serverJobBase
   }
 
-  uploadFile(file: File, fileType : FileType, perimeter: string): Observable<HttpEvent<any>> {
+  uploadFile(file: File, fileType: FileType, perimeter: string): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('owner', perimeter);
@@ -54,6 +54,36 @@ export class DocumentService {
     return this.http.post<string>(url, jsonData);
 
 
+  }
+
+  checkUrlType(url: string): Observable<string> {
+    return this.http.head(url, {observe: 'response'}).pipe(
+      map((response: HttpResponse<any>) => {
+        const contentType = response.headers.get('Content-Type');
+        if (contentType) {
+          return contentType;
+        } else {
+          throw new Error('Content-Type not specified');
+        }
+      }),
+      catchError((error) => {
+        console.error('Error checking URL type:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  requestScrap(user: string, url_path: string) {
+    const jsonData = {
+      "source": url_path,
+      "owner": user,
+      "job_type": "SCRAP",
+      "status": "REQUESTED"
+    };
+
+
+    let url = this.jobs_base_url
+    return this.http.post<string>(url, jsonData);
   }
 }
 

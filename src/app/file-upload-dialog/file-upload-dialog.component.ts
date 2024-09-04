@@ -1,4 +1,14 @@
-import {Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, WritableSignal} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  Renderer2,
+  signal,
+  ViewChild,
+  WritableSignal
+} from '@angular/core';
 import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
@@ -25,13 +35,16 @@ export class FileUploadDialogComponent {
   protected uploadProgress: number = 0;
   protected summaryChecked: WritableSignal<boolean> = signal(false);
   protected isFileSelected: WritableSignal<boolean> = signal(false);
+  protected urlToScrap: WritableSignal<string> = signal("");
+  protected active_tab: TABS = TABS.DOCUMENTS;
 
 
   constructor(private fileUploadService: DocumentService,
               private documentService: DocumentService,
               private router: Router,
               private eventBus: NgEventBus,
-              private userContextService: UserContextService) {
+              private userContextService: UserContextService,
+              private renderer: Renderer2) {
   }
 
 
@@ -40,10 +53,12 @@ export class FileUploadDialogComponent {
     this.fileInput.nativeElement.value = '';
     this.summaryChecked.set(false);
     this.isFileSelected.set(false)
+    this.urlToScrap.set("")
     this.uploadProgress = 0;
+    this.active_tab = TABS.DOCUMENTS;
+
 
   }
-
 
   uploadFile(file: File, fileType: FileType) {
     let user = this.userContextService.getUserID()();
@@ -91,23 +106,37 @@ export class FileUploadDialogComponent {
 
   onUpload() {
 
-    if (this.fileInput && this.fileInput.nativeElement.files) {
+    if (this.active_tab == TABS.DOCUMENTS) {
+      if (this.fileInput && this.fileInput.nativeElement.files) {
 
-      const file = this.fileInput.nativeElement.files[0];
-      const fileType = file.type as FileType;
+        const file = this.fileInput.nativeElement.files[0];
+        const fileType = file.type as FileType;
 
 
-      if (fileType === FileType.PDF || fileType === FileType.DOCX) {
-        // Call the uploadFile method with the file and its type
-        this.uploadFile(file, fileType);
-        // Reset the file input
-      } else {
-        // Show alert and reset the file input
-        alert('Please select a PDF or DOCX file.');
-        this.resetFileInput();
+        if (fileType === FileType.PDF || fileType === FileType.DOCX
+          || fileType === FileType.XLSX || fileType === FileType.PPTX) {
+          // Call the uploadFile method with the file and its type
+          this.uploadFile(file, fileType);
+          // Reset the file input
+        } else {
+          // Show alert and reset the file input
+          alert('Please select a PDF or DOCX file.');
+          this.resetFileInput();
+        }
+
       }
-
-
+    } else if (this.active_tab == TABS.URL) {
+      let user = this.userContextService.getUserID()();
+      this.documentService.requestScrap(user, this.urlToScrap()).subscribe({
+        next: () => {
+          this.resetFileInput();
+          this.closeModal.emit();
+          this.eventBus.cast("reload_data");
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
     }
   }
 
@@ -125,9 +154,37 @@ export class FileUploadDialogComponent {
     }
 
   }
+
+
+  onTabActivated(tabId: string): void {
+    console.log(`Tab activated: ${tabId}`);
+    this.resetFileInput();
+    if (tabId === TABS.DOCUMENTS) {
+      this.active_tab = TABS.DOCUMENTS;
+    } else if (tabId === TABS.URL) {
+      this.active_tab = TABS.URL;
+    }
+  }
+
+
+  isValidUrl() {
+    const control: HTMLInputElement = document.createElement("input");
+    control.type = "url";
+    control.value = this.urlToScrap();
+    return control.checkValidity();
+  }
 }
 
 export enum FileType {
   PDF = 'application/pdf',
-  DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 }
+
+
+export enum TABS {
+  DOCUMENTS = 'documents',
+  URL = 'url'
+}
+

@@ -63,3 +63,16 @@
 .form-check-label{
   color: #343541;
 }
+
+.url_input {
+  width: 100%;
+  height: 30px;
+  margin-top: 10px;
+  /* Add other styling here if necessary */
+}
+.url_input_component {
+  padding-left: 10px;
+  padding-top: 20px;
+  /* Add other styling here if necessary */
+  color: black;
+}
