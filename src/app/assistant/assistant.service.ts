@@ -17,6 +17,7 @@ export class AssistantService {
   private assistant_base_url: string;
   private assistant_command_url: string;
   private message_url: string
+  private perimeter:string=""
 
   constructor(private httpClient: HttpClient, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
@@ -29,8 +30,12 @@ export class AssistantService {
 
   sendCommand(current_message: string, currentAssistant: number) {
 
-    let call_url = sprintf(this.assistant_command_url, current_message, currentAssistant);
-    return this.httpClient.get<Result>(call_url);
+    let call_url = sprintf(this.assistant_command_url, current_message, currentAssistant) ;
+
+    if (this.perimeter.length != 0)
+      call_url= sprintf("%s&perimeter=%s",call_url,this.perimeter)
+
+      return this.httpClient.get<Result>(call_url);
   }
 
   loadAssistants() {
@@ -137,6 +142,9 @@ export class AssistantService {
       });
   }
 
+  setDocumentPerimeter(perimeter: string) {
+    this.perimeter = perimeter
+  }
 }
 
 

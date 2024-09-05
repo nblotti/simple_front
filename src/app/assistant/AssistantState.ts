@@ -87,5 +87,10 @@ export class AssistantState implements StateInterface {
     this.conversation_id = conversation_id;
   }
 
+  setPerimeter(perimeter: string): any {
+    this.assistantService.setDocumentPerimeter(perimeter)
+  }
+
+
 }
 

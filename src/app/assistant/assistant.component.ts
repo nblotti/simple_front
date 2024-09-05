@@ -12,18 +12,20 @@ import {
 import {StateManagerService, STATES} from "../state-manager.service";
 import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 import {Assistant, AssistantService} from "./assistant.service";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CustomAssistantSelectComponent} from "../custom-assistant-select/custom-assistant-select.component";
+import {UserContextService} from "../auth/user-context.service";
 
 
 @Component({
   selector: 'app-assistant',
   standalone: true,
-  imports: [NgbDropdownModule, FormsModule, CustomAssistantSelectComponent],
+    imports: [NgbDropdownModule, FormsModule, CustomAssistantSelectComponent, ReactiveFormsModule],
   templateUrl: './assistant.component.html',
   styleUrl: './assistant.component.css'
 })
 export class AssistantComponent implements OnInit {
+
 
   readonly models: WritableSignal<Map<string, string>> = signal(new Map<string, string>())
   @ViewChild(CustomAssistantSelectComponent) customSelectComponent!: CustomAssistantSelectComponent;
@@ -31,6 +33,8 @@ export class AssistantComponent implements OnInit {
 
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
+
+  protected summaryChecked: WritableSignal<string> = signal<string>("");
 
   options = [
     { value: '3.5', label: 'gpt-3.5' },
@@ -48,8 +52,9 @@ export class AssistantComponent implements OnInit {
     else return "";
   });
 
+
   constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService,
-              private renderer: Renderer2) {
+              private renderer: Renderer2, protected userContextService: UserContextService) {
     this.assistants = this.assistantService.getAssistants();
     this.selectedCategory = signal<Assistant>(this.assistants()[0]);
 
@@ -121,5 +126,9 @@ export class AssistantComponent implements OnInit {
     let assistant: Assistant = this.selectedCategory();
     assistant.gpt_model_number = selectElement.value;
     this.assistantService.updateAssistant(this.selectedCategory())
+  }
+
+  perimeterChanged() {
+    this.stateManagerService.setPerimeter(this.userContextService.getUserID()())
   }
 }

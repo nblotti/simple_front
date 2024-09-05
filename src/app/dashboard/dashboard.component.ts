@@ -208,7 +208,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
     console.log(perimeter.trim());
-    return this.conversationService.setDocumentPerimeter(perimeter.trim());
+
+    return this.stateManagerService.setPerimeter(perimeter.trim());
   }
 
   unsubscribeFromLeftFormValueChanges() {

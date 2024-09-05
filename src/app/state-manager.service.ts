@@ -130,8 +130,12 @@ export class StateManagerService implements OnInit {
   private resetMessages() {
     this.stateManager().clearConversation();
   }
-}
 
+  public setPerimeter(perimeter: string) {
+      this.stateManager().setPerimeter(perimeter)
+
+}
+}
 export enum STATES {
   Dashboard = "DASHBOARD",
   Assistant = "ASSISTANT",

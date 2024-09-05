@@ -94,5 +94,9 @@ export class DashboardState implements StateInterface {
     this.conversationService.setCurrentConversation(conversation_id);
   }
 
+  setPerimeter(perimeter: string): any {
+    this.conversationService.setDocumentPerimeter(perimeter)
+  }
+
 }
 
