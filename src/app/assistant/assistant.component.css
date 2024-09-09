@@ -126,3 +126,20 @@ select optgroup {
   color: #0d6efd;
   font-size: 17px;
 }
+
+.btn-files{
+  color: #0d6efd;
+}
+
+.btn-files:hover{
+
+  color: white;
+}
+
+.btn-files:focus{
+
+  color: white;
+}
+
+
+

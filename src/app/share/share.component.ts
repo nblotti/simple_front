@@ -63,7 +63,7 @@ export class ShareComponent implements OnInit {
 
     this.statemanagerService.chatEnabled.set(false);
 
-    this.documentService.fetchDocuments(this.userContextService.getUserID()(),DocumentType.DOCUMENT).subscribe({
+    this.documentService.fetchDocuments(this.userContextService.getUserID()(),DocumentType.ALL).subscribe({
       next: (result: Document[]) => {
 
         this.documentList = result;

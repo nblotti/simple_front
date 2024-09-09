@@ -15,32 +15,29 @@ import {Assistant, AssistantService} from "./assistant.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CustomAssistantSelectComponent} from "../custom-assistant-select/custom-assistant-select.component";
 import {UserContextService} from "../auth/user-context.service";
+import {DocumentSelectorComponent} from "../document-selector/document-selector.component";
+import {FileUploadDialogComponent} from "../file-upload-dialog/file-upload-dialog.component";
 
 
 @Component({
   selector: 'app-assistant',
   standalone: true,
-    imports: [NgbDropdownModule, FormsModule, CustomAssistantSelectComponent, ReactiveFormsModule],
+  imports: [NgbDropdownModule, FormsModule, CustomAssistantSelectComponent, ReactiveFormsModule, DocumentSelectorComponent, FileUploadDialogComponent],
   templateUrl: './assistant.component.html',
   styleUrl: './assistant.component.css'
 })
 export class AssistantComponent implements OnInit {
 
-
+  showModal: boolean = false;
   readonly models: WritableSignal<Map<string, string>> = signal(new Map<string, string>())
   @ViewChild(CustomAssistantSelectComponent) customSelectComponent!: CustomAssistantSelectComponent;
   @ViewChild('inputName') inputName!: ElementRef;
-
+  options = [
+    {value: '3.5', label: 'gpt-3.5'},
+    {value: '4o', label: 'gpt4o'},
+  ];
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
-
-  protected summaryChecked: WritableSignal<string> = signal<string>("");
-
-  options = [
-    { value: '3.5', label: 'gpt-3.5' },
-    { value: '4o', label: 'gpt4o' },
-  ];
-
   assistantName: Signal<string> = computed(() => {
     if (this.selectedCategory() != undefined)
       return this.selectedCategory().name;
@@ -50,6 +47,11 @@ export class AssistantComponent implements OnInit {
     if (this.selectedCategory() != undefined)
       return this.selectedCategory().description;
     else return "";
+  });
+  assistantUseDocument: Signal<boolean> = computed(() => {
+    if (this.selectedCategory() != undefined)
+      return this.selectedCategory().use_documents;
+    else return false;
   });
 
 
@@ -115,7 +117,7 @@ export class AssistantComponent implements OnInit {
     }
   }
 
-  onTextAreaFocused($event: any){
+  onTextAreaFocused($event: any) {
     const textarea = $event.target as HTMLTextAreaElement;
     setTimeout(() => textarea.select(), 0);
   }
@@ -128,7 +130,20 @@ export class AssistantComponent implements OnInit {
     this.assistantService.updateAssistant(this.selectedCategory())
   }
 
-  perimeterChanged() {
-    this.stateManagerService.setPerimeter(this.userContextService.getUserID()())
+  perimeterChanged($event: any) {
+
+    const selectElement = $event.target as HTMLInputElement;
+    let isChecked = $event.target.checked;
+    if (this.assistantUseDocument() !== isChecked) {
+      let assistant: Assistant = this.selectedCategory();
+
+      assistant.use_documents = isChecked;
+
+      this.assistantService.updateAssistant(this.selectedCategory())
+    }
+  }
+
+  showFileSelector() {
+    this.showModal = true;
   }
 }

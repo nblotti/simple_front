@@ -1,0 +1,76 @@
+<div class="modal" [class.show]="showModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Assistant's documents</h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- Left Zones -->
+          <div class="col-6 column-container">
+            <div class="row table-container">
+              <div class="col-12">
+                <h5>My documents</h5>
+                <table class="table table-borderless table_documnents">
+                  <thead>
+                  <tr>
+                    <th class="document_header_content">Document</th>
+                    <th class="document_header_action_content">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (element of this.elementsZone1(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="selectElement(element, 1)">
+                        <td class="document_text_content">{{ element.name }}</td>
+                        <td class="document_action_content">
+                          <button class="btn btn-secondary" (click)="selectElement(element, 1)">Add</button>
+                        </td>
+                      </tr>
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-12">
+                <h5></h5>
+              </div>
+            </div>
+          </div>
+          <!-- Right Zones -->
+          <div class="col-6 column-container">
+            <div class="row table-container">
+              <div class="col-12">
+                <h5>Search perimeter</h5>
+
+                <table class="table table-borderless table_documnents">
+                  <thead>
+                  <tr>
+                    <th class="document_header_content">Document</th>
+                    <th class="document_header_action_content">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (element of this.selectedElementsZone1(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="removeElement(element, 1)">
+                        <td class="document_text_content">{{ element.document_name }}</td>
+                        <td class="document_action_content">
+                          <button class="btn btn-danger" (click)="removeElement(element, 1)">Remove</button>
+                        </td>
+                      </tr>
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-12">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="closeWindow()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

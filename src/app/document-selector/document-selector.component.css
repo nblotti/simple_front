@@ -1,0 +1,109 @@
+
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  position: relative;
+  transform: translateY(-50%);
+
+}
+
+/* Ensure the modal is properly centered and has adequate spacing */
+.modal-dialog {
+  max-width: 80%;
+
+}
+
+
+.modal-content {
+  padding: 20px;
+  background-color: #444654;
+}
+.modal-title{
+  color: #0d6efd;
+}
+
+/* Add spacing between the column headers and lists */
+.col-12 h5 {
+  margin-bottom: 20px;
+}
+
+.list-group-item {
+  cursor: pointer; /* Change cursor to indicate interactivity */
+}
+
+.list-group-item:hover {
+  background-color: #f1f1f1; /* Lighten background on hover for better UX */
+}
+
+ul.list-group {
+  max-height: 300px; /* Limit height */
+  overflow-y: auto; /* Add scroll if necessary */
+}
+
+/* Add some spacing between the lists */
+.row .col-12 {
+  margin-bottom: 20px;
+}
+
+
+.table_documnents {
+
+  width: 100%;
+}
+
+
+.document_header_content {
+  background-color: #444654;
+  color: white;
+  font-weight: normal;
+  border-bottom: white solid 1px;
+  padding-top: 13px;
+
+}
+
+.document_header_action_content{
+  background-color: #444654;
+  color: white;
+  font-weight: normal;
+  border-bottom: white solid 1px;
+  padding-top: 13px;
+  width : 15%
+
+}
+
+
+.document_text_content {
+  background-color: #444654;
+  color: white;
+
+}
+
+.document_action_content {
+  background-color: #444654;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+
+}
+
+.document_text_content_selectable:hover {
+  font-style: italic;
+  cursor: pointer;
+}
+
+.table-container{
+
+
+}
+
+.column-container{
+  background-color: white;
+  border-left: 1px #444654 inset ;
+  border-right: 1px #444654 inset ;
+}
+
+
+

@@ -55,8 +55,14 @@
     </select>
   </div>
   <div class="">
-    <input type="checkbox"  role="switch" [(ngModel)]="summaryChecked" (change)="perimeterChanged()">
+    <input type="checkbox" role="switch" [ngModel]="assistantUseDocument()" (change)="perimeterChanged($event)">
     <label class="my_documents_label">Use my documents</label>
+
+    <button type="button" tabindex="0" class="btn btn-xsm btn-filled btn-neutral btn-files" (click)="showFileSelector()">(+Files)</button>
+
+
+
+
   </div>
 
   <div class="assistant-block-class">
@@ -97,3 +103,4 @@
 
 </div>
 
+<app-document-selector [showModal]="showModal" [assistant]="selectedCategory()" (closeModal)="showModal = false"></app-document-selector>

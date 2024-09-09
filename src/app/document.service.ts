@@ -4,7 +4,6 @@ import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
 import {Document} from "./dashboard/Document";
 import {FileType} from "./file-upload-dialog/file-upload-dialog.component";
-import {UserCategory} from "./auth/user-context.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +12,13 @@ export class DocumentService {
 
 
   documents_base_url: string;
+  all_user_documents_base_url: string
   jobs_base_url: string;
 
   constructor(private http: HttpClient, private globalsService: GlobalsService) {
 
     this.documents_base_url = globalsService.serverAssistmeBase + "document/"
+    this.all_user_documents_base_url = globalsService.serverAssistmeBase + "/users/%s/documents/"
     this.jobs_base_url = globalsService.serverJobBase
   }
 
@@ -89,7 +90,8 @@ export class DocumentService {
 
 export enum DocumentType {
   SUMMARY = 'SUMMARY',
-  DOCUMENT = 'DOCUMENT'
+  DOCUMENT = 'DOCUMENT',
+  ALL = 'ALL'
 }
 
 export enum DocumentStatus {
