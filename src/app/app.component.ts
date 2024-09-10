@@ -15,13 +15,25 @@ import {DashboardState} from "./dashboard/DashboardState";
 import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
 import {ShareState} from "./share/ShareState";
+import {HIGHLIGHT_OPTIONS} from "ngx-highlightjs";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
   providers: [NgEventBus, HttpClientModule,  DatePipe, DashboardState, AssistantState, ShareState,StateManagerService,
-    ConversationService,AssistantService, LoginComponent],
+    ConversationService,AssistantService, LoginComponent,
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        // Customize as per your requirement
+        languages: {
+          typescript: () => import('highlight.js/lib/languages/typescript'),
+          html: () => import('highlight.js/lib/languages/xml'),
+          css: () => import('highlight.js/lib/languages/css'),
+        }
+      }
+    }],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 

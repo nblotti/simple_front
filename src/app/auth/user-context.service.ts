@@ -8,6 +8,7 @@ export class UserContextService {
 
   readonly isLogged: WritableSignal<boolean> = signal(false);
   userCategories: WritableSignal<UserCategory[]> = signal([]);
+  groups: WritableSignal<string[]> = signal([]);
   private userUrl: string = '';
   private userID: WritableSignal<string> = signal("");
 
@@ -19,10 +20,15 @@ export class UserContextService {
     return this.userID.asReadonly()
   }
 
-  public setLoggedIn(user: string, categories: UserCategory[]) {
+  getGroups(): Signal<string[]> {
+    return this.groups.asReadonly()
+  }
+
+  public setLoggedIn(user: string, categories: UserCategory[], groups: string[]) {
     this.userID.set(user);
     this.userCategories.set(categories);
     this.isLogged.set(true);
+    this.groups.set(groups);
   }
 
   public logoff() {
@@ -49,7 +55,7 @@ export class UserCategory {
   value: boolean;
   owner: string;
 
-  constructor(id: string, label: string, value: boolean = false, owner="") {
+  constructor(id: string, label: string, value: boolean = false, owner = "") {
     this.id = id;
     this.label = label;
     this.value = value;

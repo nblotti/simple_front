@@ -5,12 +5,14 @@ import {NgEventBus} from 'ng-event-bus';
 import {LineBreakPipe} from "./line-break.pipe";
 import {StateManagerService} from "../state-manager.service";
 import {ScreenReadyMessage} from "./SreenReadyMessage";
+import {HighlightJsDirective} from "ngx-highlight-js";
+import {HighlightDirective} from "../highlight/highlight.component";
 
 
 @Component({
   selector: 'chat-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, LineBreakPipe],
+  imports: [FormsModule, HttpClientModule, LineBreakPipe, HighlightJsDirective, HighlightDirective],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })

@@ -24,7 +24,7 @@ export class AssistantService {
               private userContextService: UserContextService) {
 
     this.assistant_base_url = globalsService.serverAssistmeBase + "assistants/"
-    this.assistant_command_url = this.assistant_base_url + "command/?command=%s&conversation_id=%s"
+    this.assistant_command_url = this.assistant_base_url + "command/"
     this.message_url = globalsService.serverAssistmeBase + "message/?conversation_id=%s"
 
     this.assistant_document_base_url = globalsService.serverAssistmeBase + "assistantsdocument/"
@@ -34,11 +34,14 @@ export class AssistantService {
   sendCommand(current_message: string, currentAssistant: number) {
 
     let call_url = sprintf(this.assistant_command_url, current_message, currentAssistant);
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    if (this.perimeter.length != 0)
-      call_url = sprintf("%s&perimeter=%s", call_url, this.perimeter)
+    const jsonData = {
+      "command": current_message,
+      "conversation_id":""+currentAssistant
+    };
 
-    return this.httpClient.get<Result>(call_url);
+    return this.httpClient.post<Result>(call_url,jsonData, {headers: headers});
   }
 
   loadAssistantDocuments(currentAssistant: string) {

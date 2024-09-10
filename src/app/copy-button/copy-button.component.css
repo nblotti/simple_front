@@ -1,0 +1,33 @@
+.btn {
+  background-color: #ffffff; /* Light background for the button */
+  color: #444654;           /* Matching the content background color */
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;       /* Optional: Round the corners for a nicer look */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.btn .btn-label-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.btn .btn-node.start-node {
+  display: flex;
+  align-items: center;
+}
+
+.code-sample-copy-float svg {
+  fill: white;
+}
+
+.code-sample-copy-float:hover svg {
+  fill: gray;
+}
+

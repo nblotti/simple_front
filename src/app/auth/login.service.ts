@@ -59,7 +59,7 @@ export class LoginService {
     const jwttoken: LoginToken = await firstValueFrom(this.http.post<LoginToken>(this.jwtTokenUrl, jwt));
 
     if (jwttoken.groups.includes("agp_prod_users")) {
-      this.userContext.setLoggedIn(jwttoken.user, this.extractTokens(jwttoken.categories));
+      this.userContext.setLoggedIn(jwttoken.user, this.extractTokens(jwttoken.categories),jwttoken.groups);
 
       return true;
     } else {

@@ -34,7 +34,7 @@ export class AssistantComponent implements OnInit {
   @ViewChild('inputName') inputName!: ElementRef;
   options = [
     {value: '3.5', label: 'gpt-3.5'},
-    {value: '4o', label: 'gpt4o'},
+    {value: '4o', label: 'gpt4o'}
   ];
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
@@ -59,6 +59,11 @@ export class AssistantComponent implements OnInit {
               private renderer: Renderer2, protected userContextService: UserContextService) {
     this.assistants = this.assistantService.getAssistants();
     this.selectedCategory = signal<Assistant>(this.assistants()[0]);
+
+      let groups = this.userContextService.getGroups()();
+      if (groups.includes("agp_prod_gpt4")) {
+        this.options.push({value: '4', label: 'gpt4'});
+      }
 
   }
 
