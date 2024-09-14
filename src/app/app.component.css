@@ -101,4 +101,10 @@
 
 }
 
+.nav-link{
+  cursor: pointer;
+}
 
+.dropdown-item{
+  cursor: pointer;
+}
