@@ -23,7 +23,7 @@ export class ConversationService {
 
 
 
-  constructor(protected httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
+  constructor(private httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
               private userContextService: UserContextService) {
 
     this.chat_command_no_perimeter_url = globalsService.serverAssistmeBase + "chat/command/?command=%s&conversation_id=%s"

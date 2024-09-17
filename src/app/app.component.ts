@@ -1,9 +1,8 @@
-import {Component, computed, ElementRef, OnInit, signal, ViewChild, WritableSignal,} from '@angular/core';
+import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
 import {ChatComponent} from "./chat/chat.component";
-import {HttpClientModule} from "@angular/common/http";
 import {FileUploadDialogComponent} from "./file-upload-dialog/file-upload-dialog.component";
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
@@ -15,25 +14,14 @@ import {DashboardState} from "./dashboard/DashboardState";
 import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
 import {ShareState} from "./share/ShareState";
-import {HIGHLIGHT_OPTIONS} from "ngx-highlightjs";
+import {DocumentService} from "./document.service";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  providers: [NgEventBus, HttpClientModule,  DatePipe, DashboardState, AssistantState, ShareState,StateManagerService,
-    ConversationService,AssistantService, LoginComponent,
-    {
-      provide: HIGHLIGHT_OPTIONS,
-      useValue: {
-        // Customize as per your requirement
-        languages: {
-          typescript: () => import('highlight.js/lib/languages/typescript'),
-          html: () => import('highlight.js/lib/languages/xml'),
-          css: () => import('highlight.js/lib/languages/css'),
-        }
-      }
-    }],
+  providers: [NgEventBus, DatePipe, DashboardState, AssistantState, ShareState, StateManagerService,
+    ConversationService, AssistantService, LoginComponent, DocumentService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -47,7 +35,7 @@ export class AppComponent implements OnInit {
   @ViewChild('mainContent') mainContentRef!: ElementRef;
   isCollapsed: boolean = false;
   isLoggedIn = computed<boolean>(() => {
-    return  this.usercontextService.isLogged() && this.stateManagerService.chatEnabled()
+    return this.usercontextService.isLogged() && this.stateManagerService.chatEnabled()
   });
 
   constructor(private router: Router, protected usercontextService: UserContextService, private stateManagerService: StateManagerService,) {

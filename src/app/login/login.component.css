@@ -1,4 +1,35 @@
-.login_container{
+.login_container {
   width: 100%;
   height: 75%;
+}
+
+
+.link_summary {
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1)); /* Text color */
+  text-decoration: underline; /* Underline text to mimic a link */
+  cursor: pointer; /* Mouse pointer to indicate clickable element */
+
+  /* Common styles for typical <a> elements */
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Adding hover effect to emphasize the link behavior */
+.link_summary:hover {
+  color: #0000EE; /* Typically, links become blue on hover */
+  text-decoration: none; /* Sometimes links lose their underline on hover */
+  cursor: pointer; /* Ensure pointer cursor on focus/active */
+}
+
+/* Adding focus and active states for better accessibility */
+.link_summary:focus,
+.link_summary:active {
+  outline: 1px dotted #0000EE; /* Show an outline to indicate focus */
+  color: #EE0000; /* Change color if active */
+  cursor: pointer; /* Ensure pointer cursor on focus/active */
+}
+
+.error {
+  color: red;
 }

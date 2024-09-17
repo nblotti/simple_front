@@ -1,51 +1,73 @@
-import {Component, inject} from '@angular/core';
-import {Router} from "@angular/router";
-import {UserContextService} from "../auth/user-context.service";
+import {Component, inject, signal, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {GlobalsService} from "../globals.service";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import { OAuthService} from "angular-oauth2-oidc";
-import {authCodeFlowConfig} from "../auth/auth.config";
-import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks'
+import {OAuthService} from "angular-oauth2-oidc";
+import {LoginService} from "../auth/login.service";
+import {Router} from "@angular/router";
+import {sha1} from "js-sha1";
+import {QrCodeDialogComponent} from "../qr-code-dialog/qr-code-dialog.component";
+import {FileUploadDialogComponent} from "../file-upload-dialog/file-upload-dialog.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    QrCodeDialogComponent,
+    FileUploadDialogComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  showModal: boolean = false;
   protected password: string = "";
   protected username: string = "";
-  private userUrl:string  = '';
-
+  protected secondFactor: string = "";
+  protected showError: WritableSignal<boolean> = signal(false);
   private oauthService = inject(OAuthService)
 
-  constructor(private router: Router, private userContext: UserContextService, private globalsService: GlobalsService,
-              private httpClient: HttpClient) {
-
-    this.userUrl = globalsService.serverAssistmeBase + "user"
-
+  constructor(private loginService: LoginService, private router: Router) {
 
   }
 
 
-  doLogin() {
+  async doLogin() {
+    let userProfile = {
+      "info": {
+        "sub": this.username,
+        "userPassword": sha1(this.password),
+        "secondFactor": this.secondFactor
+      }
+    }
 
+    try {
+      const loginSuccess: boolean = await this.loginService.doLocalLogin(userProfile);
+      if (loginSuccess) {
+        console.log('Login successful');
+        this.showError.set(false);
+        this.router.navigate(['/assistant']);
+      } else {
+        console.log('Login failed');
+        // Additional logic for failed login
+        this.showError.set(true);
+      }
+    } catch (error) {
+      console.error('Error during login', error);
+      // Handle the error
+    }
 
-
-    /*
-     const ids = ['1', '2', '3'];
-     this.getUserCategories(ids)
- */
   }
 
 
+  registerSecondFactor() {
+    this.showModal = true;
+  }
 
-
+  handleCloseModal(event: { username: string, password: string }) {
+    this.password = event.password;
+    this.username = event.username;
+    this.showModal = false;  // Automatically hide the modal
+  }
 }
 
 type CategoryType = [number, string];

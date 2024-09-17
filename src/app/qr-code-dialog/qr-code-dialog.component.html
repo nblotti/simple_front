@@ -1,0 +1,39 @@
+<div class="modal" [class.show]="showModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Upload File</h5>
+      </div>
+      <div class="modal-body">
+        @if (showError) {
+
+          <div class="error">Invalid username or password</div>
+        }
+        <label class="form-label" for="qr_username">Username:</label>
+        <input type="text" id="qr_username" [(ngModel)]="username" name="username" required>
+
+        <label class="form-label" for="qr_password">Password:</label>
+        <input type="password" id="qr_password" [(ngModel)]="password" name="password" required>
+      </div>
+
+      @if (image) {
+        <h2>Scan this QR Code</h2>
+        <img [src]="qrCodeUrl()" alt="QR Code">
+      }
+      @if (!image) {
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn btn-submit btn-primary" (click)="onSubmit()">Submit</button>
+        </div>
+      }
+      @if (image) {
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn btn-submit btn-primary" (click)="onCloseModal()">Close</button>
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+
+    </div>
+  </div>
+</div>

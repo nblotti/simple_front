@@ -9,8 +9,8 @@ export class UserContextService {
   readonly isLogged: WritableSignal<boolean> = signal(false);
   userCategories: WritableSignal<UserCategory[]> = signal([]);
   groups: WritableSignal<string[]> = signal([]);
-  private userUrl: string = '';
   private userID: WritableSignal<string> = signal("");
+  private jwtToken: WritableSignal<string> = signal("");
 
   constructor() {
 
@@ -24,7 +24,12 @@ export class UserContextService {
     return this.groups.asReadonly()
   }
 
-  public setLoggedIn(user: string, categories: UserCategory[], groups: string[]) {
+  getJwtToken(): Signal<string> {
+    return this.jwtToken.asReadonly()
+  }
+
+  public setLoggedIn(jwtToken: string, user: string, categories: UserCategory[], groups: string[]) {
+    this.jwtToken.set(jwtToken);
     this.userID.set(user);
     this.userCategories.set(categories);
     this.isLogged.set(true);
@@ -33,6 +38,7 @@ export class UserContextService {
 
   public logoff() {
     this.userID.set("");
+    this.jwtToken.set("");
     this.userCategories.set([]);
     this.isLogged.set(false);
   }

@@ -1,9 +1,9 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { inject } from '@angular/core';
-import { authCodeFlowConfig } from './auth.config'; // Assuming you have this configured
-import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
-import { LoginService } from "./login.service";
+import {CanActivateFn, Router} from '@angular/router';
+import {OAuthService} from 'angular-oauth2-oidc';
+import {inject} from '@angular/core';
+import {authCodeFlowConfig} from './auth.config'; // Assuming you have this configured
+import {JwksValidationHandler} from 'angular-oauth2-oidc-jwks';
+import {LoginService} from "./login.service";
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const oauthService = inject(OAuthService);
@@ -11,6 +11,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
 
   try {
+    if (loginService.isLogged())
+      return true;
     oauthService.configure(authCodeFlowConfig);
     oauthService.tokenValidationHandler = new JwksValidationHandler();
     oauthService.setupAutomaticSilentRefresh();
@@ -20,7 +22,6 @@ export const authGuard: CanActivateFn = async (route, state) => {
     if (oauthService.hasValidAccessToken() && oauthService.hasValidIdToken()) {
       try {
         const userProfile = await oauthService.loadUserProfile();
-        console.log(oauthService.getAccessToken())
         if (!await loginService.doLogin(userProfile)) {
           await router.navigate(['/login']);
           return false;

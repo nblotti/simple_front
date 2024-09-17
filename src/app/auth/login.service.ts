@@ -44,26 +44,48 @@ interface AzqoreUserProfile {
 })
 export class LoginService {
   private jwtTokenUrl: string = '';
+  private jwtLocalTokenUrl: string = ""
   private userUrl: string = '';
 
   constructor(private globalsService: GlobalsService, private http: HttpClient, private userContext: UserContextService) {
     this.userUrl = globalsService.serverAssistmeBase + "category/?group_ids="
     this.jwtTokenUrl = globalsService.serverAssistmeBase + "user/login"
-    //this.jwtTokenUrl = "http://localhost:8000/user/login";
+    this.jwtLocalTokenUrl = this.jwtTokenUrl + "/local"
   }
 
   async doLogin(jwt: object) {
-
 
     //console.log(JSON.stringify(jwt, null, 2));
     const jwttoken: LoginToken = await firstValueFrom(this.http.post<LoginToken>(this.jwtTokenUrl, jwt));
 
     if (jwttoken.groups.includes("agp_prod_users")) {
-      this.userContext.setLoggedIn(jwttoken.user, this.extractTokens(jwttoken.categories),jwttoken.groups);
+      this.userContext.setLoggedIn(jwttoken.jwt,jwttoken.user, this.extractTokens(jwttoken.categories), jwttoken.groups);
 
       return true;
     } else {
       this.userContext.logoff();
+      return false;
+    }
+  }
+
+  public isLogged() {
+    return this.userContext.isLogged();
+  }
+
+  async doLocalLogin(jwt: object) {
+
+    try {
+      const jwttoken: LoginToken = await firstValueFrom(this.http.post<LoginToken>(this.jwtLocalTokenUrl, jwt));
+
+      if (jwttoken.groups.includes("agp_prod_users")) {
+        this.userContext.setLoggedIn(jwttoken.jwt, jwttoken.user, this.extractTokens(jwttoken.categories), jwttoken.groups);
+        return true;
+      } else {
+        this.userContext.logoff();
+        return false;
+      }
+    } catch (error) {
+      console.error('Error during local login', error);
       return false;
     }
   }

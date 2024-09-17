@@ -3,15 +3,30 @@
     <div class="col-md-6">
       <form>
         <h2>Login</h2>
+        @if (showError()) {
+          <div class="error">Invalid username or password</div>
+        }
         <div class="mb-3">
           <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="username" [ngModelOptions]="{standalone: true}">
+          <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="username"
+                 [ngModelOptions]="{standalone: true}">
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
+          <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="password"
+                 [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="mb-3">
+          <label for="secondFactor" class="form-label">Second Factor
+            <div class="link_summary" (click)="registerSecondFactor()">(register)</div>
+          </label>
+          <input type="text" class="form-control" id="secondFactor" placeholder="Enter your second factor"
+                 [(ngModel)]="secondFactor" [ngModelOptions]="{standalone: true}">
         </div>
         <button type="submit" (click)="doLogin()" class="btn btn-primary">Login</button>
+        <app-qr-code-dialog [showModal]="showModal" (closeModal)="handleCloseModal($event)"></app-qr-code-dialog>
+
+
       </form>
     </div>
   </div>
