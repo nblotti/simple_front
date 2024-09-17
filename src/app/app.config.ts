@@ -5,7 +5,7 @@ import { APP_ROUTES } from './app.routes';
 import { provideOAuthClient } from "angular-oauth2-oidc";
 import { MyHttpInterceptor } from "./http.interceptor";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
-import { HIGHLIGHT_OPTIONS } from "ngx-highlightjs";
+import {HIGHLIGHT_OPTIONS, provideHighlightOptions} from "ngx-highlightjs";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,16 +18,14 @@ export const appConfig: ApplicationConfig = {
       useClass: MyHttpInterceptor,
       multi: true,
     },
-    {
-      provide: HIGHLIGHT_OPTIONS,
-      useValue: {
-        // Customize as per your requirement
-        languages: {
-          typescript: () => import('highlight.js/lib/languages/typescript'),
-          html: () => import('highlight.js/lib/languages/xml'),
-          css: () => import('highlight.js/lib/languages/css'),
-        }
+    provideHighlightOptions({
+      coreLibraryLoader: () => import('highlight.js/lib/core'),
+      lineNumbersLoader: () => import('ngx-highlightjs/line-numbers'), // Optional, add line numbers if needed
+      languages: {
+        typescript: () => import('highlight.js/lib/languages/typescript'),
+        css: () => import('highlight.js/lib/languages/css'),
+        xml: () => import('highlight.js/lib/languages/xml')
       }
-    }
+    })
   ],
 };
