@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, computed, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, computed, Input, OnInit, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {NgEventBus} from 'ng-event-bus';
@@ -6,19 +6,21 @@ import {LineBreakPipe} from "./line-break.pipe";
 import {StateManagerService} from "../state-manager.service";
 import {HighlightJsDirective} from "ngx-highlight-js";
 import {HighlightDirective} from "../highlight/highlight.component";
+import {AppCopyButtonDirective} from "../copy-button/copy-button.component";
 
 
 @Component({
   selector: 'chat-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, LineBreakPipe, HighlightJsDirective, HighlightDirective],
+  imports: [FormsModule, HttpClientModule, LineBreakPipe, HighlightJsDirective, HighlightDirective, AppCopyButtonDirective],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
 
   inputMessage: string = "";
-  newMessage : boolean = false;
+  newMessage: boolean = false;
+  @Input() text: string = '';
   protected screenReadyMessage = computed(() => {
     this.newMessage = true;
     return this.statemanagerService.getScreenReadyMessages()();
@@ -39,7 +41,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
 
   ngAfterViewChecked() {
-    if(this.newMessage){
+    if (this.newMessage) {
       this.scrollToBottom();
       this.newMessage = false;
     }
@@ -55,10 +57,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
             KeyboardEvent
   ) {
 
-    if ($event.key === 'Enter' && $event.shiftKey) {
-      this.runAction();
-    }
-    if ($event.key === 'Enter' && $event.ctrlKey) {
+    if ($event.key === 'Enter' && (!$event.shiftKey && !$event.ctrlKey)) {
       this.runAction();
     }
   }

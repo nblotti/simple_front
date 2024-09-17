@@ -1,15 +1,11 @@
 import {
-  ApplicationRef,
-  ComponentFactoryResolver,
   Directive,
   ElementRef,
-  Injector,
   Input,
   OnChanges,
   Renderer2
 } from '@angular/core';
 import {HighlightJS} from 'ngx-highlightjs';
-import {CopyButtonComponent} from "../copy-button/copy-button.component";
 
 @Directive({
   standalone: true,
@@ -21,10 +17,7 @@ export class HighlightDirective implements OnChanges {
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private highlightJS: HighlightJS,
-    private resolver: ComponentFactoryResolver,
-    private injector: Injector,
-    private appRef: ApplicationRef
+    private highlightJS: HighlightJS
   ) {}
 
   ngOnChanges() {
@@ -36,7 +29,7 @@ export class HighlightDirective implements OnChanges {
     this.renderer.setProperty(this.el.nativeElement, 'innerHTML', '');
 
     codeBlocks.forEach(block => {
-      const backgroundColor = block.isCode ? 'black' : '#444654';
+
       if (block.isCode) {
         const codeElement = this.renderer.createElement('code');
         if (block.language) {
@@ -44,14 +37,14 @@ export class HighlightDirective implements OnChanges {
         }
         this.renderer.setProperty(codeElement, 'textContent', block.content);
         this.highlightJS.highlightElement(codeElement);
-        const preElement = this.createBlockElement(codeElement, block.content, backgroundColor);
+        const preElement = this.createBlockElement(codeElement, block.content);
         this.renderer.appendChild(this.el.nativeElement, preElement);
       } else {
         const divElement = this.renderer.createElement('div');
         this.renderer.addClass(divElement, 'non-code-text');
         const textNode = this.renderer.createText(this.trimSingleQuotes(block.content));
         this.renderer.appendChild(divElement, textNode);
-        const containerElement = this.createBlockElement(divElement, block.content, backgroundColor);
+        const containerElement = this.createBlockElement(divElement, block.content);
         this.renderer.appendChild(this.el.nativeElement, containerElement);
       }
     });
@@ -78,22 +71,10 @@ export class HighlightDirective implements OnChanges {
     return parts;
   }
 
-  private createBlockElement(element: HTMLElement, textContent: string, backgroundColor: string): HTMLElement {
+  private createBlockElement(element: HTMLElement, textContent: string): HTMLElement {
     const container = this.renderer.createElement('div');
     this.renderer.addClass(container, 'block-container');
-
-    const componentFactory = this.resolver.resolveComponentFactory(CopyButtonComponent);
-    const componentRef = componentFactory.create(this.injector);
-
-    // Trim single quotes from textContent
-    (componentRef.instance as CopyButtonComponent).textToCopy = this.trimSingleQuotes(textContent);
-    (componentRef.instance as CopyButtonComponent).backgroundColor = backgroundColor;
-
-    this.appRef.attachView(componentRef.hostView);
-    const domElem = (componentRef.hostView as any).rootNodes[0] as HTMLElement;
-
     this.renderer.appendChild(container, element);
-    this.renderer.appendChild(container, domElem);
 
     return container;
   }

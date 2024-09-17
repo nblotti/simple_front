@@ -3,7 +3,10 @@
   height: 75%;
 }
 
-
+.form-label{
+  color: gray;
+  padding-left: 3px;
+}
 .link_summary {
   color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1)); /* Text color */
   text-decoration: underline; /* Underline text to mimic a link */

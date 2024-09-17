@@ -1,28 +1,35 @@
-import {Component, Input} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {Directive, ElementRef, HostBinding, HostListener, Input, Renderer2} from '@angular/core';
 
-@Component({
-  selector: 'app-copy-button',
-  templateUrl: './copy-button.component.html',
+@Directive({
   standalone: true,
-  styleUrls: ['./copy-button.component.css'],
-  imports: [CommonModule]
+  selector: '[appCopyButton]'
 })
-export class CopyButtonComponent {
-  @Input() textToCopy: string | undefined;
-  @Input() backgroundColor: string | undefined;
+export class AppCopyButtonDirective {
+  @Input() backgroundColor: string = '';
+  @Input() textToCopy: string = '';
 
-  copyToClipboard($event: Event) {
-    if (!this.textToCopy) return;
+  constructor(private renderer: Renderer2, private el: ElementRef) {
+  }
 
-    const trimmedText = this.textToCopy.trim();
+  @HostBinding('style.backgroundColor') get setBackgroundColor() {
+    return this.backgroundColor;
+  }
 
-    try {
-      navigator.clipboard.writeText(trimmedText);
-      console.log('Text copied to clipboard');
-    } catch (err) {
-      console.error('Failed to copy text', err);
+  @HostListener('click', ['$event']) copyToClipboard(event: Event) {
+    event.preventDefault();
+    navigator.clipboard.writeText(this.trimSingleQuotes(this.textToCopy)).then(() => {
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+    });
+  }
+
+  private trimSingleQuotes(text: string): string {
+    if (text.startsWith("'''")) {
+      text = text.substring(3);
     }
-    $event.preventDefault();
+    if (text.endsWith("'''")) {
+      text = text.substring(0, text.length - 3);
+    }
+    return text;
   }
 }

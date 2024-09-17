@@ -2,12 +2,6 @@
 /*                                                position of the buttons & windows                                   */
 /**********************************************************************************************************************/
 
-.button_container {
-
-  margin-top: 430px;
-}
-
-
 .chat {
   content: url("../../assets/chatgpt.png");
   height: 20px;
@@ -16,45 +10,9 @@
 
 }
 
-
-.maincontainer {
-
-  margin: 0px;
-  background-color: #444654;
-  text-align: left;
-  overflow: auto;
-  width: 500px;
-  height: 500px;
-  position: relative;
-  resize: both;
-}
-
--webkit-resizer {
-  background-color: red;
-}
-
-
 /**********************************************************************************************************************/
 /*                                                intra component css                                                  */
 /**********************************************************************************************************************/
-
-
-/*second column*/
-
-
-.bottom-5 {
-  bottom: 5px !important;
-}
-
-table tr td, table tr th {
-  background-color: rgba(34, 35, 41, 0) !important;
-
-}
-
-.table_messages {
-  table-layout: fixed;
-  word-wrap: break-word;
-}
 
 .chat_icon {
   width: 25px;
@@ -68,46 +26,30 @@ table tr td, table tr th {
 .chat_user_icon {
   content: url("../../assets/avatar_user.png");
 
-
 }
 
 .chat_assistant_icon {
   content: url("../../assets/logo.png");
   background-color: #0FA47F;
-
   padding-top: 2px;
 
 }
 
 .chat_icon_content {
-  width: 35px;
-  padding-top: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Only if you want horizontal centering as well */
+
 }
 
 .chat_text_content {
   color: white;
-  padding-top: 13px;
   width: 100%;
+  padding-top: 8px;
+  background-color: rgb(248, 249, 250);
 }
 
-.message {
-  white-space: pre-line;
-}
 /*All*/
-
-
-.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: white;
-  opacity: 1; /* Firefox */
-}
-
-.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: white;
-}
-
-.form-control::-ms-input-placeholder { /* Microsoft Edge */
-  color: white;
-}
 
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
@@ -115,112 +57,67 @@ table tr td, table tr th {
 }
 
 *::-webkit-scrollbar-track {
-  background: #343541;
+  background: white;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #343541;
-  border-radius: 3px;
-  border: 3px solid #444654;
-}
-
-
-.h-90 {
-  height: 90% !important;
-}
-
-.example-handle {
-  background-image: url("../../assets/draggable-svgrepo-com.svg");
-  z-index: 100;
-  width: 24px;
-  height: 24px;
-
-  background-size: 24px, auto, contain;
-}
-
-
-.accordion-button {
-  background-color: #444654;
-}
-
-.accordion-button:focus {
-  box-shadow: 0 0 0 0.25rem #444654;
-}
-
-
-.accordion-button.collapsed {
-  background-color: #444654 !important;
-  color: #444654;
-  height: 5px;
-
-
-}
-
-.accordion-button.collapsed::after {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-}
-
-.accordion-button:not(.collapsed) {
-  margin-top: 5px;
-  height: 5px;
-  background-color: white !important;
-  color: #444654;
-}
-
-.accordion-collapse:not(.collapsed) {
-  background-color: #444654 !important;
-}
-
-
-.clearconversation {
-  width: 24px;
-  height: 24px;
-  margin-left: 10px;
-  margin-right: 3px;
-  margin-top: 5px;
-}
-
-.h-100 {
-  height: 100%;
-}
-
-.flex-grow-1 {
-  flex-grow: 1;
-}
-
-.overflow-auto {
-  overflow: auto;
-}
-
-.inputcontent {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 20px;
-}
-
-textarea {
-  width: calc(100% - 120px); /* Adjust width to allow space for buttons */
-  min-height: 90px; /* Minimum height for 3 rows */
-  max-height: 300px; /* Maximum height if needed */
-  resize: vertical; /* Allow vertical resizing only */
+  background-color: rgb(248, 249, 250);
+  border-radius: 1px;
+  border: 1px solid rgb(248, 249, 250);
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
 }
 
-.button-group button {
-  width: 100px;
-  height: 40px;
-  margin-top: 5px;
+.inputcontent {
+  margin-top: 10px;
+  margin-left: 40px;
+  margin-right: 65px;
 }
-.chat_input_component {
-  width: 100%;
-  min-height: 90px; /* Minimum height for 3 rows */
-  max-height: 300px; /* Maximum height if needed */
-  resize: vertical; /* Allow vertical resizing only */
+
+.chat_button {
+  margin: 1px
 }
+
+.btn {
+  background-color: white; /* Light background for the button */
+  color: white; /* Matching the content background color */
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px; /* Optional: Round the corners for a nicer look */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  top: 10px;
+  right: 10px;
+}
+
+.btn .btn-label-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.btn .btn-node.start-node {
+  display: flex;
+  align-items: center;
+}
+
+.code-sample-copy-float svg {
+  fill: gray;
+}
+
+.code-sample-copy-float:hover svg {
+  fill: black;
+}
+
+.non-code-text {
+  background-color: #F8F9FA;
+}
+
+

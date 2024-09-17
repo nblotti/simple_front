@@ -15,38 +15,9 @@ body {
   height: 100%
 }
 
-.mat-bottom-sheet-container {
-
-  min-width: 100% !important;
 
 
-}
 
-.mybottomsheet {
-
-  border: 0.05em solid red;
-  width: 100%;
-  height: 40%;
-  display: flex;
-  justify-content: center;
-  min-width: 100% !important;
-}
-
-.in_ner {
-  border: 0.05em solid black;
-  text-align: center;
-  background-color: blue;
-}
-
-.container {
-  max-width: 100%;
-  width: 100%;
-  overflow: hidden; /* Prevent overflow */
-  background-color: #444654; /* Set background color for the entire content */
-
-  border-radius: 5px; /* Optional: Round the corners for a nicer look */
-  color: white; /* Ensure text color is white for contrast */
-}
 
 pre {
   white-space: pre-wrap;         /* CSS3 */
@@ -57,37 +28,17 @@ pre {
   overflow-x: hidden;            /* Ensure no horizontal scrollbar */
   width: 100%;                   /* Ensure it stays within the parent div */
   box-sizing: border-box;        /* Ensure padding/border is included in width */
-  background-color: #444654;       /* Set background color to black */
-  color: white;                  /* Set text color to white for contrast */
+  background-color: white;       /* Set background color to black */
+  color: black;                  /* Set text color to white for contrast */
   border-radius: 5px;            /* Optional: Round the corners for a nicer look */
-  padding-left: 10px;
   position: relative;            /* Position to contain the absolute button */
 }
 
 code {
-  display: block;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  width: 100%;
-  background-color: black;       /* Set background color to black */
-  color: white;                  /* Set text color to white for contrast */
-  padding: 10px;                 /* Add padding for better readability */
   border-radius: 5px;            /* Optional: Round the corners for a nicer look */
 }
 
-.non-code-text {
-  margin: 0.5em 0;
-  width: 100%;                   /* Ensure it stays within the parent div */
-  box-sizing: border-box;        /* Ensure padding/border is included in width */
-  overflow-wrap: anywhere;       /* Ensure text wraps within container */
 
-  position: relative;            /* Position to contain the absolute button */
-}
-
-.block-container {
-  position: relative;
-  margin-bottom: 20px;  /* Add some space between each block */
-}
 
 .copy-button {
   position: absolute;
@@ -96,7 +47,6 @@ code {
   background-color: #ffffff; /* Light background for the button */
   color: #444654;           /* Matching the content background color */
   border: none;
-  padding: 5px 10px;
   cursor: pointer;
   border-radius: 5px;       /* Optional: Round the corners for a nicer look */
 }

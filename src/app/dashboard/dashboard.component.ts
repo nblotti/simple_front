@@ -12,11 +12,12 @@ import {DocumentService, DocumentStatus, DocumentType} from "../document.service
 import {GlobalsService} from "../globals.service";
 import {SharedGroupDTO} from "./SharedGroupDTO";
 import {Document} from "./Document";
+import {CapitalizePipe} from "../capitalize.pipe";
 
 @Component({
   selector: 'dashboard-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, NgIf, ReactiveFormsModule],
+  imports: [FormsModule, HttpClientModule, NgIf, ReactiveFormsModule, CapitalizePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -242,10 +243,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let current_conversation: number = 0;
     let current_date = this.datePipe.transform(new Date(), 'dd.MM.yyyy');
     this.conversations().forEach((loc_conversation) => {
-      if ((loc_conversation.pdf_id == 0) && loc_conversation.created_on == current_date) {
-        if (current_conversation != 0 || current_conversation < loc_conversation.id) {
-          current_conversation = loc_conversation.id;
-        }
+      if ((loc_conversation.pdf_id == 0)) {
+        current_conversation = loc_conversation.id;
       }
     });
     if (current_conversation == 0) {

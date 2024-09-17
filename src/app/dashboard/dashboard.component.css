@@ -6,17 +6,17 @@
 
 
 .document_header_content {
-  background-color: #444654;
-  color: white;
+
+  color: black;
   font-weight: normal;
-  border-bottom: white solid 1px;
+  border-bottom: lightgray solid 1px;
   padding-top: 13px;
 }
 
 
 .document_text_content {
-  background-color: #444654;
-  color: white;
+
+  color: black;
 
 }
 
@@ -26,71 +26,30 @@
 }
 
 .accordion-button {
-  background-color: #444654;
+  background-color: #dcdddf;
+  color: black;
 }
 
 .accordion-button:focus {
   box-shadow: 0 0 0 0.25rem #444654;
 }
 
-
-.accordion-button.collapsed {
-  background-color: white !important;
-  color: #444654;
-
-
-}
-
-.accordion-button:not(.collapsed) {
-
-  color: white;
-}
-
-.addconversation {
-  width: 24px;
-  height: 24px;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-right: 24px;
-}
-
-.addconversationtext {
-  margin-top: 13px;
-  margin-left: 10px;
-  align-content: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .form-container {
   display: flex;
   justify-content: space-between;
+  margin: 5px;
 }
 
 .form-container form {
   flex: 1;
   margin-right: 20px; /* Adjust the margin as needed */
+  margin-top: 10px;
 }
 
-.form-container form:last-child {
-  margin-right: 0;
-}
-
-.line-separator {
-  border-bottom: 1px solid #ccc;
-  margin: 10px 0;
-}
-
-.shares_title{
-  font-size: 16px !important;
-
-  text-align: center;
-
-}
 .link_summary {
-  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));          /* Text color */
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1)); /* Text color */
   text-decoration: underline; /* Underline text to mimic a link */
-  cursor: pointer;          /* Mouse pointer to indicate clickable element */
+  cursor: pointer; /* Mouse pointer to indicate clickable element */
 
   /* Common styles for typical <a> elements */
   display: inline;
@@ -100,8 +59,8 @@
 
 /* Adding hover effect to emphasize the link behavior */
 .link_summary:hover {
-  color: #0000EE;          /* Typically, links become blue on hover */
-  text-decoration: none;   /* Sometimes links lose their underline on hover */
+  color: #0000EE; /* Typically, links become blue on hover */
+  text-decoration: none; /* Sometimes links lose their underline on hover */
   cursor: pointer; /* Ensure pointer cursor on focus/active */
 }
 
@@ -109,19 +68,40 @@
 .link_summary:focus,
 .link_summary:active {
   outline: 1px dotted #0000EE; /* Show an outline to indicate focus */
-  color: #EE0000;              /* Change color if active */
+  color: #EE0000; /* Change color if active */
   cursor: pointer; /* Ensure pointer cursor on focus/active */
 }
 
-.dashboard-container{
+.dashboard-container {
   margin-top: 20px;
 }
 
-.refresh-dashboard{
-  text-align: end;
+.refresh-dashboard {
+  color: black;
+  text-align: start;
   padding-right: 4px !important;
   padding-bottom: 4px !important;
   cursor: pointer; /* Ensure pointer cursor on focus/active */
 
 }
+
+.pdf_button {
+  width: 100%;
+}
+
+.refresh-dashboard-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.shares_title{
+  margin-bottom: 10px;
+  background-color: #F8F9FA;
+}
+
+.share_item{
+  margin-bottom: 5px;
+}
+
 

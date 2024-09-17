@@ -31,13 +31,29 @@ export class ShareComponent implements OnInit {
   protected selectedGroup: WritableSignal<SharedGroup | null> = signal(null);
   protected groupName: WritableSignal<string> = signal("");
   protected isInputValid = computed(() => {
-    return this.groupName().trim().length > 0;
+    let group = this.groupName();
+    if (group == null)
+      return false;
+    return group.trim().length > 0;
   })
   /*********************************************************************************************************************/
   protected documents: WritableSignal<Document[] | null> = signal(null);
-  protected documentAddedModel: any;
+  protected documentAddedModel: WritableSignal<Document | null> = signal(null);
+  protected isDocumentAddedModelValid = computed(() => {
+    let doc = this.documentAddedModel();
+    if (doc == null|| (doc as Document).name == undefined )
+      return false;
+    return doc.name.trim().length > 0;
+  })
   /*********************************************************************************************************************/
-  protected userAddedModel: any;
+  protected userAddedModel: WritableSignal<User | null> = signal(null);
+
+  protected isUerAddedModelValid = computed(() => {
+    let user = this.userAddedModel();
+    if (user == null || (user as User).cn == undefined )
+      return false;
+    return user.cn.trim().length > 0;
+  })
   protected users: WritableSignal<User[] | null> = signal(null);
   private groupUrl: string
   private sharedGroupDocuments: SharedGroupDocument[] = [];
@@ -63,7 +79,7 @@ export class ShareComponent implements OnInit {
 
     this.statemanagerService.chatEnabled.set(false);
 
-    this.documentService.fetchDocuments(this.userContextService.getUserID()(),DocumentType.ALL).subscribe({
+    this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.ALL).subscribe({
       next: (result: Document[]) => {
 
         this.documentList = result;
@@ -125,7 +141,8 @@ export class ShareComponent implements OnInit {
 
   reload() {
     this.groupName.set("");
-    this.userAddedModel = "";
+    this.userAddedModel.set(null)
+    this.documentAddedModel.set(null)
     this.loadGroups();
 
   }
@@ -170,7 +187,10 @@ export class ShareComponent implements OnInit {
     let group_id = this.selectedGroup()?.id;
     if (group_id == null)
       return
-    let newGroup = new SharedGroupUser(group_id, this.userAddedModel.cn, this.getCurrentDateFormatted())
+    let user = this.userAddedModel();
+    if (user == null)
+      return;
+    let newGroup = new SharedGroupUser(group_id, user.cn, this.getCurrentDateFormatted())
 
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
@@ -178,7 +198,7 @@ export class ShareComponent implements OnInit {
       .subscribe({
         next: (assistant) => {
           this.loadUserForGroup(group_id)
-          this.userAddedModel = "";
+          this.userAddedModel.set(null);
         },
         error: (err) => {
           console.error(err);
@@ -191,7 +211,10 @@ export class ShareComponent implements OnInit {
     let group_id = this.selectedGroup()?.id;
     if (group_id == null)
       return
-    let newGroup = new SharedGroupDocument(group_id, this.documentAddedModel.id.toString(), this.getCurrentDateFormatted())
+    let document = this.documentAddedModel()
+    if (document == null)
+      return;
+    let newGroup = new SharedGroupDocument(group_id, document.id.toString(), this.getCurrentDateFormatted())
 
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
@@ -199,7 +222,7 @@ export class ShareComponent implements OnInit {
       .subscribe({
         next: (assistant) => {
           this.loadDocumentForGroup(group_id)
-          this.documentAddedModel = "";
+          this.documentAddedModel.set(null)
         },
         error: (err) => {
           console.error(err);

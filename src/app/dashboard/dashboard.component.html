@@ -1,74 +1,18 @@
 <div class="dashboard-container">
-  <div class="refresh-dashboard" (click)="refreshDashboard()"><i class="bi bi-arrow-clockwise"></i> Refresh</div>
+  <div class="refresh-dashboard-container">
+    <button class="refresh-dashboard" (click)="refreshDashboard()"> Refresh</button>
+  </div>
   <div class="accordion" id="accordionExample">
+
     <div class="accordion-item">
       <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                aria-expanded="false" aria-controls="collapseOne">
-          Conversations
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-        <div style="display: inline-flex; width: 100%;justify-content: flex-end;">
-          <div class="addconversationtext">Add conversation</div>
-          <div (click)="addConversation()" class="addconversation">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-              <path
-                d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
-            </svg>
-          </div>
-
-        </div>
-        <div class="accordion-body">
-          <table class="table table-borderless table_documnents">
-            <thead>
-            <tr>
-              <th class="document_header_content">Name</th>
-              <th class="document_header_content">Created</th>
-              <th class="document_header_content">Document name</th>
-              <th class="document_header_content">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-
-              @for (message of conversations(); track message; let index = $index) {
-                <tr class=".bg-transparent mt-5">
-                  <td class="document_text_content document_text_content_selectable">
-                    @if (message.pdf_id == 0) {
-                      <p (click)="setConversation(message.id)">{{ message.description }}</p>
-                    } @else {
-                      <p (click)="setDocumentConversation(message.id,message.pdf_id)">{{ message.description }}</p>
-
-                    }
-                  </td>
-                  <td class="document_text_content">
-                    {{ message.created_on }}
-                  </td>
-                  <td class="document_text_content">
-                    {{ message.pdf_name }}
-                  </td>
-                  <td class="document_text_content">
-                    <button class="btn btn-danger" [disabled]="isCurrentConversation(message.id) "
-                            (click)="deleteConversation(message.id)">Delete
-                    </button>
-                  </td>
-                </tr>
-              }
-
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo"
                 aria-expanded="true" aria-controls="collapseTwo">
           My Documents
         </button>
       </h2>
-      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
         <div class="accordion-body">
 
           <table class="table table-borderless table_documnents">
@@ -86,13 +30,13 @@
               @for (document of documents(); track document; let index = $index) {
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
-                    <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name }} </a>
+                    <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
                   </td>
                   <td class="document_text_content">
                     @if (document.summary_status == DocumentStatus.COMPLETED) {
-                      <div class="link_summary" (click)="onDisplayPDF($event,  document.summary_id)">View</div>
+                      <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
                     } @else if (document.summary_status == DocumentStatus.NONE) {
-                      <div class="link_summary" (click)="createSummaryJob($event,  document.id)">Request</div>
+                      <button class="pdf_button" (click)="createSummaryJob($event,  document.id)">Request</button>
                     } @else {
                       {{ document.summary_status }}
                     }
@@ -126,7 +70,7 @@
           <table class="table table-borderless table_documnents">
             <thead>
             <tr>
-              <th class="document_header_content">Document</th>
+              <th class="document_header_content">Summary</th>
               <th class="document_header_content">Owner</th>
               <th class="document_header_content">Date uploaded</th>
               <th class="document_header_content">Action</th>
@@ -138,7 +82,7 @@
               @for (summary of summaries(); track document; let index = $index) {
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
-                    <a href (click)="onDisplayPDF($event,  summary.id)">{{ summary.name }} </a>
+                    <a href (click)="onDisplayPDF($event,  summary.id)">{{ summary.name |capitalize }} </a>
                   </td>
                   <td class="document_text_content">
                     {{ summary.owner }}
@@ -165,40 +109,36 @@
             Search perimeter
           </button>
         </h2>
-        <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionPerimeter">
-          <div class="accordion-body">
 
-            <div class="form-container">
+        <div class="form-container">
 
-              <form [formGroup]="formLeft">
-                <div class="shares_title">Groups</div>
-                <div class="line-separator"></div>
-                <div formArrayName="checkboxesLeft" class="form-check form-switch">
-                  @for (checkbox of checkboxesFormLeftArray.controls; track checkbox; let index = $index) {
-                    <div [formGroupName]="index">
-                      <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
-                      <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
-                    </div>
-                  }
+          <form [formGroup]="formLeft">
+            <div class="shares_title">Groups</div>
+            <div class="line-separator"></div>
+            <div formArrayName="checkboxesLeft" class="form-check form-switch">
+              @for (checkbox of checkboxesFormLeftArray.controls; track checkbox; let index = $index) {
+                <div [formGroupName]="index" class="share_item">
+                  <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
+                  <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
                 </div>
-              </form>
-              <form [formGroup]="formRight">
-                <div class="shares_title">Shares</div>
-                <div class="line-separator"></div>
-                <div formArrayName="checkboxesRight" class="form-check form-switch">
-                  @for (checkbox of checkboxesFormRightArray.controls; track checkbox; let index = $index) {
-                    <div [formGroupName]="index">
-                      <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
-                      <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
-                    </div>
-                  }
-                </div>
-              </form>
+              }
             </div>
-
-
-          </div>
+          </form>
+          <form [formGroup]="formRight">
+            <div class="shares_title">Shares</div>
+            <div class="line-separator"></div>
+            <div formArrayName="checkboxesRight" class="form-check form-switch">
+              @for (checkbox of checkboxesFormRightArray.controls; track checkbox; let index = $index) {
+                <div [formGroupName]="index" class="share_item">
+                  <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
+                  <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
+                </div>
+              }
+            </div>
+          </form>
         </div>
+
+
       </div>
 
     </div>

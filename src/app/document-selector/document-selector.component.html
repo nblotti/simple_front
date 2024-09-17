@@ -21,9 +21,9 @@
                   <tbody>
                     @for (element of this.elementsZone1(); track element) {
                       <tr class=" .bg-transparent mt-5" (dblclick)="selectElement(element, 1)">
-                        <td class="document_text_content">{{ element.name }}</td>
+                        <td class="document_text_content">{{ element.name | capitalize}}</td>
                         <td class="document_action_content">
-                          <button class="btn btn-secondary" (click)="selectElement(element, 1)">Add</button>
+                          <button  (click)="selectElement(element, 1)">Add</button>
                         </td>
                       </tr>
                     }
@@ -52,7 +52,7 @@
                   <tbody>
                     @for (element of this.selectedElementsZone1(); track element) {
                       <tr class=" .bg-transparent mt-5" (dblclick)="removeElement(element, 1)">
-                        <td class="document_text_content">{{ element.document_name }}</td>
+                        <td class="document_text_content">{{ element.document_name | capitalize}}</td>
                         <td class="document_action_content">
                           <button class="btn btn-danger" (click)="removeElement(element, 1)">Remove</button>
                         </td>
@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="closeWindow()">Close</button>
+        <button type="button" (click)="closeWindow()">Close</button>
       </div>
     </div>
   </div>

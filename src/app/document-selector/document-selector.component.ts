@@ -3,6 +3,7 @@ import {UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentType} from "../document.service";
 import {Document} from "../share/Document";
 import {Assistant, AssistantService} from "../assistant/assistant.service";
+import {CapitalizePipe} from "../capitalize.pipe";
 
 
 interface Element {
@@ -22,7 +23,9 @@ interface AssistantDocument {
 @Component({
   selector: 'app-document-selector',
   standalone: true,
-  imports: [],
+  imports: [
+    CapitalizePipe
+  ],
   templateUrl: './document-selector.component.html',
   styleUrl: './document-selector.component.css'
 })

@@ -5,6 +5,7 @@
 
 .custom-select-container {
   width: 100%;
+  color: black;
 }
 
 
@@ -13,10 +14,9 @@
   padding: 8px;
   font-size: 16px;
   box-sizing: border-box;
+  background-color: #dcdddf;
 }
-.custom-select:focus {
-  color: #0d6efd; /* Change this to your desired color */
-}
+
 
 
 select {
@@ -26,22 +26,9 @@ select {
 }
 
 .assistant-btn-class {
-  border-color: lightgray;
+  border: 1px solid lightgray;
   width: 100%;
-  color: lightgray;
-
   height: 40px;
-  border-radius: 5px; /* You can adjust the value as needed */
-  padding: 5px; /* Adding some padding can help with the overall look */
-  border: none; /* Adding a border to ensure visibility */
   text-align: center;
 }
 
-
-.custom-option {
-  /*background-color: #dc3545; /* Background color of dropdown options */
-  background-color:#444654;;
-  color: lightgray; /* Text color of dropdown options */
-  height: 50px;
-
-}

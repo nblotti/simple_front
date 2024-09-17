@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-wrap: wrap;
+  color:black;
 }
 
 h2 {
@@ -37,4 +38,35 @@ h2 {
 
 .bi-trash {
   color: red;
+}
+
+.share_th{
+  background-color:  #F8F9FA;
+}
+
+.label_share{
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+
+.button_share{
+  margin-top: 10px;
+}
+
+.share_container {
+  display: flex;
+  flex-direction: column;  /* Stack children vertically */
+}
+
+
+
+/* New CSS class to align button to the end (right) */
+.align-end {
+  align-self: flex-end;
+  margin-top: 10px; /* Adds margin to keep a bit of space between input and button */
+}
+
+/* Ensure the input takes full width */
+input.form-control {
+  width: 100%;
 }

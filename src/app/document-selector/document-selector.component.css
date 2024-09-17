@@ -19,10 +19,9 @@
 
 .modal-content {
   padding: 20px;
-  background-color: #444654;
 }
 .modal-title{
-  color: #0d6efd;
+  color: black;
 }
 
 /* Add spacing between the column headers and lists */
@@ -56,8 +55,8 @@ ul.list-group {
 
 
 .document_header_content {
-  background-color: #444654;
-  color: white;
+  background-color: #F8F9FA;
+  color: black;
   font-weight: normal;
   border-bottom: white solid 1px;
   padding-top: 13px;
@@ -65,8 +64,8 @@ ul.list-group {
 }
 
 .document_header_action_content{
-  background-color: #444654;
-  color: white;
+  background-color: #F8F9FA;;
+  color: black;
   font-weight: normal;
   border-bottom: white solid 1px;
   padding-top: 13px;
@@ -76,14 +75,14 @@ ul.list-group {
 
 
 .document_text_content {
-  background-color: #444654;
-  color: white;
-
+  background-color: white;
+  color: black;
+  cursor: pointer;
 }
 
 .document_action_content {
-  background-color: #444654;
-  color: white;
+  background-color: white;
+  color: black;
   display: flex;
   justify-content: flex-end;
 
@@ -101,8 +100,6 @@ ul.list-group {
 
 .column-container{
   background-color: white;
-  border-left: 1px #444654 inset ;
-  border-right: 1px #444654 inset ;
 }
 
 
