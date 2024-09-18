@@ -15,13 +15,15 @@ import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
 import {ShareState} from "./share/ShareState";
 import {DocumentService} from "./document.service";
+import {NavigationStateService} from "./document-screen/navigation-state.service";
+import {PdfViewerModule} from "ng2-pdf-viewer";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
-  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive, PdfViewerModule],
   providers: [NgEventBus, DatePipe, DashboardState, AssistantState, ShareState, StateManagerService,
-    ConversationService, AssistantService, LoginComponent, DocumentService],
+    ConversationService, AssistantService, LoginComponent, DocumentService, NavigationStateService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 

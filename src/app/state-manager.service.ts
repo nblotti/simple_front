@@ -6,6 +6,7 @@ import {DashboardState} from "./dashboard/DashboardState";
 import {ScreenReadyMessage} from "./chat/SreenReadyMessage";
 import {AssistantState} from "./assistant/AssistantState";
 import {ShareState} from "./share/ShareState";
+import {NavigationStateService} from "./document-screen/navigation-state.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ import {ShareState} from "./share/ShareState";
 export class StateManagerService implements OnInit {
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
 
-  public chatEnabled : WritableSignal<boolean> =  signal(true);
+  public chatEnabled: WritableSignal<boolean> = signal(true);
 
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     return this.stateManager().getScreenReadyMessages()();
@@ -22,7 +23,8 @@ export class StateManagerService implements OnInit {
   constructor(private conversationService: ConversationService, private router: Router,
               private dashboardState: DashboardState,
               private assistantState: AssistantState,
-              private shareState: ShareState
+              private shareState: ShareState,
+              private navStateService: NavigationStateService
   ) {
   }
 
@@ -44,17 +46,17 @@ export class StateManagerService implements OnInit {
    /* 1a. on a pas de numéro de chat existant pour ce document, on en crée un -> createConversation
    * /2. on envoie les deux messages -> a au chat. b au pdf viewer
    */
-  public loadDocument(documentId: number) {
+  public loadDocument(documentId: number, page: number, content: string) {
     // 1. on charge le numéro de chat ou on le crée
     this.conversationService.loadOrCreateConversationsByDocumentId(documentId).subscribe({
       next: (result) => {
         //on a pas trouvé de conversation, on la crée
         if (result.length == 0) {
           this.conversationService.createConversation(documentId).subscribe(value => {
-            this.loadConversationAndDocument(value.id, documentId)
+            this.loadConversationAndDocument(value.id, documentId, page, content)
           })
         } else {
-          this.loadConversationAndDocument(result[0].id, documentId)
+          this.loadConversationAndDocument(result[0].id, documentId, page, content)
         }
       }, error: (error) => {
         console.error('Delete failed:', error);
@@ -69,12 +71,19 @@ export class StateManagerService implements OnInit {
    /* 2. on charge le pdf viewer
    * /2. on envoie les deux messages ->  au chat. + au pdf viewer
    */
-  public loadConversationAndDocument(conversationId: number, documentId: number) {
+  public loadConversationAndDocument(conversationId: number, documentId: number, page: number, content: string) {
 
     this.conversationService.setCurrentConversation(conversationId)
     this.loadConversationMessages();
-    this.router.navigate(['/docs', documentId, 0]);
+    this.navigateWithState(documentId, page, content);
 
+
+  }
+
+  navigateWithState(documentId: number, page: number, content: string) {
+    const state = { documentId, page, content };
+    this.navStateService.setState(state);  // Store state in the service
+    this.router.navigate(['/docs']);
   }
 
   public loadAssistant() {
@@ -121,6 +130,11 @@ export class StateManagerService implements OnInit {
 
   }
 
+  public setPerimeter(perimeter: string) {
+    this.stateManager().setPerimeter(perimeter)
+
+  }
+
   private loadConversationMessages() {
 
     this.stateManager().loadConversationMessages();
@@ -130,12 +144,8 @@ export class StateManagerService implements OnInit {
   private resetMessages() {
     this.stateManager().clearConversation();
   }
-
-  public setPerimeter(perimeter: string) {
-      this.stateManager().setPerimeter(perimeter)
-
 }
-}
+
 export enum STATES {
   Dashboard = "DASHBOARD",
   Assistant = "ASSISTANT",

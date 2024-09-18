@@ -1,6 +1,5 @@
 export class Document {
 
-
   constructor(public id: string, public name: string, public owner: string, public perimeter: string,
               public created_on: string, public summary_id: string, public summary_status: string,
               public document_type: string) {

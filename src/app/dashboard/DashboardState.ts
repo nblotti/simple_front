@@ -83,7 +83,7 @@ export class DashboardState implements StateInterface {
     if (sources != null)
       sources.forEach(item => {
 
-        let loc_source = new Source(item.blob_id, item.file_name, item.page, item.perimeter)
+        let loc_source = new Source(item.blob_id, item.file_name, item.page, item.perimeter, item.text)
         source_http_url.push(loc_source)
       });
 

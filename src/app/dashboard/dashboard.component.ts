@@ -256,9 +256,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string) {
+  onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
     let page_number = 0;
-    this.stateManagerService.loadDocument(Number(documentId));
+    this.stateManagerService.loadDocument(Number(documentId),page,content);
     $event.preventDefault();
   }
 
@@ -296,9 +296,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.stateManagerService.setCurrentConversation(conversation_id);
   }
 
-  setDocumentConversation(conversation_id: number, pdf_id: number) {
-    this.stateManagerService.loadConversationAndDocument(conversation_id, pdf_id);
-  }
 
   addConversation() {
     this.conversationService.createConversation().subscribe(value => {

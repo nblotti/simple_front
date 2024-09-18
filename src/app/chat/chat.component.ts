@@ -65,15 +65,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   /*********************************************************************************************
    /*Click sur une référence de document  dans le chat
    */
-  displaySource($event
-                  :
-                  MouseEvent, documentId
-                  :
-                  string, page_number
-                  :
-                  number
-  ) {
-    this.statemanagerService.loadDocument(Number(documentId))
+  displaySource($event: MouseEvent, documentId: string, page: number, content: string) {
+    this.statemanagerService.loadDocument(Number(documentId),page,content)
     $event.preventDefault()
   }
 

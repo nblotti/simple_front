@@ -1,4 +1,4 @@
-import {computed, effect, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Conversation} from "./Conversation";
 import {Router} from "@angular/router";
@@ -20,7 +20,6 @@ export class ConversationService {
   private current_conversation: number = 0;
 
   private documentPerimeter: string = "";
-
 
 
   constructor(private httpClient: HttpClient, private router: Router, private globalsService: GlobalsService,
@@ -126,13 +125,15 @@ export class Source {
   file_name: string
   page: number
   perimeter: string
+  text: string
 
 
-  public constructor(blob_id: string, file_name: string, page: number, perimeter: string) {
+  public constructor(blob_id: string, file_name: string, page: number, perimeter: string, text: string) {
     this.blob_id = blob_id;
     this.file_name = file_name;
     this.page = page;
     this.perimeter = perimeter;
+    this.text = text;
 
   }
 }
