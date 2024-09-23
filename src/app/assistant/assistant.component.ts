@@ -34,7 +34,8 @@ export class AssistantComponent implements OnInit {
   @ViewChild('inputName') inputName!: ElementRef;
   options = [
     {value: '3.5', label: 'gpt-3.5'},
-    {value: '4o', label: 'gpt4o'}
+    {value: '4o', label: 'gpt4o'},
+    {value: '4o-mini', label: 'gpt4o-mini'}
   ];
   protected assistants: WritableSignal<Assistant[]>;
   protected selectedCategory: WritableSignal<Assistant>;
