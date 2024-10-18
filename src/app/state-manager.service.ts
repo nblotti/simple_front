@@ -12,10 +12,10 @@ import {NavigationStateService} from "./document-screen/navigation-state.service
   providedIn: 'root'
 })
 export class StateManagerService implements OnInit {
+
+
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
-
   public chatEnabled: WritableSignal<boolean> = signal(true);
-
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     return this.stateManager().getScreenReadyMessages()();
   });
@@ -26,6 +26,16 @@ export class StateManagerService implements OnInit {
               private shareState: ShareState,
               private navStateService: NavigationStateService
   ) {
+  }
+
+  private _blurWindow: WritableSignal<boolean> = signal(false);
+
+  get blurWindow(): WritableSignal<boolean> {
+    return this._blurWindow;
+  }
+
+  set blurWindow(value: WritableSignal<boolean>) {
+    this._blurWindow = value;
   }
 
   ngOnInit(): void {
@@ -81,7 +91,7 @@ export class StateManagerService implements OnInit {
   }
 
   navigateWithState(documentId: number, page: number, content: string) {
-    const state = { documentId, page, content };
+    const state = {documentId, page, content};
     this.navStateService.setState(state);  // Store state in the service
     this.router.navigate(['/docs']);
   }

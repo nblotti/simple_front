@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary toolbar app-toolbar">
+<nav class="navbar navbar-expand-lg bg-body-tertiary toolbar app-toolbar" [class.blurred]="blurWindow()">
   <div class="container-fluid">
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0" *ngIf="usercontextService.isLogged()">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" *ngIf="userContextService.isLogged()">
         <li class="nav-item">
           <a class="nav-link" (click)="loadAssistant()">Assistants</a>
         </li>
@@ -28,7 +28,7 @@
 
 </nav>
 
-<div class="container-fluid full-height-minus-menu app_content">
+<div class="container-fluid full-height-minus-menu app_content" [class.blurred]="showModal">
   <div class="row">
     <!-- Left Sidebar -->
     <div class="h-100 sidebar shared_side" #sidebar *ngIf="isLoggedIn()">
@@ -48,10 +48,7 @@
 
 
 
-
-
-
-  <app-file-upload-dialog [showModal]="showModal" (closeModal)="showModal = false"></app-file-upload-dialog>
-
 </div>
+
+<app-file-upload-dialog [showModal]="showModal" (closeModal)="closeModal()"></app-file-upload-dialog>
 

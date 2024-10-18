@@ -61,10 +61,10 @@ export class AssistantComponent implements OnInit {
     this.assistants = this.assistantService.getAssistants();
     this.selectedCategory = signal<Assistant>(this.assistants()[0]);
 
-      let groups = this.userContextService.getGroups()();
-      if (groups.includes("agp_prod_gpt4")) {
-        this.options.push({value: '4', label: 'gpt4'});
-      }
+    let groups = this.userContextService.getGroups()();
+    if (groups.includes("agp_prod_gpt4")) {
+      this.options.push({value: '4', label: 'gpt4'});
+    }
 
   }
 
@@ -151,5 +151,12 @@ export class AssistantComponent implements OnInit {
 
   showFileSelector() {
     this.showModal = true;
+    this.stateManagerService.blurWindow.set(true);
+
+  }
+
+  closeSelector() {
+    this.showModal = false;
+    this.stateManagerService.blurWindow.set(false);
   }
 }

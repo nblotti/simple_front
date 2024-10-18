@@ -1,4 +1,4 @@
-<div class="assistant-main-class">
+<div class="assistant-main-class" [class.blurred]="showModal">
 
 
     <div class="assistant-name">
@@ -92,4 +92,4 @@
 </div>
 
 <app-document-selector [showModal]="showModal" [assistant]="selectedCategory()"
-                       (closeModal)="showModal = false"></app-document-selector>
+                       (closeModal)="closeSelector()"></app-document-selector>

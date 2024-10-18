@@ -1,4 +1,10 @@
 
+.blurred {
+  filter: blur(5px); /* Adjust the blur intensity here */
+  pointer-events: none; /* Disable interactions with the blurred background */
+  user-select: none; /* Optional: Disable text selection on blurred content */
+  background-color: lightgray;
+}
 
 .app-toolbar {
   height: 40px;
