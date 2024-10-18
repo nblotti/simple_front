@@ -1,7 +1,7 @@
 import {StateInterface} from "../StateInterface";
 import {Component, Signal, signal, WritableSignal} from "@angular/core";
-import {ScreenReadyMessage} from "../chat/SreenReadyMessage";
-import {ConversationService, Source} from "../dashboard/conversation.service";
+import {ScreenReadyMessage} from "../chat-main-screen/SreenReadyMessage";
+import {ConversationService, Source} from "../dashboard-main-screen/conversation.service";
 import {Observable, of} from "rxjs";
 
 

@@ -1,12 +1,12 @@
 import {computed, Injectable, OnInit, signal, Signal, WritableSignal} from '@angular/core';
-import {ConversationService} from "./dashboard/conversation.service";
+import {ConversationService} from "./dashboard-main-screen/conversation.service";
 import {Router} from "@angular/router";
 import {StateInterface} from "./StateInterface";
-import {DashboardState} from "./dashboard/DashboardState";
-import {ScreenReadyMessage} from "./chat/SreenReadyMessage";
+import {DashboardState} from "./dashboard-main-screen/DashboardState";
+import {ScreenReadyMessage} from "./chat-main-screen/SreenReadyMessage";
 import {AssistantState} from "./assistant/AssistantState";
 import {ShareState} from "./share/ShareState";
-import {NavigationStateService} from "./document-screen/navigation-state.service";
+import {NavigationStateService} from "./dashboard-document-screen/navigation-state.service";
 
 @Injectable({
   providedIn: 'root'

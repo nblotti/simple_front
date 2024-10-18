@@ -5,7 +5,7 @@ import {LoginService} from "../auth/login.service";
 import {Router} from "@angular/router";
 import {sha1} from "js-sha1";
 import {QrCodeDialogComponent} from "../qr-code-dialog/qr-code-dialog.component";
-import {FileUploadDialogComponent} from "../file-upload-dialog/file-upload-dialog.component";
+import {FileUploadDialogComponent} from "../dashboard-document-upload/file-upload-dialog.component";
 
 @Component({
   selector: 'app-login',

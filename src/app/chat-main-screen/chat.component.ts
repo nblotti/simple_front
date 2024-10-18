@@ -5,8 +5,8 @@ import {NgEventBus} from 'ng-event-bus';
 import {LineBreakPipe} from "./line-break.pipe";
 import {StateManagerService} from "../state-manager.service";
 import {HighlightJsDirective} from "ngx-highlight-js";
-import {HighlightDirective} from "../highlight/highlight.component";
-import {AppCopyButtonDirective} from "../copy-button/copy-button.component";
+import {HighlightDirective} from "../chat-highlight-content/highlight.component";
+import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 
 
 @Component({

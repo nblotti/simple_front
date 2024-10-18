@@ -13,10 +13,10 @@ import {StateManagerService, STATES} from "../state-manager.service";
 import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 import {Assistant, AssistantService} from "./assistant.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {CustomAssistantSelectComponent} from "../custom-assistant-select/custom-assistant-select.component";
+import {CustomAssistantSelectComponent} from "../assistant-custom-select/custom-assistant-select.component";
 import {UserContextService} from "../auth/user-context.service";
-import {DocumentSelectorComponent} from "../document-selector/document-selector.component";
-import {FileUploadDialogComponent} from "../file-upload-dialog/file-upload-dialog.component";
+import {DocumentSelectorComponent} from "../assistant-document-selector/document-selector.component";
+import {FileUploadDialogComponent} from "../dashboard-document-upload/file-upload-dialog.component";
 
 
 @Component({

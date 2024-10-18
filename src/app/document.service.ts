@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
 import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
-import {Document} from "./dashboard/Document";
-import {FileType} from "./file-upload-dialog/file-upload-dialog.component";
+import {Document} from "./dashboard-main-screen/Document";
+import {FileType} from "./dashboard-document-upload/file-upload-dialog.component";
 
 @Injectable({
   providedIn: 'root'

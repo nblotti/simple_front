@@ -2,22 +2,22 @@ import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
-import {ChatComponent} from "./chat/chat.component";
-import {FileUploadDialogComponent} from "./file-upload-dialog/file-upload-dialog.component";
+import {ChatComponent} from "./chat-main-screen/chat.component";
+import {FileUploadDialogComponent} from "./dashboard-document-upload/file-upload-dialog.component";
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
-import {ConversationService} from "./dashboard/conversation.service";
+import {ConversationService} from "./dashboard-main-screen/conversation.service";
 import {StateManagerService} from "./state-manager.service";
 import {UserContextService} from "./auth/user-context.service";
 import {LoginComponent} from "./login/login.component";
-import {DashboardState} from "./dashboard/DashboardState";
+import {DashboardState} from "./dashboard-main-screen/DashboardState";
 import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
 import {ShareState} from "./share/ShareState";
 import {DocumentService} from "./document.service";
-import {NavigationStateService} from "./document-screen/navigation-state.service";
+import {NavigationStateService} from "./dashboard-document-screen/navigation-state.service";
 import {PdfViewerModule} from "ng2-pdf-viewer";
-import {DocumentSelectorComponent} from "./document-selector/document-selector.component";
+import {DocumentSelectorComponent} from "./assistant-document-selector/document-selector.component";
 
 @Component({
   selector: 'root',

@@ -1,4 +1,4 @@
-import {ScreenReadyMessage} from "./chat/SreenReadyMessage";
+import {ScreenReadyMessage} from "./chat-main-screen/SreenReadyMessage";
 import {Signal, WritableSignal} from "@angular/core";
 import {Observable} from "rxjs";
 

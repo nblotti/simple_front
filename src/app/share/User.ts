@@ -1,4 +1,4 @@
-import {Source} from "../dashboard/conversation.service";
+import {Source} from "../dashboard-main-screen/conversation.service";
 
 export class User {
 
