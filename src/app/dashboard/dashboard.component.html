@@ -45,7 +45,7 @@
                     {{ document.created_on }}
                   </td>
                   <td class="document_text_content">
-                    <button class="btn btn-danger" (click)="deleteDocument(document.id)">Delete</button>
+                    <button class="pdf_button_delete"  (click)="deleteDocument(document.id)">Delete</button>
                   </td>
                 </tr>
               }
@@ -91,7 +91,7 @@
                     {{ summary.created_on }}
                   </td>
                   <td class="document_text_content">
-                    <button class="btn btn-danger" (click)="deleteDocument(summary.id)">Delete</button>
+                    <button class="pdf_button_delete"  (click)="deleteDocument(summary.id)">Delete</button>
                   </td>
                 </tr>
               }

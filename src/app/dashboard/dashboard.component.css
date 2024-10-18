@@ -89,6 +89,11 @@
   width: 100%;
 }
 
+.pdf_button_delete{
+  border-color: red;
+  color: red;
+}
+
 .refresh-dashboard-container {
   display: flex;
   justify-content: flex-end;

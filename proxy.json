@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://gpt.azqore.com",
+    "target": "http://localhost:8000",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",

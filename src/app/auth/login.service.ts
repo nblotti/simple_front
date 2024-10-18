@@ -93,9 +93,9 @@ export class LoginService {
 
   extractTokens(data: any[]) {
     return data.map(item => {
-      const id = item[1].toString();
-      const label = item[2].toString();
-      const enabled = item[3] && item[3] == true ? true : false;
+      const id = item.category_id;
+      const label = item.category_name;
+      const enabled = item.enabled;
       return new UserCategory(id, label, enabled);
     });
   }
