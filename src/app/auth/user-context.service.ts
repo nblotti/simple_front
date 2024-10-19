@@ -57,13 +57,13 @@ export class UserContextService {
 export class UserCategory {
 
   id: string;
-  label: string;
+  name: string;
   value: boolean;
   owner: string;
 
-  constructor(id: string, label: string, value: boolean = false, owner = "") {
+  constructor(id: string, name: string, value: boolean = false, owner = "") {
     this.id = id;
-    this.label = label;
+    this.name = name;
     this.value = value;
     this.owner = owner;
   }

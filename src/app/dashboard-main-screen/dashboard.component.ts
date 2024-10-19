@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private httpClient: HttpClient
   ) {
 
-    this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroupuser/"
+    this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroup/"
 
     this.formPerimeter = this.fb.group({
       checkboxesPerimeter: this.fb.array([]) // Initialize the FormArray
@@ -97,13 +97,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadGroups() {
 
-    let url = this.groupUrl + "user/" + this.userContextService.getUserID()() + "/"
+    let url = this.groupUrl + "group/user/" + this.userContextService.getUserID()() + "/"
     this.httpClient.get<SharedGroupDTO[]>(url)
       .subscribe({
         next: (groups) => {
           let categories: UserCategory[] = []
           groups.forEach(group => {
-            categories.push(new UserCategory(group.group_id, group.name, false, group.owner))
+            categories.push(new UserCategory(group.id, group.name, false, group.owner))
           })
           this.unsubscribeFromShareFormValueChanges()
           this.initialShareCheckboxes = categories;
@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   createPerimeterCheckboxControl(item: UserCategory): FormGroup {
     return this.fb.group({
       id: item.id,
-      label: item.label,
+      label: item.name,
       value: item.value
     });
   }
@@ -144,7 +144,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   createShareCheckboxControl(item: UserCategory): FormGroup {
     return this.fb.group({
       id: item.id,
-      label: item.label,
+      label: item.name,
       value: item.value
     });
   }

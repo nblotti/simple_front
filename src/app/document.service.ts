@@ -44,7 +44,7 @@ export class DocumentService {
   }
 
   fetchSharedDocuments(perimeter: string): Observable<SharedDocument[]> {
-    let url = this.documents_base_url + "shared/" + perimeter + "/";
+    let url = this.documents_base_url + "shared/" + perimeter ;
 
     return this.http.get<SharedDocument[]>(url).pipe(
       map((documents: SharedDocument[]) => {
