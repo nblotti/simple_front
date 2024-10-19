@@ -6,11 +6,34 @@
       </div>
       <div class="modal-body">
         <div class="row">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'home'"
+                (click)="setActiveTab('my_document')"
+                href="javascript:void(0);"
+              >My Documents</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'profile'"
+                (click)="setActiveTab('shared_document')"
+                href="javascript:void(0);"
+              >Shared Documents</a
+              >
+            </li>
+          </ul>
           <!-- Left Zones -->
-          <div class="col-6 column-container">
-            <div class="row table-container">
+          <div class="col-6 column-container tab-content" id="myTabContent">
+            <div class="row table-container tab-pane"
+                 [class.active]="activeTab === 'my_document'"
+                 [class.show]="activeTab === 'my_document'"
+                 id="my_document"
+            >
               <div class="col-12">
-                <h5>My documents</h5>
                 <table class="table table-borderless table_documnents">
                   <thead>
                   <tr>
@@ -19,11 +42,41 @@
                   </tr>
                   </thead>
                   <tbody>
-                    @for (element of this.elementsZone1(); track element) {
-                      <tr class=" .bg-transparent mt-5" (dblclick)="selectElement(element, 1)">
-                        <td class="document_text_content">{{ element.name | capitalize}}</td>
+                    @for (element of this.elementsMyDocuments(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="selectDocumentElement(element)">
+                        <td class="document_text_content">{{ element.name | capitalize }}</td>
                         <td class="document_action_content">
-                          <button  (click)="selectElement(element, 1)">Add</button>
+                          <button (click)="selectDocumentElement(element)">Add</button>
+                        </td>
+                      </tr>
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-12">
+                <h5></h5>
+              </div>
+            </div>
+            <div class="row table-container tab-pane"
+                 [class.active]="activeTab === 'shared_document'"
+                 [class.show]="activeTab === 'shared_document'"
+                 id="shared_document"
+            >
+              <div class="col-12">
+                <table class="table table-borderless table_documnents">
+                  <thead>
+                  <tr>
+                    <th class="document_header_content">Document</th>
+                    <th class="document_header_action_content">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (element of this.elementsSharedDocuments(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="selectSharedElement(element)">
+                        <td class="document_text_content">{{ element.name | capitalize }}</td>
+                        <td class="document_action_content">
+                          <button (click)="selectSharedElement(element)">Add</button>
                         </td>
                       </tr>
                     }
@@ -40,7 +93,7 @@
           <div class="col-6 column-container">
             <div class="row table-container">
               <div class="col-12">
-                <h5>Search perimeter</h5>
+
 
                 <table class="table table-borderless table_documnents">
                   <thead>
@@ -50,11 +103,11 @@
                   </tr>
                   </thead>
                   <tbody>
-                    @for (element of this.selectedElementsZone1(); track element) {
-                      <tr class=" .bg-transparent mt-5" (dblclick)="removeElement(element, 1)">
-                        <td class="document_text_content">{{ element.document_name | capitalize}}</td>
+                    @for (element of this.selectedDocuments(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="removeElement(element)">
+                        <td class="document_text_content">{{ element.document_name | capitalize }}</td>
                         <td class="document_action_content">
-                          <button class="btn btn-danger" (click)="removeElement(element, 1)">Remove</button>
+                          <button class="btn btn-danger" (click)="removeElement(element)">Remove</button>
                         </td>
                       </tr>
                     }

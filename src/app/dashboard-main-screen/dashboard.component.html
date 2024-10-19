@@ -112,11 +112,11 @@
 
         <div class="form-container">
 
-          <form [formGroup]="formLeft">
+          <form [formGroup]="formPerimeter">
             <div class="shares_title">Groups</div>
             <div class="line-separator"></div>
-            <div formArrayName="checkboxesLeft" class="form-check form-switch">
-              @for (checkbox of checkboxesFormLeftArray.controls; track checkbox; let index = $index) {
+            <div formArrayName="checkboxesPerimeter" class="form-check form-switch">
+              @for (checkbox of checkboxesFormPerimeterArray.controls; track checkbox; let index = $index) {
                 <div [formGroupName]="index" class="share_item">
                   <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
                   <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
@@ -124,11 +124,11 @@
               }
             </div>
           </form>
-          <form [formGroup]="formRight">
+          <form [formGroup]="formShare">
             <div class="shares_title">Shares</div>
             <div class="line-separator"></div>
-            <div formArrayName="checkboxesRight" class="form-check form-switch">
-              @for (checkbox of checkboxesFormRightArray.controls; track checkbox; let index = $index) {
+            <div formArrayName="checkboxesShare" class="form-check form-switch">
+              @for (checkbox of checkboxesFormShareArray.controls; track checkbox; let index = $index) {
                 <div [formGroupName]="index" class="share_item">
                   <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
                   <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>

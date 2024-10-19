@@ -329,7 +329,7 @@ export class ShareComponent implements OnInit {
       return;
 
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    this.httpClient.delete(this.sharedGroupDocumentUrl, {headers, body: deleteGroup}).subscribe({
+    this.httpClient.delete(this.sharedGroupDocumentUrl +deleteGroup.id + "/", {headers}).subscribe({
       next: (assistant) => {
         if (groupId != null)
           this.loadDocumentForGroup(groupId)

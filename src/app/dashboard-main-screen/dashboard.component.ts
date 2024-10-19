@@ -25,14 +25,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly conversations: WritableSignal<Conversation[]> = signal([]);
   readonly documents: WritableSignal<Document[]> = signal([]);
   readonly summaries: WritableSignal<Document[]> = signal([]);
-  formLeft: FormGroup;
-  formRight: FormGroup;
-  initialLeftCheckboxes: UserCategory[] = [];
-  initialRightCheckboxes: UserCategory[] = [];
+  formPerimeter: FormGroup;
+  formShare: FormGroup;
+  initialPerimeterCheckboxes: UserCategory[] = [];
+  initialShareCheckboxes: UserCategory[] = [];
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
-  private formLeftValueChangesSubscription: Subscription | undefined;
-  private formRightValueChangesSubscription: Subscription | undefined;
+  private formPerimeterValueChangesSubscription: Subscription | undefined;
+  private formShareValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
 
   constructor(
@@ -49,11 +49,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroupuser/"
 
-    this.formLeft = this.fb.group({
-      checkboxesLeft: this.fb.array([]) // Initialize the FormArray
+    this.formPerimeter = this.fb.group({
+      checkboxesPerimeter: this.fb.array([]) // Initialize the FormArray
     });
-    this.formRight = this.fb.group({
-      checkboxesRight: this.fb.array([]) // Initialize the FormArray
+    this.formShare = this.fb.group({
+      checkboxesShare: this.fb.array([]) // Initialize the FormArray
     });
 
 
@@ -63,17 +63,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  get checkboxesFormLeftArray() {
-    return this.formLeft.get('checkboxesLeft') as FormArray;
+  get checkboxesFormPerimeterArray() {
+    return this.formPerimeter.get('checkboxesPerimeter') as FormArray;
   }
 
-  get checkboxesFormRightArray() {
-    return this.formRight.get('checkboxesRight') as FormArray;
+  get checkboxesFormShareArray() {
+    return this.formShare.get('checkboxesShare') as FormArray;
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeFromLeftFormValueChanges();
-    this.unsubscribeFromRightFormValueChanges();
+    this.unsubscribeFromPerimeterFormValueChanges();
+    this.unsubscribeFromShareFormValueChanges();
   }
 
   ngOnInit() {
@@ -85,12 +85,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadCategories() {
-    this.unsubscribeFromLeftFormValueChanges();
-    this.initialLeftCheckboxes = this.userContextService.userCategories();
+    this.unsubscribeFromPerimeterFormValueChanges();
+    this.initialPerimeterCheckboxes = this.userContextService.userCategories();
     //on ajoute les checkbox dans la forme
-    this.addLeftCheckboxes(this.initialLeftCheckboxes);
+    this.addPerimeterCheckboxes(this.initialPerimeterCheckboxes);
     //on s'inscrit pour le changement
-    this.initializeLeftValueChangesSubscription();
+    this.initializePerimeterValueChangesSubscription();
     this.setPerimeter();
 
   }
@@ -105,10 +105,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           groups.forEach(group => {
             categories.push(new UserCategory(group.group_id, group.name, false, group.owner))
           })
-          this.unsubscribeFromRightFormValueChanges()
-          this.initialRightCheckboxes = categories;
-          this.addRightCheckboxes(this.initialRightCheckboxes);
-          this.initializeRightValueChangesSubscription();
+          this.unsubscribeFromShareFormValueChanges()
+          this.initialShareCheckboxes = categories;
+          this.addShareCheckboxes(this.initialShareCheckboxes);
+          this.initializeShareValueChangesSubscription();
           this.reload();
         },
         error: (err) => {
@@ -118,22 +118,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  addLeftCheckboxes(items: UserCategory[]) {
-    this.checkboxesFormLeftArray.clear();
+  addPerimeterCheckboxes(items: UserCategory[]) {
+    this.checkboxesFormPerimeterArray.clear();
     items.forEach(item => {
-      this.checkboxesFormLeftArray.push(this.createLeftCheckboxControl(item));
+      this.checkboxesFormPerimeterArray.push(this.createPerimeterCheckboxControl(item));
     });
   }
 
-  addRightCheckboxes(items: UserCategory[]) {
+  addShareCheckboxes(items: UserCategory[]) {
 
-    this.checkboxesFormRightArray.clear();
+    this.checkboxesFormShareArray.clear();
     items.forEach(item => {
-      this.checkboxesFormRightArray.push(this.createRightCheckboxControl(item));
+      this.checkboxesFormShareArray.push(this.createShareCheckboxControl(item));
     });
   }
 
-  createLeftCheckboxControl(item: UserCategory): FormGroup {
+  createPerimeterCheckboxControl(item: UserCategory): FormGroup {
     return this.fb.group({
       id: item.id,
       label: item.label,
@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  createRightCheckboxControl(item: UserCategory): FormGroup {
+  createShareCheckboxControl(item: UserCategory): FormGroup {
     return this.fb.group({
       id: item.id,
       label: item.label,
@@ -150,30 +150,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   // Method to check if at least one checkbox is selected
-  anyCheckboxLeftChecked(): boolean {
-    return this.checkboxesFormLeftArray.controls.some(control => control.get('value')?.value);
+  anyCheckboxPerimeterChecked(): boolean {
+    return this.checkboxesFormPerimeterArray.controls.some(control => control.get('value')?.value);
   }
 
   // Method to initialize subscription to form value changes
-  initializeLeftValueChangesSubscription() {
-    this.formLeftValueChangesSubscription = this.formLeft.valueChanges.subscribe(values => {
+  initializePerimeterValueChangesSubscription() {
+    this.formPerimeterValueChangesSubscription = this.formPerimeter.valueChanges.subscribe(values => {
       // dans le cas ou aucune checkbox n'est active
-      if (!this.anyCheckboxLeftChecked()) {
-        const checkboxesArray = this.checkboxesFormLeftArray.controls;
+      if (!this.anyCheckboxPerimeterChecked()) {
+        const checkboxesArray = this.checkboxesFormPerimeterArray.controls;
 
-        for (let i = 0; i < this.initialLeftCheckboxes.length; i++) {
+        for (let i = 0; i < this.initialPerimeterCheckboxes.length; i++) {
           let currentcb = checkboxesArray[i].get('value');
           if (currentcb != null)
-            currentcb.setValue(this.initialLeftCheckboxes[i].value); // Setting all checkboxes to checked
+            currentcb.setValue(this.initialPerimeterCheckboxes[i].value);
 
         }
 
       } else {
-        const changedIndex = values.checkboxesLeft.findIndex((checkbox: any, index: number) =>
-          checkbox.value !== this.initialLeftCheckboxes[index].value
+        const changedIndex = values.checkboxesPerimeter.findIndex((checkbox: any, index: number) =>
+          checkbox.value !== this.initialPerimeterCheckboxes[index].value
         );
         if (changedIndex !== -1) {
-          this.initialLeftCheckboxes[changedIndex].value = !this.initialLeftCheckboxes[changedIndex].value;
+          this.initialPerimeterCheckboxes[changedIndex].value = !this.initialPerimeterCheckboxes[changedIndex].value;
           this.setPerimeter()
         }
       }
@@ -181,13 +181,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  initializeRightValueChangesSubscription() {
-    this.formRightValueChangesSubscription = this.formRight.valueChanges.subscribe(values => {
-      const changedIndex = values.checkboxesRight.findIndex((checkbox: any, index: number) =>
-        checkbox.value !== this.initialRightCheckboxes[index].value
+  initializeShareValueChangesSubscription() {
+    this.formShareValueChangesSubscription = this.formShare.valueChanges.subscribe(values => {
+      const changedIndex = values.checkboxesShare.findIndex((checkbox: any, index: number) =>
+        checkbox.value !== this.initialShareCheckboxes[index].value
       );
       if (changedIndex !== -1) {
-        this.initialRightCheckboxes[changedIndex].value = !this.initialRightCheckboxes[changedIndex].value;
+        this.initialShareCheckboxes[changedIndex].value = !this.initialShareCheckboxes[changedIndex].value;
         this.setPerimeter()
       }
 
@@ -196,14 +196,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   setPerimeter() {
     let perimeter = "";
-    for (let i = 0; i < this.initialLeftCheckboxes.length; i++) {
-      const value = this.initialLeftCheckboxes[i];
+    for (let i = 0; i < this.initialPerimeterCheckboxes.length; i++) {
+      const value = this.initialPerimeterCheckboxes[i];
       if (value.value) {
         perimeter = i === 0 ? `${perimeter} ${this.userContextService.getUserID()()}` : `${perimeter} ${value.id}`;
       }
     }
-    for (let i = 0; i < this.initialRightCheckboxes.length; i++) {
-      const value = this.initialRightCheckboxes[i];
+    for (let i = 0; i < this.initialShareCheckboxes.length; i++) {
+      const value = this.initialShareCheckboxes[i];
       if (value.value) {
         perimeter = `${perimeter} ${value.id}`;
       }
@@ -213,15 +213,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.stateManagerService.setPerimeter(perimeter.trim());
   }
 
-  unsubscribeFromLeftFormValueChanges() {
-    if (this.formLeftValueChangesSubscription) {
-      this.formLeftValueChangesSubscription.unsubscribe();
+  unsubscribeFromPerimeterFormValueChanges() {
+    if (this.formPerimeterValueChangesSubscription) {
+      this.formPerimeterValueChangesSubscription.unsubscribe();
     }
   }
 
-  unsubscribeFromRightFormValueChanges() {
-    if (this.formRightValueChangesSubscription) {
-      this.formRightValueChangesSubscription.unsubscribe();
+  unsubscribeFromShareFormValueChanges() {
+    if (this.formShareValueChangesSubscription) {
+      this.formShareValueChangesSubscription.unsubscribe();
     }
   }
 
@@ -258,7 +258,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
     let page_number = 0;
-    this.stateManagerService.loadDocument(Number(documentId),page,content);
+    this.stateManagerService.loadDocument(Number(documentId), page, content);
     $event.preventDefault();
   }
 
@@ -303,14 +303,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  refreshDashboard() {
+    this.reload();
+  }
+
   protected createSummaryJob($event: MouseEvent, id: string) {
     return this.documentService.requestSummary(this.userContextService.getUserID()(), id)
       .pipe(
-      catchError(error => {
-        console.error('An error occurred:', error);
-        return throwError(error);
-      })
-    )
+        catchError(error => {
+          console.error('An error occurred:', error);
+          return throwError(error);
+        })
+      )
       .subscribe({
         next: (response) => {
           console.log('Job created successfully', response);
@@ -367,11 +371,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return []
       return response
     }));
-  }
-
-
-  refreshDashboard() {
-    this.reload();
   }
 }
 

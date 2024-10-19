@@ -38,10 +38,10 @@ export class AssistantService {
 
     const jsonData = {
       "command": current_message,
-      "conversation_id":""+currentAssistant
+      "conversation_id": "" + currentAssistant
     };
 
-    return this.httpClient.post<Result>(call_url,jsonData, {headers: headers});
+    return this.httpClient.post<Result>(call_url, jsonData, {headers: headers});
   }
 
   loadAssistantDocuments(currentAssistant: string) {
@@ -50,7 +50,12 @@ export class AssistantService {
     return this.httpClient.get<AssistantDocument[]>(call_url);
   }
 
-  createAssistantDocument(assistantDocument: AssistantDocument) {
+  createAssistantDocument(assistantDocument: {
+    document_name: string;
+    assistant_id: string;
+    id: string;
+    document_id: string
+  }) {
     let call_url = this.assistant_document_base_url;
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.httpClient.post<AssistantDocument>(this.assistant_document_base_url, assistantDocument, {headers: headers})
@@ -196,17 +201,28 @@ export class Assistant {
   }
 }
 
+export enum AssistantDocumentType {
+  MY_DOCUMENTS = "MY_DOCUMENTS",
+  SHARED_DOCUMENTS = "SHARED_DOCUMENTS"
+}
+
 class AssistantDocument {
   id: string
   assistant_id: string
   document_id: string
   document_name: string
+  assistant_document_type: AssistantDocumentType
+  shared_group_id: string
 
-  public constructor(id: string, assistant_id: string, document_id: string, document_name: string) {
+  public constructor(id: string, assistant_id: string, document_id: string, document_name: string,
+                     assistant_document_type: AssistantDocumentType = AssistantDocumentType.MY_DOCUMENTS,
+                     shared_group_id: string) {
     this.id = id;
     this.assistant_id = assistant_id;
     this.document_id = document_id;
     this.document_name = document_name;
+    this.assistant_document_type = assistant_document_type;
+    this.shared_group_id = shared_group_id;
   }
 }
 

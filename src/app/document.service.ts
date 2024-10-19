@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
 import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
-import {Document} from "./dashboard-main-screen/Document";
+import {Document, SharedDocument} from "./dashboard-main-screen/Document";
 import {FileType} from "./dashboard-document-upload/file-upload-dialog.component";
+import {AssistantDocumentType} from "./assistant/assistant.service";
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +39,25 @@ export class DocumentService {
   }
 
   fetchDocuments(perimeter: string, type: DocumentType): Observable<Document[]> {
-    let url = this.documents_base_url + "users/" + perimeter + "/documents?type=" + type;
+    let url = this.documents_base_url + "user/" + perimeter + "?type=" + type;
     return this.http.get<Document[]>(url);
+  }
+
+  fetchSharedDocuments(perimeter: string): Observable<SharedDocument[]> {
+    let url = this.documents_base_url + "shared/" + perimeter + "/";
+
+    return this.http.get<SharedDocument[]>(url).pipe(
+      map((documents: SharedDocument[]) => {
+        // Modify one element of the array
+        for (let document of documents as SharedDocument[]) {
+          document.document_type = AssistantDocumentType.SHARED_DOCUMENTS
+        }
+        return documents;
+      })
+    );
+
+
+    return this.http.get<SharedDocument[]>(url);
   }
 
 
