@@ -1,6 +1,5 @@
-import {Component, inject, signal, WritableSignal} from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {OAuthService} from "angular-oauth2-oidc";
 import {LoginService} from "../auth/login.service";
 import {Router} from "@angular/router";
 import {sha1} from "js-sha1";
@@ -24,7 +23,6 @@ export class LoginComponent {
   protected username: string = "";
   protected secondFactor: string = "";
   protected showError: WritableSignal<boolean> = signal(false);
-  private oauthService = inject(OAuthService)
 
   constructor(private loginService: LoginService, private router: Router) {
 
@@ -69,6 +67,4 @@ export class LoginComponent {
     this.showModal = false;  // Automatically hide the modal
   }
 }
-
-type CategoryType = [number, string];
 

@@ -8,6 +8,7 @@ export class UserContextService {
 
   readonly isLogged: WritableSignal<boolean> = signal(false);
   userCategories: WritableSignal<UserCategory[]> = signal([]);
+  userAdminCategories: WritableSignal<UserCategory[]> = signal([]);
   groups: WritableSignal<string[]> = signal([]);
   private userID: WritableSignal<string> = signal("");
   private jwtToken: WritableSignal<string> = signal("");
@@ -31,7 +32,8 @@ export class UserContextService {
   public setLoggedIn(jwtToken: string, user: string, categories: UserCategory[], groups: string[]) {
     this.jwtToken.set(jwtToken);
     this.userID.set(user);
-    this.userCategories.set(categories);
+    this.userCategories.set(categories.filter(item => !item.is_admin));
+    this.userAdminCategories.set(categories.filter(item => item.is_admin));
     this.isLogged.set(true);
     this.groups.set(groups);
   }
@@ -43,14 +45,6 @@ export class UserContextService {
     this.isLogged.set(false);
   }
 
-  extractTokens(data: any[]) {
-    return data.map(item => {
-      const id = item[1].toString();
-      const label = item[2].toString();
-      const enabled = item[3] && item[3] == true ? true : false;
-      return new UserCategory(id, label, enabled);
-    });
-  }
 
 }
 
@@ -59,12 +53,12 @@ export class UserCategory {
   id: string;
   name: string;
   value: boolean;
-  owner: string;
+  is_admin: boolean;
 
-  constructor(id: string, name: string, value: boolean = false, owner = "") {
+  constructor(id: string, name: string, value: boolean = false, is_admin = false) {
     this.id = id;
     this.name = name;
     this.value = value;
-    this.owner = owner;
+    this.is_admin = is_admin;
   }
 }

@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (groups) => {
           let categories: UserCategory[] = []
           groups.forEach(group => {
-            categories.push(new UserCategory(group.id, group.name, false, group.owner))
+            categories.push(new UserCategory(group.id, group.name, false ))
           })
           this.unsubscribeFromShareFormValueChanges()
           this.initialShareCheckboxes = categories;

@@ -96,7 +96,9 @@ export class LoginService {
       const id = item.category_id;
       const label = item.category_name;
       const enabled = item.enabled;
-      return new UserCategory(id, label, enabled);
+      const is_admin = item.is_admin;
+
+      return new UserCategory(id, label, enabled,is_admin);
     });
   }
 

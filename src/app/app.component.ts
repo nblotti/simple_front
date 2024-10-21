@@ -66,4 +66,12 @@ export class AppComponent implements OnInit {
     this.showModal = false
     this.stateManagerService.blurWindow.set(false);
   }
+
+  loadAdmin() {
+
+  }
+
+  isAdmin() {
+    return this.userContextService.userAdminCategories().length != 0;
+  }
 }
