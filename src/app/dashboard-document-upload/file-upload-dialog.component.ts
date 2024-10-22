@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   ElementRef,
   EventEmitter,
   Input,
@@ -16,13 +17,16 @@ import {NgEventBus} from "ng-event-bus";
 import {UserContextService} from "../auth/user-context.service";
 import {FormsModule} from "@angular/forms";
 import {catchError, throwError} from "rxjs";
+import {AsyncPipe, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-file-upload-dialog',
   templateUrl: './file-upload-dialog.component.html',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    NgIf,
+    AsyncPipe
   ],
   styleUrls: ['./file-upload-dialog.component.css']
 })
@@ -30,7 +34,11 @@ export class FileUploadDialogComponent {
   @Input() showModal: boolean = false;
   @Output() closeModal: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('fileInput', {static: false}) fileInput!: ElementRef<HTMLInputElement>;
-
+  isDisabled: boolean = true; // or false depending on your logic
+  selectedCategory = computed(() => {
+      return this.userContextService.userAdminCategories()[0];
+    }
+  )
 
   protected uploadProgress: number = 0;
   protected summaryChecked: WritableSignal<boolean> = signal(false);
@@ -38,13 +46,13 @@ export class FileUploadDialogComponent {
   protected urlToScrap: WritableSignal<string> = signal("");
   protected active_tab: TABS = TABS.DOCUMENTS;
 
-
   constructor(private fileUploadService: DocumentService,
               private documentService: DocumentService,
               private router: Router,
               private eventBus: NgEventBus,
-              private userContextService: UserContextService,
+              protected userContextService: UserContextService,
               private renderer: Renderer2) {
+
   }
 
 
@@ -57,11 +65,13 @@ export class FileUploadDialogComponent {
     this.uploadProgress = 0;
     this.active_tab = TABS.DOCUMENTS;
 
-
   }
 
   uploadFile(file: File, fileType: FileType) {
+
     let user = this.userContextService.getUserID()();
+    if (!this.isDisabled)
+      user = this.selectedCategory().id
     this.fileUploadService.uploadFile(file, fileType, user)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
@@ -127,6 +137,9 @@ export class FileUploadDialogComponent {
       }
     } else if (this.active_tab == TABS.URL) {
       let user = this.userContextService.getUserID()();
+      if (this.isDisabled)
+        user = this.selectedCategory().id.toString()
+
       this.documentService.requestScrap(user, this.urlToScrap()).subscribe({
         next: () => {
           this.resetFileInput();
@@ -145,7 +158,7 @@ export class FileUploadDialogComponent {
     this.closeModal.emit();
   }
 
-  onFileSelected($event: Event) {
+  onFileSelected($event: any) {
 
     if (this.fileInput && this.fileInput.nativeElement.files) {
       this.isFileSelected.set(this.fileInput.nativeElement.files.length > 0);
@@ -173,6 +186,18 @@ export class FileUploadDialogComponent {
     control.value = this.urlToScrap();
     return control.checkValidity();
   }
+
+
+
+  perimeterChanged($event: any) {
+    this.isDisabled = !this.isDisabled;
+  }
+
+  isAdmin() {
+    return this.userContextService.userAdminCategories().length != 0;
+  }
+
+
 }
 
 export enum FileType {

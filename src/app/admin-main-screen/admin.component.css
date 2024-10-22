@@ -1,0 +1,31 @@
+
+.document_header_content {
+
+  color: black;
+  font-weight: normal;
+  border-bottom: lightgray solid 1px;
+  padding-top: 13px;
+  background-color: lightgray;
+}
+
+
+.document_text_content {
+
+  color: black;
+
+}
+
+.pdf_button {
+  width: 100%;
+}
+
+.pdf_button_delete {
+  border-color: red;
+  color: red;
+}
+
+.admin_group_selector{
+  width: 20%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

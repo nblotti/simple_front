@@ -12,17 +12,21 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" routerLink="/dashboard/">Dashboard</a></li>
-            <li><hr class="dropdown-divider"></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
 
-           <li><a class="dropdown-item" (click)="openFileUploadDialog()">Add document</a></li>
-            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" (click)="openFileUploadDialog()">Add document</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
             <li><a class="dropdown-item" routerLink="/share/">Share document</a></li>
 
 
           </ul>
         </li>
         <li class="nav-item" *ngIf="isAdmin()">
-          <a class="nav-link" (click)="loadAdmin()">Admin</a>
+          <a class="nav-link" routerLink="/admin/">Admin</a>
         </li>
       </ul>
 
@@ -48,7 +52,6 @@
     </div>
 
   </div>
-
 
 
 </div>

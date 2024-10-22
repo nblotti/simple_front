@@ -13,6 +13,8 @@ import {GlobalsService} from "../globals.service";
 import {SharedGroupDTO} from "./SharedGroupDTO";
 import {Document} from "./Document";
 import {CapitalizePipe} from "../capitalize.pipe";
+import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'dashboard-component',
@@ -43,8 +45,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private eventBus: NgEventBus,
     private datePipe: DatePipe,
     private fb: FormBuilder,
+    private router : Router,
     private globalsService: GlobalsService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private navStateService: NavigationStateService
   ) {
 
     this.groupUrl = this.globalsService.serverAssistmeBase + "sharedgroup/"
@@ -103,7 +107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (groups) => {
           let categories: UserCategory[] = []
           groups.forEach(group => {
-            categories.push(new UserCategory(group.id, group.name, false ))
+            categories.push(new UserCategory(group.id, group.name, false))
           })
           this.unsubscribeFromShareFormValueChanges()
           this.initialShareCheckboxes = categories;
@@ -258,7 +262,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
     let page_number = 0;
-    this.stateManagerService.loadDocument(Number(documentId), page, content);
+    //this.stateManagerService.loadDocument(Number(documentId), page, content);
+
+    const state = {documentId, page, content};
+    this.navStateService.setState(state);  // Store state in the service
+    this.router.navigate(['/docs']);
     $event.preventDefault();
   }
 

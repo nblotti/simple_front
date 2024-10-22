@@ -7,6 +7,8 @@ import {StateManagerService} from "../state-manager.service";
 import {HighlightJsDirective} from "ngx-highlight-js";
 import {HighlightDirective} from "../chat-highlight-content/highlight.component";
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
+import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -29,7 +31,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   constructor(private eventBus: NgEventBus,
               private httpClient: HttpClient,
-              protected statemanagerService: StateManagerService) {
+              protected statemanagerService: StateManagerService,
+              private navStateService: NavigationStateService,
+              private router : Router) {
 
 
   }
@@ -66,7 +70,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
    /*Click sur une référence de document  dans le chat
    */
   displaySource($event: MouseEvent, documentId: string, page: number, content: string) {
-    this.statemanagerService.loadDocument(Number(documentId),page,content)
+
+    const state = {documentId, page, content};
+    this.navStateService.setState(state);  // Store state in the service
+    this.router.navigate(['/docs']);
+    //this.statemanagerService.loadDocument(Number(documentId),page,content)
     $event.preventDefault()
   }
 

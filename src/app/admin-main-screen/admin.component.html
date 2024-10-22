@@ -1,0 +1,47 @@
+
+
+<div class="input-group mb-3 admin_group_selector">
+  <span class="input-group-text" id="basic-addon1">Group : </span>
+  <select class="form-select" (change)="onCategoryChange($event)" aria-label="Default select example" aria-describedby="basic-addon1">
+    @for (category of userContextService.userAdminCategories(); track category; let index = $index) {
+    <option value=category.id [value]="category.id">{{ category.name }}</option>
+  }
+  </select>
+</div>
+
+
+<table class="table table-borderless table_documnents .table-hover ">
+  <thead >
+  <tr>
+    <th class="document_header_content">Document</th>
+    <th class="document_header_content">Summary</th>
+    <th class="document_header_content">Date uploaded</th>
+    <th class="document_header_content">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+
+
+    @for (document of documents(); track document; let index = $index) {
+      <tr class=".bg-transparent mt-5">
+        <td class="document_text_content">
+          <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+        </td>
+        <td class="document_text_content">
+          @if (document.summary_status == DocumentStatus.COMPLETED) {
+            <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
+          } @else {
+            {{ document.summary_status }}
+          }
+        </td>
+        <td class="document_text_content">
+          {{ document.created_on }}
+        </td>
+        <td class="document_text_content">
+          <button class="pdf_button_delete" (click)="deleteDocument(document.id)">Delete</button>
+        </td>
+      </tr>
+    }
+
+  </tbody>
+</table>

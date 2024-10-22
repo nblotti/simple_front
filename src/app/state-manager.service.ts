@@ -6,7 +6,7 @@ import {DashboardState} from "./dashboard-main-screen/DashboardState";
 import {ScreenReadyMessage} from "./chat-main-screen/SreenReadyMessage";
 import {AssistantState} from "./assistant/AssistantState";
 import {ShareState} from "./share/ShareState";
-import {NavigationStateService} from "./dashboard-document-screen/navigation-state.service";
+import {DocumentState} from "./dashboard-document-screen/DocumentState";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class StateManagerService implements OnInit {
               private dashboardState: DashboardState,
               private assistantState: AssistantState,
               private shareState: ShareState,
-              private navStateService: NavigationStateService
+              private documentState: DocumentState
   ) {
   }
 
@@ -50,51 +50,6 @@ export class StateManagerService implements OnInit {
 
   }
 
-  /*********************************************************************************************
-   /*Chargement du document et du chat associé. Cela peut venir du chat ou du dashboard
-   /* 1. on charge le numéro de chat
-   /* 1a. on a pas de numéro de chat existant pour ce document, on en crée un -> createConversation
-   * /2. on envoie les deux messages -> a au chat. b au pdf viewer
-   */
-  public loadDocument(documentId: number, page: number, content: string) {
-    // 1. on charge le numéro de chat ou on le crée
-    this.conversationService.loadOrCreateConversationsByDocumentId(documentId).subscribe({
-      next: (result) => {
-        //on a pas trouvé de conversation, on la crée
-        if (result.length == 0) {
-          this.conversationService.createConversation(documentId).subscribe(value => {
-            this.loadConversationAndDocument(value.id, documentId, page, content)
-          })
-        } else {
-          this.loadConversationAndDocument(result[0].id, documentId, page, content)
-        }
-      }, error: (error) => {
-        console.error('Delete failed:', error);
-      }, complete: () => {
-      }
-    });
-  }
-
-  /*********************************************************************************************
-   /*L'utilisateur a clické dans le Dashboard sur une conversation qui porte sur un document.
-   /* 1. on set la conversation courante dans le service
-   /* 2. on charge le pdf viewer
-   * /2. on envoie les deux messages ->  au chat. + au pdf viewer
-   */
-  public loadConversationAndDocument(conversationId: number, documentId: number, page: number, content: string) {
-
-    this.conversationService.setCurrentConversation(conversationId)
-    this.loadConversationMessages();
-    this.navigateWithState(documentId, page, content);
-
-
-  }
-
-  navigateWithState(documentId: number, page: number, content: string) {
-    const state = {documentId, page, content};
-    this.navStateService.setState(state);  // Store state in the service
-    this.router.navigate(['/docs']);
-  }
 
   public loadAssistant() {
     this.router.navigate(['/assistant']);
@@ -136,6 +91,11 @@ export class StateManagerService implements OnInit {
         this.stateManager.set(this.shareState);
         this.chatEnabled.set(false);
         break;
+      case STATES.Document:
+        this.stateManager.set(this.documentState);
+        this.stateManager().loadConversationMessages();
+        this.chatEnabled.set(true);
+        break;
     }
 
   }
@@ -146,7 +106,7 @@ export class StateManagerService implements OnInit {
   }
 
   private loadConversationMessages() {
-
+    this.screenReadyMessages
     this.stateManager().loadConversationMessages();
 
   }
@@ -160,4 +120,5 @@ export enum STATES {
   Dashboard = "DASHBOARD",
   Assistant = "ASSISTANT",
   Share = "SHARE",
+  Document = "DOCUMENT",
 }

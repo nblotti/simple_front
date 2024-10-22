@@ -15,8 +15,7 @@
 
 .modal-dialog {
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  top :20%
 }
 
 .modal-content {
@@ -75,4 +74,8 @@
   padding-top: 20px;
   /* Add other styling here if necessary */
   color: black;
+}
+
+.group_selector{
+  margin-right: 5px;
 }
