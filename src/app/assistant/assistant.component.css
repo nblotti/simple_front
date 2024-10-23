@@ -87,7 +87,17 @@
 .assistant-label-documents {
   margin-bottom: 20px;
 }
+.assistant-header-class{
+  display: flex;
+  align-items: center; /* Align items vertically center */
+}
 
+.assistant-header-class app-app-favorite {
+  flex: 0 0 5%; /* First element takes 10% of the width */
+}
+.assistant-header-class .assistant-name {
+  flex: 0 0 95%; /* Second element takes 90% of the width */
+}
 .assistant-name-input {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;

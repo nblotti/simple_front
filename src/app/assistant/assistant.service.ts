@@ -188,9 +188,10 @@ export class Assistant {
   description: string
   gpt_model_number: string
   use_documents: boolean
+  favorite:boolean
 
   public constructor(id: string, userid: string = "", name: string, conversation_id: string = "", description: string,
-                     gpt_model_number: string, use_documents: boolean) {
+                     gpt_model_number: string, use_documents: boolean, favorite:boolean=false) {
     this.id = id;
     this.userid = userid;
     this.description = description;
@@ -198,6 +199,7 @@ export class Assistant {
     this.name = name;
     this.gpt_model_number = gpt_model_number
     this.use_documents = use_documents
+    this.favorite = favorite
   }
 }
 

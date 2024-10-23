@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@an
 import {Assistant} from "../assistant/assistant.service";
 import {AsyncPipe} from "@angular/common";
 
+
 @Component({
   standalone: true,
   selector: 'app-custom-assistant-select',
@@ -49,18 +50,27 @@ export class CustomAssistantSelectComponent {
     this.oldAssistants = [...this._categories];
   }
 
+  selectFavoriteOrFirst() {
+    for (let current of this._categories) {
+      if (current.favorite) {
+        return current.id;
+      }
+    }
+    return this._categories[0]?.id ?? "";
+  }
+
   private handleCategoryChanges(): void {
     const newAssistant = this.findFirstUniqueElement();
     if (this._categories.length > 0) {
       if (!this.selectedId) {
-        this.selectedId = this._categories[0]?.id ?? "";
+        this.selectedId = this.selectFavoriteOrFirst()
       } else if (newAssistant) {
         this.selectedId = newAssistant.id;
       }
       this.selectedCategoryId.emit(this.selectedId);
       this.oldAssistants = [...this._categories];
     }
-    if (this.selectElement != undefined && this.selectedId =="")
+    if (this.selectElement != undefined && this.selectedId == "")
       this.selectElement.nativeElement.focus();
   }
 

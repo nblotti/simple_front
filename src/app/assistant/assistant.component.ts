@@ -1,14 +1,4 @@
-import {
-  Component,
-  computed,
-  ElementRef,
-  OnInit,
-  Renderer2,
-  Signal,
-  signal,
-  ViewChild,
-  WritableSignal
-} from '@angular/core';
+import {Component, ElementRef, OnInit, Renderer2, signal, ViewChild, WritableSignal} from '@angular/core';
 import {StateManagerService, STATES} from "../state-manager.service";
 import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 import {Assistant, AssistantService} from "./assistant.service";
@@ -17,12 +7,14 @@ import {CustomAssistantSelectComponent} from "../assistant-custom-select/custom-
 import {UserContextService} from "../auth/user-context.service";
 import {DocumentSelectorComponent} from "../assistant-document-selector/document-selector.component";
 import {FileUploadDialogComponent} from "../dashboard-document-upload/file-upload-dialog.component";
+import {AppFavoriteComponent} from "../app-favorite/app-favorite.component";
+import {AsyncPipe, CommonModule} from "@angular/common";
 
 
 @Component({
   selector: 'app-assistant',
   standalone: true,
-  imports: [NgbDropdownModule, FormsModule, CustomAssistantSelectComponent, ReactiveFormsModule, DocumentSelectorComponent, FileUploadDialogComponent],
+  imports: [CommonModule, NgbDropdownModule, FormsModule, CustomAssistantSelectComponent, ReactiveFormsModule, DocumentSelectorComponent, FileUploadDialogComponent, AppFavoriteComponent, AsyncPipe],
   templateUrl: './assistant.component.html',
   styleUrl: './assistant.component.css'
 })
@@ -36,29 +28,13 @@ export class AssistantComponent implements OnInit {
     {value: '4o', label: 'gpt4o'},
     {value: '4o-mini', label: 'gpt4o-mini'}
   ];
-  protected assistants: WritableSignal<Assistant[]>;
-  protected selectedCategory: WritableSignal<Assistant>;
-  assistantName: Signal<string> = computed(() => {
-    if (this.selectedCategory() != undefined)
-      return this.selectedCategory().name;
-    else return "";
-  });
-  textareaValue: Signal<string> = computed(() => {
-    if (this.selectedCategory() != undefined)
-      return this.selectedCategory().description;
-    else return "";
-  });
-  assistantUseDocument: Signal<boolean> = computed(() => {
-    if (this.selectedCategory() != undefined)
-      return this.selectedCategory().use_documents;
-    else return false;
-  });
+  assistant_favorite_status: WritableSignal<boolean> = signal(false);
+  protected assistants: WritableSignal<Assistant[]> = this.assistantService.getAssistants();
+  protected selectedCategory: WritableSignal<Assistant> = signal<Assistant>(this.assistants()[0]);
 
 
   constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService,
               private renderer: Renderer2, protected userContextService: UserContextService) {
-    this.assistants = this.assistantService.getAssistants();
-    this.selectedCategory = signal<Assistant>(this.assistants()[0]);
 
     let groups = this.userContextService.getGroups()();
     if (groups.includes("agp_prod_gpt4")) {
@@ -98,11 +74,7 @@ export class AssistantComponent implements OnInit {
   }
 
   updateDescription($event: any) {
-    if (this.textareaValue() !== $event.target.value) {
-      let assistant: Assistant = this.selectedCategory();
-      assistant.description = $event.target.value;
-      this.assistantService.updateAssistant(this.selectedCategory())
-    }
+    this.assistantService.updateAssistant(this.selectedCategory())
   }
 
   addAssistant() {
@@ -115,11 +87,7 @@ export class AssistantComponent implements OnInit {
 
   updateName($event: any) {
 
-    if (this.textareaValue() !== $event.target.value) {
-      let assistant: Assistant = this.selectedCategory();
-      assistant.name = $event.target.value;
-      this.assistantService.updateAssistant(this.selectedCategory())
-    }
+    this.assistantService.updateAssistant(this.selectedCategory())
   }
 
   onTextAreaFocused($event: any) {
@@ -139,7 +107,7 @@ export class AssistantComponent implements OnInit {
 
     const selectElement = $event.target as HTMLInputElement;
     let isChecked = $event.target.checked;
-    if (this.assistantUseDocument() !== isChecked) {
+    if (this.selectedCategory().use_documents !== isChecked) {
       let assistant: Assistant = this.selectedCategory();
 
       assistant.use_documents = isChecked;
@@ -157,5 +125,19 @@ export class AssistantComponent implements OnInit {
   closeSelector() {
     this.showModal = false;
     this.stateManagerService.blurWindow.set(false);
+  }
+
+  handleFavoriteChange($event: boolean) {
+
+    this.assistantService.updateAssistant(this.selectedCategory())
+    if ($event) {
+      for (const assistant of this.assistants()) {
+        if (assistant.id != this.selectedCategory().id) {
+          assistant.favorite = false;
+          this.assistantService.updateAssistant(assistant);
+        }
+      }
+    }
+
   }
 }
