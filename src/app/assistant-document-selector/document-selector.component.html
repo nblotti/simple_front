@@ -19,10 +19,19 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                [class.active]="activeTab === 'profile'"
+                [class.active]="activeTab === 'shared'"
                 (click)="setActiveTab('shared_document')"
                 href="javascript:void(0);"
               >Shared Documents</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'category'"
+                (click)="setActiveTab('category_document')"
+                href="javascript:void(0);"
+              >Category Documents</a
               >
             </li>
           </ul>
@@ -84,10 +93,48 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-12">
-                <h5></h5>
+            </div>
+            <div class="row table-container tab-pane"
+                 [class.active]="activeTab === 'category_document'"
+                 [class.show]="activeTab === 'category_document'"
+                 id="category_document"
+            >
+              <div class="col-12" style="overflow: auto; max-height: 400px;">
+                <table class="table table-borderless table_documnents">
+                  <thead>
+                  <tr>
+                    <th class="document_header_content">Document</th>
+                    <th class="document_header_content">
+                      <select (change)="categoryValueChanged($event)" tabindex="-1"
+                              class=" assistant-btn-class" id="dropdownModel">
+                        @for (option of this.userContextService.userAdminCategories(); track option.value) {
+                            <option class="custom-option" selected [value]="option.id">{{ option.name }}</option>
+
+                        }
+                      </select>
+                    </th>
+                    <th class="document_header_action_content">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (element of this.elementsCategoryDocuments(); track element) {
+                      <tr class=" .bg-transparent mt-5" (dblclick)="selectCategoryElement(element)">
+                        <td class="document_text_content">{{ element.name | capitalize }}</td>
+                        <td class="document_text_content">{{ element.category_name | capitalize }}</td>
+                        <td class="document_action_content">
+                          <button (click)="selectCategoryElement(element)">Add</button>
+                        </td>
+                      </tr>
+                    }
+
+                  </tbody>
+                </table>
               </div>
             </div>
+            <div class="col-12">
+              <h5></h5>
+            </div>
+
           </div>
           <!-- Right Zones -->
           <div class="col-6 column-container">

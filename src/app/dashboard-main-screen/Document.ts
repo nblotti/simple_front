@@ -32,3 +32,24 @@ export class SharedDocument {
   }
 
 }
+
+
+export class CategoryDocument {
+
+  constructor(public id: string, public name: string, public owner: string, public perimeter: string,
+              public created_on: string, public summary_id: string, public summary_status: string,
+              public document_type: string,public category_id: string, public category_name: string) {
+    this.id = id;
+    this.name = name;
+    this.owner = owner;
+    this.perimeter = perimeter;
+    this.created_on = created_on;
+    this.summary_id = summary_id;
+    this.summary_status = summary_status;
+    this.document_type = document_type;
+    this.category_id = category_id;
+    this.category_name = category_name;
+  }
+
+
+}

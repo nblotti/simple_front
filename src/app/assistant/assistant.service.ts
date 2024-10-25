@@ -188,10 +188,10 @@ export class Assistant {
   description: string
   gpt_model_number: string
   use_documents: boolean
-  favorite:boolean
+  favorite: boolean
 
   public constructor(id: string, userid: string = "", name: string, conversation_id: string = "", description: string,
-                     gpt_model_number: string, use_documents: boolean, favorite:boolean=false) {
+                     gpt_model_number: string, use_documents: boolean, favorite: boolean = false) {
     this.id = id;
     this.userid = userid;
     this.description = description;
@@ -205,7 +205,8 @@ export class Assistant {
 
 export enum AssistantDocumentType {
   MY_DOCUMENTS = "MY_DOCUMENTS",
-  SHARED_DOCUMENTS = "SHARED_DOCUMENTS"
+  SHARED_DOCUMENTS = "SHARED_DOCUMENTS",
+  CATEGORY_DOCUMENTS = "CATEGORY_DOCUMENTS"
 }
 
 class AssistantDocument {

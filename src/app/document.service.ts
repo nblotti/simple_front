@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
 import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
-import {Document, SharedDocument} from "./dashboard-main-screen/Document";
+import {CategoryDocument, Document, SharedDocument} from "./dashboard-main-screen/Document";
 import {FileType} from "./dashboard-document-upload/file-upload-dialog.component";
 import {AssistantDocumentType} from "./assistant/assistant.service";
 
@@ -44,7 +44,7 @@ export class DocumentService {
   }
 
   fetchSharedDocuments(perimeter: string): Observable<SharedDocument[]> {
-    let url = this.documents_base_url + "shared/" + perimeter ;
+    let url = this.documents_base_url + "shared/" + perimeter;
 
     return this.http.get<SharedDocument[]>(url).pipe(
       map((documents: SharedDocument[]) => {
@@ -56,10 +56,21 @@ export class DocumentService {
       })
     );
 
-
-    return this.http.get<SharedDocument[]>(url);
   }
 
+  fetchCategoryDocuments(perimeter: string, category_id: string): Observable<CategoryDocument[]> {
+    let url = this.documents_base_url + "category/" + perimeter + "/" + category_id;
+    return this.http.get<CategoryDocument[]>(url).pipe(
+      map((documents: CategoryDocument[]) => {
+        // Modify one element of the array
+        for (let document of documents as CategoryDocument[]) {
+          document.document_type = AssistantDocumentType.CATEGORY_DOCUMENTS
+        }
+        return documents;
+      })
+    );
+
+  }
 
   requestSummary(user: string, id: string) {
     const jsonData = {
@@ -104,6 +115,7 @@ export class DocumentService {
     let url = this.jobs_base_url
     return this.http.post<string>(url, jsonData);
   }
+
 }
 
 export enum DocumentType {

@@ -4,7 +4,8 @@ import {DocumentService, DocumentType} from "../document.service";
 import {Document} from "../share/Document";
 import {Assistant, AssistantDocumentType, AssistantService} from "../assistant/assistant.service";
 import {CapitalizePipe} from "../capitalize.pipe";
-import {SharedDocument} from "../dashboard-main-screen/Document";
+import {CategoryDocument, SharedDocument} from "../dashboard-main-screen/Document";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 interface Element {
@@ -27,7 +28,8 @@ interface AssistantDocument {
   selector: 'app-document-selector',
   standalone: true,
   imports: [
-    CapitalizePipe
+    CapitalizePipe,
+    ReactiveFormsModule
   ],
   templateUrl: './document-selector.component.html',
   styleUrl: './document-selector.component.css'
@@ -40,12 +42,18 @@ export class DocumentSelectorComponent {
 
   protected initialMyDocuments: Document[] = [];
   protected initialSharedDocuments: SharedDocument[] = []
+  protected initialCategoryDocuments: CategoryDocument[] = []
   protected elementsMyDocuments: WritableSignal<Document[]> = signal([]);
   protected selectedMyDocuments: WritableSignal<AssistantDocument[]> = signal([]);
   protected elementsSharedDocuments: WritableSignal<SharedDocument[]> = signal([]);
   protected selectedSharedDocuments: WritableSignal<AssistantDocument[]> = signal([]);
+
+  protected elementsCategoryDocuments: WritableSignal<CategoryDocument[]> = signal([]);
+  protected selectedCategoryDocuments: WritableSignal<AssistantDocument[]> = signal([]);
+
+
   protected selectedDocuments = computed(() => {
-    return this.selectedMyDocuments().concat(this.selectedSharedDocuments());
+    return this.selectedMyDocuments().concat(this.selectedSharedDocuments()).concat(this.selectedCategoryDocuments());
   });
   protected selectedPerimeter: WritableSignal<AssistantDocument[]> = signal([]);
   protected activeTab: string = 'my_document';
@@ -87,17 +95,32 @@ export class DocumentSelectorComponent {
         }
       });
 
+      this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), this.userContextService.userAdminCategories()[0].id).subscribe({
+        next: (result: CategoryDocument[]) => {
+          this.elementsCategoryDocuments.set(result);
+          this.initialCategoryDocuments = result;
+
+        },
+        error: (error) => {
+          console.error('Load failed:', error);
+        },
+        complete: () => {
+        }
+      });
 
       //Loading selected documents for the assistant
       this.assistantService.loadAssistantDocuments(this.assistant.id).subscribe({
         next: (result: AssistantDocument[]) => {
           for (const assistantDocument of result)
             if (assistantDocument.assistant_document_type == AssistantDocumentType.MY_DOCUMENTS)
-              this.selectedMyDocuments.set(result);
+              this.selectedMyDocuments.update(value => [...value, assistantDocument]);
             else if (assistantDocument.assistant_document_type == AssistantDocumentType.SHARED_DOCUMENTS)
-              this.selectedSharedDocuments.set(result);
+              this.selectedSharedDocuments.update(value => [...value, assistantDocument]);
+            else if (assistantDocument.assistant_document_type == AssistantDocumentType.CATEGORY_DOCUMENTS)
+              this.selectedCategoryDocuments.update(value => [...value, assistantDocument]);
           this.updateMyDocumentsElements();
           this.updateSharedElements();
+          this.updateCategoryElements();
 
         },
         error: (error) => {
@@ -111,7 +134,6 @@ export class DocumentSelectorComponent {
     }
 
   }
-
 
   selectDocumentElement(element: Document) {
     if (!this.assistant)
@@ -174,6 +196,38 @@ export class DocumentSelectorComponent {
   }
 
 
+  selectCategoryElement(element: CategoryDocument) {
+    if (!this.assistant)
+      return;
+
+    let assistantDocument = {
+      id: '',
+      assistant_id: this.assistant.id,
+      document_id: element.id,
+      document_name: element.name,
+      assistant_document_type: element.document_type,
+      shared_group_id: element.category_id
+    };
+    //on le sauvegarde sur le serveur comme un élément du périmêtre
+    this.assistantService.createAssistantDocument(assistantDocument).subscribe({
+      next: (element: AssistantDocument) => {
+        //on l'ajoute comme un élément du périmêtre
+        this.selectedCategoryDocuments.update(values => {
+          return [...values, element]
+        });
+        //on le supprime des éléments disponibles
+        this.elementsCategoryDocuments.set(this.elementsCategoryDocuments().filter(item => item.id != element.document_id));
+      },
+      error: (error) => {
+        console.error('Load failed:', error);
+      },
+      complete: () => {
+      }
+    });
+
+  }
+
+
   removeElement(assistantDocument: AssistantDocument) {
 
     //on le supprime sur le serveur comme un élément du périmêtre
@@ -191,8 +245,12 @@ export class DocumentSelectorComponent {
           //on met à jour les éléments non sélectionnés
           this.elementsSharedDocuments.set(this.initialSharedDocuments);
           this.updateSharedElements();
+        } else if (assistantDocument.assistant_document_type == AssistantDocumentType.CATEGORY_DOCUMENTS) {
+          this.selectedCategoryDocuments.set(this.selectedCategoryDocuments().filter(value => value.id != assistantDocument.id));
+          //on met à jour les éléments non sélectionnés
+          this.elementsCategoryDocuments.set(this.initialCategoryDocuments);
+          this.updateCategoryElements();
         }
-
       },
       error: (error) => {
         console.error('Load failed:', error);
@@ -211,6 +269,26 @@ export class DocumentSelectorComponent {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  protected categoryValueChanged($event: Event) {
+    const selectElement = $event.target as HTMLSelectElement;
+
+    this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), selectElement.value).subscribe({
+
+      next: (element: CategoryDocument[]) => {
+        //on l'ajoute comme un élément du périmêtre
+        this.initialCategoryDocuments = element;
+        this.elementsCategoryDocuments.set(element);
+      },
+      error: (error) => {
+        console.error('Load failed:', error);
+      },
+      complete: () => {
+      }
+    });
+
+
   }
 
   private updateMyDocumentsElements() {
@@ -263,10 +341,34 @@ export class DocumentSelectorComponent {
     );
   }
 
+  private updateCategoryElements() {
+    // Create an array to hold the filtered elements
+    let filteredElements: Document[] = [];
 
+    // Iterate through each item in elementsZone1 using forEach
+    this.elementsCategoryDocuments().forEach(item => {
+      // Iterate through each item in selectedElementsZone1 using forEach
+      this.selectedCategoryDocuments().forEach(selectedItem => {
+        // Check if the document_id matches the id of the item
+        if (selectedItem.document_id === item.id) {
+          // Add the item to the filteredElements array
+          filteredElements.push(item);
+          return; // Exit the inner forEach loop as match is found
+        }
+      });
+    });
+
+    // Remove the elements in filteredElements from elementsZone1
+    this.elementsCategoryDocuments.set(
+      this.elementsCategoryDocuments().filter(item =>
+        !filteredElements.some(filteredItem => filteredItem.id === item.id)
+      )
+    );
+  }
   private resetModal() {
     this.selectedMyDocuments.set([]);
     this.selectedSharedDocuments.set([]);
+    this.selectedCategoryDocuments.set([]);
     this.selectedPerimeter.set([]);
 
   }

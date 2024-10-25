@@ -51,6 +51,7 @@ ul.list-group {
 .table_documnents {
 
   width: 100%;
+  min-height: 200px;
 }
 
 
@@ -103,4 +104,8 @@ ul.list-group {
 }
 
 
-
+.dropdown-menu {
+  top: 100%; /* Adjust as necessary */
+  left: 0; /* or right: 0; */
+  will-change: top, left; /* Enables optimized animations */
+}
