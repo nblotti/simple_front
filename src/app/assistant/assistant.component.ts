@@ -9,6 +9,7 @@ import {DocumentSelectorComponent} from "../assistant-document-selector/document
 import {FileUploadDialogComponent} from "../dashboard-document-upload/file-upload-dialog.component";
 import {AppFavoriteComponent} from "../app-favorite/app-favorite.component";
 import {AsyncPipe, CommonModule} from "@angular/common";
+import {toObservable} from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -33,6 +34,8 @@ export class AssistantComponent implements OnInit {
   protected selectedCategory: WritableSignal<Assistant> = signal<Assistant>(this.assistants()[0]);
 
 
+
+
   constructor(private stateManagerService: StateManagerService, private assistantService: AssistantService,
               private renderer: Renderer2, protected userContextService: UserContextService) {
 
@@ -40,7 +43,6 @@ export class AssistantComponent implements OnInit {
     if (groups.includes("agp_prod_gpt4")) {
       this.options.push({value: '4', label: 'gpt4'});
     }
-
   }
 
 
@@ -58,7 +60,6 @@ export class AssistantComponent implements OnInit {
         this.selectedCategory.set(category);
       }
     }
-    console.log('Selected Category ID:', id);
   }
 
   deleteAssistant() {
@@ -74,6 +75,7 @@ export class AssistantComponent implements OnInit {
   }
 
   updateDescription($event: any) {
+    this.selectedCategory().description = $event.target.value;
     this.assistantService.updateAssistant(this.selectedCategory())
   }
 
@@ -86,7 +88,7 @@ export class AssistantComponent implements OnInit {
   }
 
   updateName($event: any) {
-
+    this.selectedCategory().name = $event.target.value;
     this.assistantService.updateAssistant(this.selectedCategory())
   }
 
@@ -128,7 +130,7 @@ export class AssistantComponent implements OnInit {
   }
 
   handleFavoriteChange($event: boolean) {
-
+    this.selectedCategory().favorite = $event;
     this.assistantService.updateAssistant(this.selectedCategory())
     if ($event) {
       for (const assistant of this.assistants()) {

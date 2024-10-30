@@ -50,7 +50,8 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(value => console.log('Current Route:', value.type));
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(value => {
+    });
   }
 
   openFileUploadDialog(): void {

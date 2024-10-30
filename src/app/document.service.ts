@@ -20,7 +20,7 @@ export class DocumentService {
 
     this.documents_base_url = globalsService.serverAssistmeBase + "document/"
     this.all_user_documents_base_url = globalsService.serverAssistmeBase + "/users/%s/documents/"
-    this.jobs_base_url = globalsService.serverJobBase
+    this.jobs_base_url = globalsService.serverAssistmeBase + "job/request"
   }
 
   uploadFile(file: File, fileType: FileType, perimeter: string): Observable<HttpEvent<any>> {
@@ -76,7 +76,7 @@ export class DocumentService {
     const jsonData = {
       "source": id,
       "owner": user,
-      "status": "REQUESTED"
+      "job_type": "SUMMARY"
     };
 
 
@@ -107,8 +107,7 @@ export class DocumentService {
     const jsonData = {
       "source": url_path,
       "owner": user,
-      "job_type": "SCRAP",
-      "status": "REQUESTED"
+      "job_type": "SCRAP"
     };
 
 

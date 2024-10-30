@@ -38,7 +38,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     }
   } catch (error) {
     // Handle errors during the discovery document and login process
-    console.error('Error during OAuth discovery/login', error);
+    //console.error('Error during OAuth discovery/login', error);
     await router.navigate(['/login']);
     return false;
   }
