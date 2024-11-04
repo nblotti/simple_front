@@ -1,5 +1,5 @@
 # Stage 1: Build Angular app
-FROM node:slim AS build
+FROM node:20-slim AS build
 
 # Set working directory
 WORKDIR /app
@@ -36,7 +36,7 @@ RUN nginx -t
 RUN ls -l /usr/share/nginx/html
 
 # Expose port 80
-EXPOSE 8080
+EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

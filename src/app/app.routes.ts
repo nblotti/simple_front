@@ -2,8 +2,11 @@ import {Route} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {authGuard} from './auth/auth.guard';
 
+
 export const APP_ROUTES: Route[] = [
   {path: 'login', component: LoginComponent},
+
+  // Add the dedicated OAuth callback route
 
   {
     path: '',
@@ -16,7 +19,14 @@ export const APP_ROUTES: Route[] = [
       },
       {
         path: 'docs',
-        loadComponent: () => import('./dashboard-document-screen/document-screen').then(m => m.DocumentScreen)
+        loadComponent: () => import('./dashboard-document-screen/document-screen').then(m => m.DocumentScreen),
+        pathMatch: 'full', // Ensure the route matches fully
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./dashboard-document-screen/document-screen').then(m => m.DocumentScreen)
+          }
+        ]
       },
       {
         path: 'dashboard',
