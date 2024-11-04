@@ -60,7 +60,7 @@ export class ConversationService {
     else
       call_url = sprintf(this.chat_command_perimeter_url, command, this.current_conversation, this.documentPerimeter);
 
-    console.log(call_url);
+
     return this.httpClient.get<Result>(call_url);
 
   }

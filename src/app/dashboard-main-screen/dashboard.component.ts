@@ -26,6 +26,8 @@ import {Router} from "@angular/router";
 export class DashboardComponent implements OnInit, OnDestroy {
   readonly conversations: WritableSignal<Conversation[]> = signal([]);
   readonly documents: WritableSignal<Document[]> = signal([]);
+  readonly templates: WritableSignal<Document[]> = signal([]);
+
   readonly summaries: WritableSignal<Document[]> = signal([]);
   formPerimeter: FormGroup;
   formShare: FormGroup;
@@ -45,7 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private eventBus: NgEventBus,
     private datePipe: DatePipe,
     private fb: FormBuilder,
-    private router : Router,
+    private router: Router,
     private globalsService: GlobalsService,
     private httpClient: HttpClient,
     private navStateService: NavigationStateService
@@ -212,7 +214,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         perimeter = `${perimeter} ${value.id}`;
       }
     }
-    console.log(perimeter.trim());
 
     return this.stateManagerService.setPerimeter(perimeter.trim());
   }
@@ -353,7 +354,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private reload() {
     this.loadDocuments();
     this.reloadConversations();
-    this.loadSummary();
+    this.loadTemplates();
     // this.perimeter.set(this.userContextService.userID, true);
   }
 
@@ -361,12 +362,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.fetchDocuments().subscribe(value => this.documents.set(value));
   }
 
+  private loadTemplates() {
+    this.fetchTemplates().subscribe(value => this.templates.set(value));
+  }
+
+
   private loadSummary() {
     this.fetchSummaries().subscribe(value => this.summaries.set(value));
   }
 
   private fetchDocuments(): Observable<Document[]> {
     return this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.DOCUMENT).pipe(map(response => {
+      if (response.length == 0)
+        return []
+      return response
+    }));
+  }
+
+  private fetchTemplates(): Observable<Document[]> {
+    return this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.TEMPLATE).pipe(map(response => {
       if (response.length == 0)
         return []
       return response

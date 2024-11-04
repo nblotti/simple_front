@@ -120,6 +120,7 @@ export class DocumentService {
 export enum DocumentType {
   SUMMARY = 'SUMMARY',
   DOCUMENT = 'DOCUMENT',
+  TEMPLATE = 'TEMPLATE',
   ALL = 'ALL'
 }
 

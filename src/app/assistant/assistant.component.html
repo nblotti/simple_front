@@ -1,10 +1,9 @@
 <div class="assistant-main-class" [class.blurred]="showModal">
 
   <div class="assistant-header-class">
-
-    <ng-container *ngIf="selectedCategory()?.favorite !== undefined">
+    <ng-container *ngIf="selectedCategory()?.favorite !== undefined && selectedCategory()?.favorite !== null">
       <app-app-favorite
-        [(isFavorite)]="selectedCategory()?.favorite==undefined?false:selectedCategory().favorite"
+        [(isFavorite)]="selectedCategory().favorite"
         (isFavoriteChange)="handleFavoriteChange($event)">
       </app-app-favorite>
     </ng-container>
@@ -19,9 +18,10 @@
   </div>
   <div class="assistant-block-class">
 
-    <label class="assistant-label" for="checkboxDocument">Name</label>
-    <input #inputName type="text" class="assistant-name-input" [ngModel]="selectedCategory()?.name"
-           (change)="updateName($event)">
+    <label class="assistant-label" for="checkboxDocument">Name</label><input #inputName type="text"
+                                                                             class="assistant-name-input"
+                                                                             [ngModel]="selectedCategory()?.name || ''"
+                                                                             (change)="updateName($event)">
   </div>
   <div class="assistant-block-class">
     <label class="assistant-label" for="basic-url">Description</label>
@@ -29,7 +29,7 @@
       <div class="input-group-prepend">
 
       </div>
-      <textarea (focus)="onTextAreaFocused($event)" id="basic-url" [ngModel]="selectedCategory()?.description"
+      <textarea (focus)="onTextAreaFocused($event)" id="basic-url" [ngModel]="selectedCategory()?.description || ''"
                 (change)="updateDescription($event)"
                 class="form-control assistant-txtarea-class"
                 aria-label="With textarea"></textarea>
@@ -40,18 +40,22 @@
     <select (change)="modelValueChanged($event)" tabindex="-1"
             class=" assistant-btn-class" id="dropdownModel">
       @for (option of this.options; track option.value) {
-        @if (this.selectedCategory() != undefined && this.selectedCategory().gpt_model_number != undefined && this.selectedCategory().gpt_model_number == option.value) {
-          <option class="custom-option" selected [value]="option.value">{{ option.label }}</option>
-        } @else {
-          <option class="custom-option" [value]="option.value">{{ option.label }}</option>
-        }
+        <option
+          *ngIf="selectedCategory() && selectedCategory().gpt_model_number !== undefined &&
+          selectedCategory().gpt_model_number !== null && selectedCategory().gpt_model_number === option.value"
+          class="custom-option" selected [value]="option.value">{{ option.label }}
+        </option>
+        <option *ngIf="!selectedCategory() || selectedCategory().gpt_model_number !== option.value"
+                class="custom-option" [value]="option.value">{{ option.label }}
+        </option>
       }
     </select>
   </div>
   <div class="">
-    <label class="assistant-label assistant-label-documents" for="checkboxDocument">Documents</label>
-    <input type="checkbox" id="checkboxDocument" role="switch" [ngModel]="selectedCategory()?.use_documents"
-           (change)="perimeterChanged($event)">
+    <label class="assistant-label assistant-label-documents" for="checkboxDocument">Documents</label><input
+    type="checkbox" id="checkboxDocument" role="switch"
+    [ngModel]="selectedCategory()?.use_documents !== null && selectedCategory().use_documents"
+    (change)="perimeterChanged($event)">
     <label class="my_documents_label">Use my documents</label>
 
     <button type="button" tabindex="0"

@@ -101,6 +101,49 @@
         </div>
       </div>
     </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFive"
+                aria-expanded="true" aria-controls="collapseFive">
+          My Templates
+        </button>
+      </h2>
+      <div id="collapseFive" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+
+          <table class="table table-borderless table_documnents">
+            <thead>
+            <tr>
+              <th class="document_header_content">Template</th>
+              <th class="document_header_content">Date uploaded</th>
+              <th class="document_header_content">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+              @for (template of templates(); track template; let index = $index) {
+                <tr class=".bg-transparent mt-5">
+                  <td class="document_text_content">
+                    <a href (click)="onDisplayPDF($event,  template.id)">{{ template.name |capitalize }} </a>
+                  </td>
+                  <td class="document_text_content">
+                    {{ template.created_on }}
+                  </td>
+                  <td class="document_text_content">
+                    <button class="pdf_button_delete"  (click)="deleteDocument(template.id)">Delete</button>
+                  </td>
+                </tr>
+              }
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <div class="accordion" id="accordionPerimeter">
       <div class="accordion-item">
         <h2 class="accordion-header">

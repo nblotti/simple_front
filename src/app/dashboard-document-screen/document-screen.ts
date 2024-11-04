@@ -81,7 +81,7 @@ export class DocumentScreen implements OnInit {
   }
 
   search() {
-    console.log(this.content)
+
     this.pdfComponent?.eventBus.dispatch('find', {
       query: this.content,
       caseSensitive: false,

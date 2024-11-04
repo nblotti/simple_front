@@ -37,8 +37,6 @@ export class AssistantState implements StateInterface {
 
   sendCommand(current_message: string): void {
 
-    console.log(current_message);
-
     this.screenReadyMessages.update(values => {
       return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
     });
