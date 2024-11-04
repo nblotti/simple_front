@@ -54,10 +54,16 @@ export class DocumentScreen implements OnInit {
         this.loadDocument(this.documentId, this.page, this.content);
         const url = `${this.base_url}${this.documentId}/`;
         this.openPdf(url);
-
-
       } else {
-        console.error('No state found');
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('documentId') && urlParams.has('page') && urlParams.has('content')) {
+          this.documentId = Number(urlParams.get('documentId'));
+          this.page = Number(urlParams.get('page')) + 1;
+          this.content = urlParams.get('content') || '';
+          this.loadDocument(this.documentId, this.page, this.content);
+          const url = `${this.base_url}${this.documentId}/`;
+          this.openPdf(url);
+        }
       }
     });
   }

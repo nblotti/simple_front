@@ -3,7 +3,6 @@ import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
 import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
 import {CategoryDocument, Document, SharedDocument} from "./dashboard-main-screen/Document";
-import {FileType} from "./dashboard-document-upload/file-upload-dialog.component";
 import {AssistantDocumentType} from "./assistant/assistant.service";
 
 @Injectable({
@@ -23,10 +22,11 @@ export class DocumentService {
     this.jobs_base_url = globalsService.serverAssistmeBase + "job/request"
   }
 
-  uploadFile(file: File, fileType: FileType, perimeter: string): Observable<HttpEvent<any>> {
+  uploadFile(file: File, fileType: DocumentType, perimeter: string): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('owner', perimeter);
+    formData.append('type', fileType);
 
     return this.http.post<any>(this.documents_base_url, formData, {
       reportProgress: true, observe: 'events'

@@ -9,6 +9,7 @@ import {HighlightDirective} from "../chat-highlight-content/highlight.component"
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
               private httpClient: HttpClient,
               protected statemanagerService: StateManagerService,
               private navStateService: NavigationStateService,
-              private router : Router) {
+              private router: Router,
+              private location: Location) {
 
 
   }
@@ -71,10 +73,17 @@ export class ChatComponent implements OnInit, AfterViewChecked {
    */
   displaySource($event: MouseEvent, documentId: string, page: number, content: string) {
 
-    const state = {documentId, page, content};
-    this.navStateService.setState(state);  // Store state in the service
-    this.router.navigate(['/docs']);
-    //this.statemanagerService.loadDocument(Number(documentId),page,content)
+
+    const queryParams = {documentId: documentId, page: page, content: content};
+
+    // Using Angular's Router to serialize the URL with query params
+    const url = this.location.prepareExternalUrl(this.router.serializeUrl(
+      this.router.createUrlTree(['/docs'], {queryParams})
+    ));
+
+    // Opening a new tab
+    window.open(url, '_blank');
+
     $event.preventDefault()
   }
 

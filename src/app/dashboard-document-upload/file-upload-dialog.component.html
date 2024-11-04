@@ -47,9 +47,14 @@
               </div>
             </div>
             <div class="form-check">
-              <input type="checkbox" [disabled]="!isFileSelected()" [(ngModel)]="summaryChecked"
+              <input type="checkbox" [disabled]="!isFileSelected() || templateChecked()" [(ngModel)]="summaryChecked"
                      class="form-check-input" id="summaryCheck">
               <label class="form-check-label" for="summaryCheck">Create summary</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" [disabled]="!isFileSelected()" [(ngModel)]="templateChecked" (change)="templateChanged()"
+                     class="form-check-input" id="templateCheck">
+              <label class="form-check-label" for="templateCheck">Template</label>
             </div>
           </div>
           <div class="tab-pane fade" id="url" role="tabpanel" aria-labelledby="url-tab" #taburl>

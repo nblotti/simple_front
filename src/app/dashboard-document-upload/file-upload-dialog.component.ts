@@ -42,6 +42,7 @@ export class FileUploadDialogComponent {
 
   protected uploadProgress: number = 0;
   protected summaryChecked: WritableSignal<boolean> = signal(false);
+  protected templateChecked: WritableSignal<boolean> = signal(false);
   protected isFileSelected: WritableSignal<boolean> = signal(false);
   protected urlToScrap: WritableSignal<string> = signal("");
   protected active_tab: TABS = TABS.DOCUMENTS;
@@ -67,12 +68,12 @@ export class FileUploadDialogComponent {
 
   }
 
-  uploadFile(file: File, fileType: FileType) {
+  uploadFile(file: File, documentType: DocumentType) {
 
     let user = this.userContextService.getUserID()();
     if (!this.isDisabled)
       user = this.selectedCategory().id
-    this.fileUploadService.uploadFile(file, fileType, user)
+    this.fileUploadService.uploadFile(file, documentType, user)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)
@@ -126,7 +127,7 @@ export class FileUploadDialogComponent {
         if (fileType === FileType.PDF || fileType === FileType.DOCX
           || fileType === FileType.XLSX || fileType === FileType.PPTX) {
           // Call the uploadFile method with the file and its type
-          this.uploadFile(file, fileType);
+          this.uploadFile(file, this.templateChecked() ? DocumentType.TEMPLATE : DocumentType.DOCUMENT);
           // Reset the file input
         } else {
           // Show alert and reset the file input
@@ -188,7 +189,6 @@ export class FileUploadDialogComponent {
   }
 
 
-
   perimeterChanged($event: any) {
     this.isDisabled = !this.isDisabled;
   }
@@ -198,6 +198,11 @@ export class FileUploadDialogComponent {
   }
 
 
+  templateChanged() {
+    if (this.templateChecked()) {
+      this.summaryChecked.set(false);
+    }
+  }
 }
 
 export enum FileType {
@@ -205,6 +210,13 @@ export enum FileType {
   DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+}
+
+export enum DocumentType {
+  SUMMARY = "SUMMARY",
+  DOCUMENT = "DOCUMENT",
+  TEMPLATE = "TEMPLATE",
+  ALL = "ALL"
 }
 
 

@@ -20,7 +20,7 @@
 
     <label class="assistant-label" for="checkboxDocument">Name</label><input #inputName type="text"
                                                                              class="assistant-name-input"
-                                                                             [ngModel]="selectedCategory()?.name || ''"
+                                                                             [ngModel]="selectedCategory().name || ''"
                                                                              (change)="updateName($event)">
   </div>
   <div class="assistant-block-class">
@@ -29,7 +29,7 @@
       <div class="input-group-prepend">
 
       </div>
-      <textarea (focus)="onTextAreaFocused($event)" id="basic-url" [ngModel]="selectedCategory()?.description || ''"
+      <textarea (focus)="onTextAreaFocused($event)" id="basic-url" [ngModel]="selectedCategory().description || ''"
                 (change)="updateDescription($event)"
                 class="form-control assistant-txtarea-class"
                 aria-label="With textarea"></textarea>
@@ -54,7 +54,7 @@
   <div class="">
     <label class="assistant-label assistant-label-documents" for="checkboxDocument">Documents</label><input
     type="checkbox" id="checkboxDocument" role="switch"
-    [ngModel]="selectedCategory()?.use_documents !== null && selectedCategory().use_documents"
+    [ngModel]="selectedCategory().use_documents !== null && selectedCategory().use_documents"
     (change)="perimeterChanged($event)">
     <label class="my_documents_label">Use my documents</label>
 
