@@ -15,7 +15,7 @@ import {NgStyle} from "@angular/common";
 })
 export class AppFavoriteComponent {
 
-  @Input() isFavorite = false;
+  @Input() isFavorite? = false;
   @Output() isFavoriteChange = new EventEmitter<boolean>();
 
   protected readonly faStar = faStar;
