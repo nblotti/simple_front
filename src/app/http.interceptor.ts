@@ -11,7 +11,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
     const userContextService: UserContextService = inject(UserContextService);
     const router = inject(Router);
 
-    if (!req.url.endsWith("/generate-qrcode/") && !userContextService.isLogged()) {
+    if ((!req.url.endsWith("/generate-qrcode/")  && !req.url.endsWith("/login/local")) && !userContextService.isLogged()) {
       router.navigate(['/login']);
       return throwError(() => "Not logged in!");
     } else {
