@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {sprintf} from "sprintf-js";
 import {GlobalsService} from "../globals.service";
 import {UserContextService} from "../auth/user-context.service";
-
+import {Result} from "../Result"
 
 @Injectable({
   providedIn: 'root'
@@ -108,36 +108,6 @@ export class ConversationService {
 
   }
 
-}
-
-class Result {
-  result: string
-  sources: Source[]
-
-  public constructor(result: string, sources: Source[] = []) {
-    this.result = result;
-    this.sources = sources
-  }
-}
-
-export class Source {
-  blob_id: string
-  file_name: string
-  page: number
-  perimeter: string
-  text: string
-  type: string
-
-
-  public constructor(blob_id: string, file_name: string, page: number, perimeter: string, text: string, type: string = "document") {
-    this.blob_id = blob_id;
-    this.file_name = file_name;
-    this.page = page;
-    this.perimeter = perimeter;
-    this.text = text;
-    this.type = type;
-
-  }
 }
 
 

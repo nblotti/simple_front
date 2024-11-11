@@ -17,4 +17,5 @@ export interface StateInterface {
   setCurrentConversation(conversation_id: number): void;
 
   setPerimeter(perimeter:string):void;
+
 }

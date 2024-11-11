@@ -5,6 +5,7 @@ import {ScreenReadyMessage} from "../chat-main-screen/SreenReadyMessage";
 import {AssistantService} from "./assistant.service";
 import {ConversationService} from "../dashboard-main-screen/conversation.service";
 import {Observable} from "rxjs";
+import {Source} from "../Source";
 
 @Component({
   standalone: true,
@@ -43,9 +44,9 @@ export class AssistantState implements StateInterface {
 
     this.assistantService.sendCommand(current_message, this.conversation_id).subscribe({
       next: (result) => {
-
+        let sources: Source[] = this.buildSources(result.sources)
         this.screenReadyMessages.update(values => {
-          return [...values, new ScreenReadyMessage(values.length, "assistant", result.result)];
+          return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
         });
       },
       error: (result: string) => {
@@ -89,6 +90,18 @@ export class AssistantState implements StateInterface {
     this.assistantService.setDocumentPerimeter(perimeter)
   }
 
+  private buildSources(sources: Source[]): Source[] {
+    let source_http_url: Source[] = []
+
+    if (sources != null)
+      sources.forEach(item => {
+
+        let loc_source = new Source(item.blob_id, item.file_name, item.page, item.perimeter, item.text, item.type)
+        source_http_url.push(loc_source)
+      });
+
+    return source_http_url;
+  }
 
 }
 

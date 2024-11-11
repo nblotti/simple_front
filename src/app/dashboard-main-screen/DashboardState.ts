@@ -1,9 +1,9 @@
 import {StateInterface} from "../StateInterface";
 import {Component, signal, WritableSignal} from "@angular/core";
 import {ScreenReadyMessage} from "../chat-main-screen/SreenReadyMessage";
-import {ConversationService, Source} from "./conversation.service";
+import {ConversationService} from "./conversation.service";
 import {Observable} from "rxjs";
-
+import {Source} from "../Source"
 
 @Component({
   standalone: true,

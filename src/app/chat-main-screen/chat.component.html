@@ -32,13 +32,13 @@
                       <div class="accordion-body">
                         @for (source of message.sources; track source) {
                           @if (source.type == "document") {
-                            <a href="" (click)="displaySource($event,  source.blob_id, source.page, source.text)">Document
+                            <a href="" (click)="displaySource($event,  source.blob_id, source.page, source.text)" title="{{source.text}}">Document
                               : {{ source.file_name }}
                               page : {{ source.page }}</a><br>
-                          }
-                          @if (source.type == "href") {
+                          } @else if (source.type == "href") {
                             <a href=""
-                               (click)="displayHrefSource($event,  source.file_name, source.text)">source.text</a>
+                               (click)="displayHrefSource($event,  source.file_name, source.text)"
+                               title="{{source.blob_id}}">{{ source.file_name }}</a><br>
                           }
                         }
                       </div>

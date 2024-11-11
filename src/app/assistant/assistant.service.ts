@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GlobalsService} from "../globals.service";
 import {UserContextService} from "../auth/user-context.service";
 import {sprintf} from "sprintf-js";
+import {Result} from "../Result"
 
 @Injectable({
   providedIn: 'root'
@@ -230,12 +231,5 @@ class AssistantDocument {
 }
 
 
-class Result {
-  result: string
-
-  public constructor(result: string) {
-    this.result = result;
-  }
-}
 
 

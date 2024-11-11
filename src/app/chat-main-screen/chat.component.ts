@@ -87,9 +87,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     $event.preventDefault()
   }
 
-  displayHrefSource($event: MouseEvent, file_name: string, text: string) {
+  displayHrefSource($event: MouseEvent, url: string, text: string) {
 
-    const url = `assets/${file_name}`;
+
     window.open(url, '_blank');
 
     $event.preventDefault();

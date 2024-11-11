@@ -1,7 +1,7 @@
 import {StateInterface} from "../StateInterface";
 import {Component, Signal, signal, WritableSignal} from "@angular/core";
 import {ScreenReadyMessage} from "../chat-main-screen/SreenReadyMessage";
-import {ConversationService, Source} from "../dashboard-main-screen/conversation.service";
+import {ConversationService} from "../dashboard-main-screen/conversation.service";
 import {Observable, of} from "rxjs";
 
 
@@ -20,7 +20,7 @@ export class ShareState implements StateInterface {
   }
 
   clearConversation(): Observable<any> {
-    return of({ success: true, message: 'Conversation cleared' });
+    return of({success: true, message: 'Conversation cleared'});
 
   }
 
@@ -40,9 +40,6 @@ export class ShareState implements StateInterface {
 
   setPerimeter(perimeter: string): void {
   }
-
-
-
 
 
 }
