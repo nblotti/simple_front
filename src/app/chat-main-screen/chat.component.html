@@ -37,7 +37,9 @@
                               page : {{ source.page }}</a><br>
                           }
                           @if (source.type == "href") {
-                            <a href="" (click)="displayHrefSource($event,  source.file_name, source.text)">source.text</a>
+                            <a href=""
+                               (click)="displayHrefSource($event,  source.file_name, source.text)">source.text</a>
+                          }
                         }
                       </div>
                     </div>
