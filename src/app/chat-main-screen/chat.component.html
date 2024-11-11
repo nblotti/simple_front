@@ -31,9 +31,13 @@
                          data-bs-parent="#accordionFlushExample">
                       <div class="accordion-body">
                         @for (source of message.sources; track source) {
-                          <a href="" (click)="displaySource($event,  source.blob_id, source.page, source.text)">Document
-                            : {{ source.file_name }}
-                            page : {{ source.page }}</a><br>
+                          @if (source.type == "document") {
+                            <a href="" (click)="displaySource($event,  source.blob_id, source.page, source.text)">Document
+                              : {{ source.file_name }}
+                              page : {{ source.page }}</a><br>
+                          }
+                          @if (source.type == "href") {
+                            <a href="" (click)="displayHrefSource($event,  source.file_name, source.text)">source.text</a>
                         }
                       </div>
                     </div>

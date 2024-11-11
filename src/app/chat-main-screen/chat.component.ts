@@ -9,7 +9,7 @@ import {HighlightDirective} from "../chat-highlight-content/highlight.component"
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 
 
 @Component({
@@ -87,6 +87,15 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     $event.preventDefault()
   }
 
+  displayHrefSource($event: MouseEvent, file_name: string, text: string) {
+
+    const url = `assets/${file_name}`;
+    window.open(url, '_blank');
+
+    $event.preventDefault();
+  }
+
+
   scrollToBottom()
     :
     void {
@@ -115,5 +124,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   clearInput() {
     this.statemanagerService.clearConversation();
   }
+
+
 }
 
