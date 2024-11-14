@@ -19,6 +19,7 @@
             <thead>
             <tr>
               <th class="document_header_content">Document</th>
+              <th class="document_header_content">Status</th>
               <th class="document_header_content">Summary</th>
               <th class="document_header_content">Date uploaded</th>
               <th class="document_header_content">Action</th>
@@ -31,6 +32,9 @@
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
                     <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+                  </td>
+                  <td class="document_text_content">
+                      {{ document.document_status }}
                   </td>
                   <td class="document_text_content">
                     @if (document.summary_status == DocumentStatus.COMPLETED) {

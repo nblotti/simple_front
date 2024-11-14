@@ -79,7 +79,6 @@ export class FileUploadDialogComponent {
           if (event.total != undefined)
             this.uploadProgress = Math.round((100 * event.loaded) / event.total);
         } else if (event.type === HttpEventType.Response) {
-          console.log('File uploaded successfully:', event.body);
           if (this.summaryChecked()) {
             this.documentService.requestSummary(user, event.body.id)
               .pipe(

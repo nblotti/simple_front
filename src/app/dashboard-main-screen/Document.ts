@@ -2,7 +2,7 @@ export class Document {
 
   constructor(public id: string, public name: string, public owner: string, public perimeter: string,
               public created_on: string, public summary_id: string, public summary_status: string,
-              public document_type: string) {
+              public document_type: string, public document_status: string) {
     this.id = id;
     this.name = name;
     this.owner = owner;
@@ -11,6 +11,7 @@ export class Document {
     this.summary_id = summary_id;
     this.summary_status = summary_status;
     this.document_type = document_type;
+    this.document_status = document_status;
   }
 
 }
