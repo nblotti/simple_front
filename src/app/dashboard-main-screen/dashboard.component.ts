@@ -5,7 +5,7 @@ import {catchError, map, Observable, Subscription, throwError} from "rxjs";
 import {ConversationService} from "./conversation.service";
 import {StateManagerService, STATES} from "../state-manager.service";
 import {Conversation} from "./Conversation";
-import {DatePipe, NgIf} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus";
 import {UserCategory, UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentStatus, DocumentType} from "../document.service";
@@ -19,7 +19,7 @@ import {Router} from "@angular/router";
 @Component({
   selector: 'dashboard-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, NgIf, ReactiveFormsModule, CapitalizePipe],
+  imports: [FormsModule, HttpClientModule, ReactiveFormsModule, CapitalizePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -33,11 +33,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   formShare: FormGroup;
   initialPerimeterCheckboxes: UserCategory[] = [];
   initialShareCheckboxes: UserCategory[] = [];
+
+  /*********************************************************************************************
+   /*Changement du périmètre
+   /* */
+
+
+// Utility method to clear the FormArray
+
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
+  private buttonStatus = ["Auto refresh", "Disable refresh"]
+  protected buttonLabel: string = this.buttonStatus[0]
   private formPerimeterValueChangesSubscription: Subscription | undefined;
   private formShareValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
+  private intervalId: any;
 
   constructor(
     private conversationService: ConversationService,
@@ -80,6 +91,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeFromPerimeterFormValueChanges();
     this.unsubscribeFromShareFormValueChanges();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   ngOnInit() {
@@ -305,7 +319,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.stateManagerService.setCurrentConversation(conversation_id);
   }
 
-
   addConversation() {
     this.conversationService.createConversation().subscribe(value => {
       this.reloadConversations();
@@ -313,7 +326,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   refreshDashboard() {
-    this.reload();
+    if (this.buttonLabel == this.buttonStatus[0]) {
+      this.buttonLabel = this.buttonStatus[1]
+      this.intervalId = setInterval(() => {
+        this.performScheduledTask();
+      }, 30000); // Schedule task to
+    } else {
+
+      this.buttonLabel = this.buttonStatus[0]
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
+    }
+
   }
 
   protected createSummaryJob($event: MouseEvent, id: string) {
@@ -336,38 +361,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });// Make sure to subscribe to the observable to trigger execution.
   }
 
-  /*********************************************************************************************
-   /*Changement du périmètre
-   /* */
+  performScheduledTask() {
+    // Implement the logic of your scheduled task here
+    console.log('Scheduled task executed at', new Date());
+    this.reload();
+  }
 
-
-
-
-
-  // Utility method to clear the FormArray
-  private clearFormArray(formArray: FormArray) {
+  clearFormArray(formArray
+                 :
+                 FormArray
+  ) {
     while (formArray.length !== 0) {
       formArray.removeAt(0);
     }
   }
 
-  private reload() {
+  reload() {
     this.loadDocuments();
     this.reloadConversations();
     this.loadTemplates();
     // this.perimeter.set(this.userContextService.userID, true);
   }
 
-  private loadDocuments() {
+  loadDocuments() {
     this.fetchDocuments().subscribe(value => this.documents.set(value));
   }
 
-  private loadTemplates() {
+  loadTemplates() {
     this.fetchTemplates().subscribe(value => this.templates.set(value));
   }
 
-
-  private loadSummary() {
+  loadSummary() {
     this.fetchSummaries().subscribe(value => this.summaries.set(value));
   }
 
