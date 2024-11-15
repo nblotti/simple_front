@@ -94,20 +94,20 @@ export class DocumentSelectorComponent {
         complete: () => {
         }
       });
+      if (this.userContextService.userAdminCategories().length > 0) {
+        this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), this.userContextService.userAdminCategories()[0].id).subscribe({
+          next: (result: CategoryDocument[]) => {
+            this.elementsCategoryDocuments.set(result);
+            this.initialCategoryDocuments = result;
 
-      this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), this.userContextService.userAdminCategories()[0].id).subscribe({
-        next: (result: CategoryDocument[]) => {
-          this.elementsCategoryDocuments.set(result);
-          this.initialCategoryDocuments = result;
-
-        },
-        error: (error) => {
-          console.error('Load failed:', error);
-        },
-        complete: () => {
-        }
-      });
-
+          },
+          error: (error) => {
+            console.error('Load failed:', error);
+          },
+          complete: () => {
+          }
+        });
+      }
       //Loading selected documents for the assistant
       this.assistantService.loadAssistantDocuments(this.assistant.id).subscribe({
         next: (result: AssistantDocument[]) => {
@@ -365,6 +365,7 @@ export class DocumentSelectorComponent {
       )
     );
   }
+
   private resetModal() {
     this.selectedMyDocuments.set([]);
     this.selectedSharedDocuments.set([]);

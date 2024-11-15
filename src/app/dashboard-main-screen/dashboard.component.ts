@@ -327,18 +327,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   refreshDashboard() {
     if (this.buttonLabel == this.buttonStatus[0]) {
-      this.buttonLabel = this.buttonStatus[1]
+      this.buttonLabel = this.buttonStatus[1];
       this.intervalId = setInterval(() => {
         this.performScheduledTask();
-      }, 30000); // Schedule task to
+      }, 120000); // Schedule task every minute
     } else {
-
-      this.buttonLabel = this.buttonStatus[0]
+      this.buttonLabel = this.buttonStatus[0];
       if (this.intervalId) {
         clearInterval(this.intervalId);
       }
     }
-
   }
 
   protected createSummaryJob($event: MouseEvent, id: string) {
