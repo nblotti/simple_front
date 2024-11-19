@@ -31,16 +31,23 @@
               @for (document of documents(); track document; let index = $index) {
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
+                    @if (document.document_status == DocumentStatus.COMPLETED) {
                     <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+                    }@else {
+                      {{  document.name |capitalize }}
+                    }
                   </td>
                   <td class="document_text_content">
                       {{ document.document_status }}
                   </td>
                   <td class="document_text_content">
-                    @if (document.summary_status == DocumentStatus.COMPLETED) {
+                    @if(document.document_status != DocumentStatus.COMPLETED){
+                      ""
+                    }
+                    @else if (document.summary_status == DocumentStatus.COMPLETED ) {
                       <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
                     } @else if (document.summary_status == DocumentStatus.NONE) {
-                      <button class="pdf_button" (click)="createSummaryJob($event,  document.id)">Request</button>
+                      <button class="pdf_button" (click)="createSummaryJob($event,  document)">Request</button>
                     } @else {
                       {{ document.summary_status }}
                     }

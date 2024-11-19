@@ -339,8 +339,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected createSummaryJob($event: MouseEvent, id: string) {
-    return this.documentService.requestSummary(this.userContextService.getUserID()(), id)
+  protected createSummaryJob($event: MouseEvent, document: Document) {
+
+    document.summary_status = DocumentStatus.REQUESTED
+    return this.documentService.requestSummary(this.userContextService.getUserID()(), document.id)
       .pipe(
         catchError(error => {
           console.error('An error occurred:', error);
@@ -350,7 +352,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           console.log('Job created successfully', response);
-          this.reload();
+
+          setTimeout(() => {
+            this.reload();
+          }, 10000); // Wait for 10 seconds
 
         },
         error: (error) => {
@@ -378,6 +383,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadDocuments();
     this.reloadConversations();
     this.loadTemplates();
+    this.loadSummary();
     // this.perimeter.set(this.userContextService.userID, true);
   }
 
