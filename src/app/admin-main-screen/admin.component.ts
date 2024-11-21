@@ -1,6 +1,6 @@
 import {Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {StateManagerService} from "../state-manager.service";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpEventType} from "@angular/common/http";
 import {UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentStatus, DocumentType} from "../document.service";
 import {CapitalizePipe} from "../capitalize.pipe";
@@ -24,14 +24,55 @@ import {NgEventBus} from "ng-event-bus";
 export class AdminComponent implements OnInit {
 
   readonly documents: WritableSignal<Document[]> = signal([]);
+  protected selectedFiles: WritableSignal<{
+    data: File;
+    uploadProgress: number,
+    name: String,
+    isIndexing: boolean
+  }[]> = signal([]);
   protected readonly DocumentStatus = DocumentStatus;
   protected readonly document = document;
-
   protected category = this.userContextService.userAdminCategories()[0].id;
+  protected active_tab: TABS = TABS.MANAGE;
 
   constructor(private stateManagerService: StateManagerService, private httpClient: HttpClient,
               private eventBus: NgEventBus, private router: Router, private navStateService: NavigationStateService, private documentService: DocumentService,
-              protected userContextService: UserContextService,) {
+              protected userContextService: UserContextService, private fileUploadService: DocumentService) {
+  }
+
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files) {
+      this.selectedFiles.set(Array.from(input.files).map(file => ({
+        data: file,
+        uploadProgress: 0,
+        isIndexing: false,
+        name: file.name
+      })));
+    }
+  }
+
+  onUpload(): void {
+
+    this.selectedFiles().forEach(file => {
+
+      this.fileUploadService.uploadFile(file.data, DocumentType.DOCUMENT, this.category).subscribe(event => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const total = event.total;
+          if (total) {
+            file.uploadProgress = Math.round(100 * event.loaded / total);
+            if (file.uploadProgress == 100) {
+              file.isIndexing = true;
+            }
+          }
+        } else if (event.type === HttpEventType.Response) {
+          console.log('Upload complete:', file.data.name);
+          file.isIndexing = false;
+        }
+      });
+    });
   }
 
 
@@ -86,6 +127,21 @@ export class AdminComponent implements OnInit {
     return item.id;
   }
 
+  onTabActivated(tabId: string): void {
+
+    if (tabId === TABS.MANAGE) {
+      this.active_tab = TABS.MANAGE;
+      this.reload()
+    } else if (tabId === TABS.UPLOAD) {
+      this.resetFileInput();
+      this.active_tab = TABS.UPLOAD;
+    }
+  }
+
+  protected resetFileInput() {
+    this.selectedFiles.set([])
+  }
+
   private fetchDocuments(): Observable<Document[]> {
     return this.documentService.fetchDocuments("" + this.category, DocumentType.DOCUMENT).pipe(map(response => {
       if (response.length == 0)
@@ -102,4 +158,10 @@ export class AdminComponent implements OnInit {
   private reload() {
     this.loadDocuments();
   }
+}
+
+
+export enum TABS {
+  MANAGE = 'manage',
+  UPLOAD = 'upload'
 }

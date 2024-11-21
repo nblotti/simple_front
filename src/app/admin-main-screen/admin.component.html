@@ -1,47 +1,106 @@
-
-
 <div class="input-group mb-3 admin_group_selector">
   <span class="input-group-text" id="basic-addon1">Group : </span>
-  <select class="form-select" (change)="onCategoryChange($event)" aria-label="Default select example" aria-describedby="basic-addon1">
+  <select class="form-select" (change)="onCategoryChange($event)" aria-label="Default select example"
+          aria-describedby="basic-addon1">
     @for (category of userContextService.userAdminCategories(); track category; let index = $index) {
-    <option value=category.id [value]="category.id">{{ category.name }}</option>
-  }
+      <option value=category.id [value]="category.id">{{ category.name }}</option>
+    }
   </select>
 </div>
 
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="documents-tab" [class.active]="active_tab === 'manage'" data-bs-toggle="tab" href="#manage"
+       (click)="onTabActivated('manage')" role="tab"
+       aria-controls="manage" aria-selected="true">Documents</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="url-tab" [class.active]="active_tab === 'upload'" data-bs-toggle="tab" href="#upload"
+       (click)="onTabActivated('upload')" role="tab" aria-controls="upload"
+       aria-selected="false">Upload</a>
+  </li>
 
-<table class="table table-borderless table_documnents .table-hover ">
-  <thead >
-  <tr>
-    <th class="document_header_content">Document</th>
-    <th class="document_header_content">Summary</th>
-    <th class="document_header_content">Date uploaded</th>
-    <th class="document_header_content">Action</th>
-  </tr>
-  </thead>
-  <tbody>
-
-
-    @for (document of documents(); track document; let index = $index) {
-      <tr class=".bg-transparent mt-5">
-        <td class="document_text_content">
-          <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
-        </td>
-        <td class="document_text_content">
-          @if (document.summary_status == DocumentStatus.COMPLETED) {
-            <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
-          } @else {
-            {{ document.summary_status }}
-          }
-        </td>
-        <td class="document_text_content">
-          {{ document.created_on }}
-        </td>
-        <td class="document_text_content">
-          <button class="pdf_button_delete" (click)="deleteDocument(document.id)">Delete</button>
-        </td>
+  @if (active_tab === 'upload') {
+    <input type="file" class="btn-document-choice"
+           accept="application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+           multiple (change)="onFileSelected($event)"/>
+  }
+</ul>
+<div class="tab-content" id="manageContent">
+  <div class="tab-pane fade show active" id="manage" role="tabpanel" aria-labelledby="manage-tab" #tabManage>
+    <table class="table table-borderless table_documnents .table-hover ">
+      <thead>
+      <tr>
+        <th class="document_header_content">Document</th>
+        <th class="document_header_content">Summary</th>
+        <th class="document_header_content">Date uploaded</th>
+        <th class="document_header_content">Action</th>
       </tr>
-    }
+      </thead>
+      <tbody>
 
-  </tbody>
-</table>
+
+        @for (document of documents(); track document; let index = $index) {
+          <tr class=".bg-transparent mt-5">
+            <td class="document_text_content">
+              <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+            </td>
+            <td class="document_text_content">
+              @if (document.summary_status == DocumentStatus.COMPLETED) {
+                <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
+              } @else {
+                {{ document.summary_status }}
+              }
+            </td>
+            <td class="document_text_content">
+              {{ document.created_on }}
+            </td>
+            <td class="document_text_content">
+              <button class="pdf_button_delete" (click)="deleteDocument(document.id)">Delete</button>
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="tab-content" id="uploadContent">
+  <div class="tab-pane fade  active" id="upload" role="tabpanel" aria-labelledby="manage-tab" #tabUpload>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Progress</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (file of selectedFiles(); track file; let index = $index) {
+          <tr>
+            <td>{{ file.name }}</td>
+            <td>
+              @if (file.uploadProgress != 100 && !file.isIndexing) {
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar"
+                       [style.width.%]="file.uploadProgress">{{ file.uploadProgress }}
+                    %
+                  </div>
+                </div>
+              } @else if (file.isIndexing) {
+                INDEXING
+              } @else {
+                DONE
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (selectedFiles().length > 0) {
+      <button class="btn-upload" (click)="onUpload()">Upload</button>
+      <button class="btn-reset" (click)="resetFileInput()">Clear</button>
+    }
+  </div>
+</div>

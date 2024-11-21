@@ -24,8 +24,21 @@
   color: red;
 }
 
-.admin_group_selector{
+.admin_group_selector {
   width: 20%;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.btn-document-choice {
+  margin: 5px;
+
+}
+
+.btn-upload {
+  margin: 5px;
+}
+
+.btn-reset {
+  margin: 5px;
 }
