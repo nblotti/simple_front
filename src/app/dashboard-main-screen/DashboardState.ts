@@ -47,8 +47,10 @@ export class DashboardState implements StateInterface {
           return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
         });
       },
-      error: (result: string) => {
-        console.log(result)
+      error: (result) => {
+        this.screenReadyMessages.update(values => {
+          return [...values, new ScreenReadyMessage(values.length, "assistant", result["error"].detail)];
+        });
       },
       complete: () => {
 

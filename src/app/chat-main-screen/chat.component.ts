@@ -2,9 +2,7 @@ import {AfterViewChecked, Component, computed, Input, OnInit, ViewChild} from '@
 import {FormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {NgEventBus} from 'ng-event-bus';
-import {LineBreakPipe} from "./line-break.pipe";
 import {StateManagerService} from "../state-manager.service";
-import {HighlightJsDirective} from "ngx-highlight-js";
 import {HighlightDirective} from "../chat-highlight-content/highlight.component";
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
@@ -15,7 +13,7 @@ import {Location} from '@angular/common';
 @Component({
   selector: 'chat-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, LineBreakPipe, HighlightJsDirective, HighlightDirective, AppCopyButtonDirective],
+  imports: [FormsModule, HttpClientModule, HighlightDirective, AppCopyButtonDirective],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
@@ -59,8 +57,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
    /*L'utilisateur a envoyé une nouvelle commande, on traite
    */
   onKeyUp($event
-            :
-            KeyboardEvent
+          :
+          KeyboardEvent
   ) {
 
     if ($event.key === 'Enter' && (!$event.shiftKey && !$event.ctrlKey)) {
@@ -111,9 +109,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   }
 
-  runAction()
-    :
-    void {
+  runAction(): void {
 
     let current_message = this.inputMessage
     this.inputMessage = "";

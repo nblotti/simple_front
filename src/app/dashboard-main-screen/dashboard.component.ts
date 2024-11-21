@@ -177,25 +177,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Method to initialize subscription to form value changes
   initializePerimeterValueChangesSubscription() {
     this.formPerimeterValueChangesSubscription = this.formPerimeter.valueChanges.subscribe(values => {
-      // dans le cas ou aucune checkbox n'est active
-      if (!this.anyCheckboxPerimeterChecked()) {
-        const checkboxesArray = this.checkboxesFormPerimeterArray.controls;
 
-        for (let i = 0; i < this.initialPerimeterCheckboxes.length; i++) {
-          let currentcb = checkboxesArray[i].get('value');
-          if (currentcb != null)
-            currentcb.setValue(this.initialPerimeterCheckboxes[i].value);
-
-        }
-
-      } else {
-        const changedIndex = values.checkboxesPerimeter.findIndex((checkbox: any, index: number) =>
-          checkbox.value !== this.initialPerimeterCheckboxes[index].value
-        );
-        if (changedIndex !== -1) {
-          this.initialPerimeterCheckboxes[changedIndex].value = !this.initialPerimeterCheckboxes[changedIndex].value;
-          this.setPerimeter()
-        }
+      const changedIndex = values.checkboxesPerimeter.findIndex((checkbox: any, index: number) =>
+        checkbox.value !== this.initialPerimeterCheckboxes[index].value
+      );
+      if (changedIndex !== -1) {
+        this.initialPerimeterCheckboxes[changedIndex].value = !this.initialPerimeterCheckboxes[changedIndex].value;
+        this.setPerimeter()
       }
 
     });
@@ -339,31 +327,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected createSummaryJob($event: MouseEvent, document: Document) {
-
-    document.summary_status = DocumentStatus.REQUESTED
-    return this.documentService.requestSummary(this.userContextService.getUserID()(), document.id)
-      .pipe(
-        catchError(error => {
-          console.error('An error occurred:', error);
-          return throwError(error);
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          console.log('Job created successfully', response);
-
-          setTimeout(() => {
-            this.reload();
-          }, 10000); // Wait for 10 seconds
-
-        },
-        error: (error) => {
-          console.error('An error occurred while creating the job:', error);
-        }
-      });// Make sure to subscribe to the observable to trigger execution.
-  }
-
   performScheduledTask() {
     // Implement the logic of your scheduled task here
     console.log('Scheduled task executed at', new Date());
@@ -397,6 +360,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadSummary() {
     this.fetchSummaries().subscribe(value => this.summaries.set(value));
+  }
+
+  protected createSummaryJob($event: MouseEvent, document: Document) {
+
+    document.summary_status = DocumentStatus.REQUESTED
+    return this.documentService.requestSummary(this.userContextService.getUserID()(), document.id)
+      .pipe(
+        catchError(error => {
+          console.error('An error occurred:', error);
+          return throwError(error);
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Job created successfully', response);
+
+          setTimeout(() => {
+            this.reload();
+          }, 10000); // Wait for 10 seconds
+
+        },
+        error: (error) => {
+          console.error('An error occurred while creating the job:', error);
+        }
+      });// Make sure to subscribe to the observable to trigger execution.
   }
 
   private fetchDocuments(): Observable<Document[]> {
