@@ -43,12 +43,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
+  protected readonly DASHBOARD_SORTABLE_COLUMNS = DASHBOARD_SORTABLE_COLUMNS;
   private buttonStatus = ["Auto refresh", "Disable refresh"]
   protected buttonLabel: string = this.buttonStatus[0]
   private formPerimeterValueChangesSubscription: Subscription | undefined;
   private formShareValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
   private intervalId: any;
+
+  protected sortOrderArray: { [key: string]: SortOrder } = {
+    name: {direction: true},
+    status: {direction: false},
+    date: {direction: true},
+  };
 
   constructor(
     private conversationService: ConversationService,
@@ -101,6 +108,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.stateManagerService.setCurrentState(STATES.Dashboard);
     this.loadCategories();
     this.loadGroups();
+
+    this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.NAME] = {direction: true};
+    this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.STATUS] = {direction: false};
+    this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.DATE] = {direction: false};
 
   }
 
@@ -351,7 +362,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadDocuments() {
-    this.fetchDocuments().subscribe(value => this.documents.set(value));
+    this.fetchDocuments().subscribe(value => this.documents.set(this.sortDocumentsByName(value, true)));
   }
 
   loadTemplates() {
@@ -362,7 +373,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.fetchSummaries().subscribe(value => this.summaries.set(value));
   }
 
+  sortDocuments(column: DASHBOARD_SORTABLE_COLUMNS) {
+
+    // Proceed with sorting
+    const col = this.sortOrderArray[column];
+
+    if (col == undefined)
+      return;
+
+    for (const current_column of Object.keys(this.sortOrderArray)) {
+      if (current_column == column)
+        this.sortOrderArray[current_column].direction = !this.sortOrderArray[current_column].direction;
+      else
+        this.sortOrderArray[current_column].direction = false;
+    }
+
+    this.sortOrderArray[column] = col
+
+
+    switch (column) {
+      case DASHBOARD_SORTABLE_COLUMNS.NAME:
+        this.documents.set(this.sortDocumentsByName(this.documents(), col.direction));
+        break;
+      case DASHBOARD_SORTABLE_COLUMNS.STATUS:
+        this.documents.set(this.sortDocumentsByDocumentStatus(this.documents(), col.direction));
+        break;
+      case DASHBOARD_SORTABLE_COLUMNS.DATE:
+        this.documents.set(this.sortDocumentsByCreatedOn(this.documents(), col.direction));
+        break;
+      default:
+        console.log("Unknown column");
+        break;
+    }
+
+  }
+
   protected createSummaryJob($event: MouseEvent, document: Document) {
+
 
     document.summary_status = DocumentStatus.REQUESTED
     return this.documentService.requestSummary(this.userContextService.getUserID()(), document.id)
@@ -387,10 +434,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });// Make sure to subscribe to the observable to trigger execution.
   }
 
+
+  private sortDocumentsByName(documents: Document[], direction: boolean) {
+    return documents.sort((a, b) => {
+      const comparison = a.name.localeCompare(b.name);
+      return direction ? comparison : -comparison;
+    });
+  }
+
+  private sortDocumentsByDocumentStatus(documents: Document[], direction: boolean) {
+    return documents.sort((a, b) => {
+      const comparison = a.document_status.localeCompare(b.document_status);
+      return direction ? comparison : -comparison;
+    });
+  }
+
+  private sortDocumentsByCreatedOn(documents: Document[], direction: boolean) {
+    return documents.sort((a, b) => {
+      const comparison = a.created_on.localeCompare(b.created_on);
+      return direction ? comparison : -comparison;
+    });
+  }
+
   private fetchDocuments(): Observable<Document[]> {
     return this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.DOCUMENT).pipe(map(response => {
       if (response.length == 0)
         return []
+
       return response
     }));
   }
@@ -410,5 +480,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return response
     }));
   }
+}
+
+interface SortOrder {
+  direction: boolean;
+}
+
+export enum DASHBOARD_SORTABLE_COLUMNS {
+  NAME = "name",
+  STATUS = "status",
+  DATE = "date",
+
 }
 

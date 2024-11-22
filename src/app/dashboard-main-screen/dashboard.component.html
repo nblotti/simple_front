@@ -18,10 +18,39 @@
           <table class="table table-borderless table_documnents">
             <thead>
             <tr>
-              <th class="document_header_content">Document</th>
-              <th class="document_header_content">Status</th>
-              <th class="document_header_content">Summary</th>
-              <th class="document_header_content">Date uploaded</th>
+              <th class="document_header_content sortable_column"
+                  (click)="sortDocuments(DASHBOARD_SORTABLE_COLUMNS.NAME)">
+                Document
+                <span class="sort-arrows">
+                  @if (sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.NAME].direction) {
+                    <span class="arrow-up">▲</span>
+                  } @else {
+                    <span class="arrow-down">▼</span>
+                  }
+              </span>
+              </th>
+              <th class="document_header_content sortable_column"
+                  (click)="sortDocuments(DASHBOARD_SORTABLE_COLUMNS.STATUS)">Status
+                <span class="sort-arrows">
+                  @if (sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.STATUS].direction) {
+
+                    <span class="arrow-down">▼</span>
+                  } @else {
+                    <span class="arrow-up">▲</span>
+                  }
+              </span></th>
+              <th class="document_header_content ">Summary</th>
+              <th class="document_header_content sortable_column"
+                  (click)="sortDocuments(DASHBOARD_SORTABLE_COLUMNS.DATE)">Date uploaded
+                <span class="sort-arrows">
+                   @if (sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.DATE].direction) {
+
+                     <span class="arrow-up">▲</span>
+                   } @else {
+
+                     <span class="arrow-down">▼</span>
+                   }
+              </span></th>
               <th class="document_header_content">Action</th>
             </tr>
             </thead>
@@ -32,19 +61,18 @@
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
                     @if (document.document_status == DocumentStatus.COMPLETED) {
-                    <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
-                    }@else {
-                      {{  document.name |capitalize }}
+                      <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+                    } @else {
+                      {{ document.name |capitalize }}
                     }
                   </td>
                   <td class="document_text_content">
-                      {{ document.document_status }}
+                    {{ document.document_status }}
                   </td>
                   <td class="document_text_content">
-                    @if(document.document_status != DocumentStatus.COMPLETED){
+                    @if (document.document_status != DocumentStatus.COMPLETED) {
                       ""
-                    }
-                    @else if (document.summary_status == DocumentStatus.COMPLETED ) {
+                    } @else if (document.summary_status == DocumentStatus.COMPLETED) {
                       <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
                     } @else if (document.summary_status == DocumentStatus.NONE) {
                       <button class="pdf_button" (click)="createSummaryJob($event,  document)">Request</button>
@@ -56,7 +84,7 @@
                     {{ document.created_on }}
                   </td>
                   <td class="document_text_content">
-                    <button class="pdf_button_delete"  (click)="deleteDocument(document.id)">Delete</button>
+                    <button class="pdf_button_delete" (click)="deleteDocument(document.id)">Delete</button>
                   </td>
                 </tr>
               }
@@ -102,7 +130,7 @@
                     {{ summary.created_on }}
                   </td>
                   <td class="document_text_content">
-                    <button class="pdf_button_delete"  (click)="deleteDocument(summary.id)">Delete</button>
+                    <button class="pdf_button_delete" (click)="deleteDocument(summary.id)">Delete</button>
                   </td>
                 </tr>
               }
@@ -144,7 +172,7 @@
                     {{ template.created_on }}
                   </td>
                   <td class="document_text_content">
-                    <button class="pdf_button_delete"  (click)="deleteDocument(template.id)">Delete</button>
+                    <button class="pdf_button_delete" (click)="deleteDocument(template.id)">Delete</button>
                   </td>
                 </tr>
               }
