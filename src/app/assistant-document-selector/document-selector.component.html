@@ -107,7 +107,7 @@
                     <th class="document_header_content">
                       <select (change)="categoryValueChanged($event)" tabindex="-1"
                               class=" assistant-btn-class" id="dropdownModel">
-                        @for (option of this.userContextService.userAdminCategories(); track option.value) {
+                        @for (option of this.userContextService.userAdminCategories(); track option.id) {
                             <option class="custom-option" selected [value]="option.id">{{ option.name }}</option>
 
                         }

@@ -269,12 +269,26 @@ export class DocumentSelectorComponent {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+
+    if (tab == 'category_document') {
+
+
+      if (this.userContextService.userAdminCategories().length > 0) {
+        const firstElement = this.userContextService.userAdminCategories()[this.userContextService.userAdminCategories().length - 1];
+        this.retrieveDocumentsForCategory(firstElement.id)
+      }
+    }
   }
 
   protected categoryValueChanged($event: Event) {
     const selectElement = $event.target as HTMLSelectElement;
+    this.retrieveDocumentsForCategory(selectElement.value);
 
-    this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), selectElement.value).subscribe({
+
+  }
+
+  private retrieveDocumentsForCategory(selectElement: string) {
+    this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), selectElement).subscribe({
 
       next: (element: CategoryDocument[]) => {
         //on l'ajoute comme un élément du périmêtre
@@ -287,8 +301,6 @@ export class DocumentSelectorComponent {
       complete: () => {
       }
     });
-
-
   }
 
   private updateMyDocumentsElements() {
