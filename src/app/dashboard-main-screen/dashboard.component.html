@@ -71,7 +71,7 @@
                   </td>
                   <td class="document_text_content">
                     @if (document.document_status != DocumentStatus.COMPLETED) {
-                      ""
+
                     } @else if (document.summary_status == DocumentStatus.COMPLETED) {
                       <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
                     } @else if (document.summary_status == DocumentStatus.NONE) {

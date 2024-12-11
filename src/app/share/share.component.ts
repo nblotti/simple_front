@@ -41,7 +41,7 @@ export class ShareComponent implements OnInit {
   protected documentAddedModel: WritableSignal<Document | null> = signal(null);
   protected isDocumentAddedModelValid = computed(() => {
     let doc = this.documentAddedModel();
-    if (doc == null|| (doc as Document).name == undefined )
+    if (doc == null || (doc as Document).name == undefined)
       return false;
     return doc.name.trim().length > 0;
   })
@@ -50,7 +50,7 @@ export class ShareComponent implements OnInit {
 
   protected isUerAddedModelValid = computed(() => {
     let user = this.userAddedModel();
-    if (user == null || (user as User).cn == undefined )
+    if (user == null || (user as User).cn == undefined)
       return false;
     return user.cn.trim().length > 0;
   })
@@ -327,18 +327,22 @@ export class ShareComponent implements OnInit {
 
     if (deleteGroup == null)
       return;
-
+    this.statemanagerService.blurWindow.set(true);
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    this.httpClient.delete(this.sharedGroupDocumentUrl +deleteGroup.id + "/", {headers}).subscribe({
+    this.httpClient.delete(this.sharedGroupDocumentUrl + deleteGroup.id + "/", {headers}).subscribe({
       next: (assistant) => {
         if (groupId != null)
           this.loadDocumentForGroup(groupId)
+          this.statemanagerService.blurWindow.set(false)
       },
       error: (err) => {
         console.error(err);
+        this.statemanagerService.blurWindow.set(false)
       }
 
-    });
+    }
+  )
+    ;
 
   }
 

@@ -4,7 +4,7 @@ import {NgEventBus} from "ng-event-bus"
 
 import {ChatComponent} from "./chat-main-screen/chat.component";
 import {FileUploadDialogComponent} from "./dashboard-document-upload/file-upload-dialog.component";
-import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
+import {NavigationEnd, Router, RouterLink, RouterOutlet} from "@angular/router";
 import {filter} from "rxjs";
 import {ConversationService} from "./dashboard-main-screen/conversation.service";
 import {StateManagerService} from "./state-manager.service";
@@ -17,16 +17,15 @@ import {ShareState} from "./share/ShareState";
 import {DocumentService} from "./document.service";
 import {NavigationStateService} from "./dashboard-document-screen/navigation-state.service";
 import {PdfViewerModule} from "ng2-pdf-viewer";
-import {DocumentSelectorComponent} from "./assistant-document-selector/document-selector.component";
 import {DocumentState} from "./dashboard-document-screen/DocumentState";
 import {LoginService} from "./auth/login.service";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
-  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, RouterLinkActive, PdfViewerModule, DocumentSelectorComponent],
+  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, PdfViewerModule],
   providers: [NgEventBus, DatePipe, DashboardState, AssistantState, ShareState, DocumentState, StateManagerService,
-    ConversationService, AssistantService, LoginComponent,LoginService, DocumentService, NavigationStateService],
+    ConversationService, AssistantService, LoginComponent, LoginService, DocumentService, NavigationStateService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 
@@ -46,7 +45,7 @@ export class AppComponent implements OnInit {
   });
 
 
-  constructor(private router: Router, protected userContextService: UserContextService, private stateManagerService: StateManagerService,) {
+  constructor(private router: Router, protected userContextService: UserContextService, protected stateManagerService: StateManagerService,) {
   }
 
 
@@ -77,4 +76,6 @@ export class AppComponent implements OnInit {
   isAdmin() {
     return this.userContextService.userAdminCategories().length != 0;
   }
+
+
 }
