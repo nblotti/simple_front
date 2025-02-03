@@ -41,7 +41,7 @@ export class HighlightDirective implements OnChanges {
         this.renderer.appendChild(this.el.nativeElement, preElement);
       } else {
         const divElement = this.renderer.createElement('div');
-        this.renderer.addClass(divElement, 'non-code-text');
+        this.renderer.addClass(divElement, 'non-code-text markdown ngPreserveWhitespaces');
         const textNode = this.renderer.createText(this.trimSingleQuotes(block.content));
         this.renderer.appendChild(divElement, textNode);
         const containerElement = this.createBlockElement(divElement, block.content);

@@ -10,14 +10,16 @@ import {
   ViewChild,
   WritableSignal
 } from '@angular/core';
-import {DocumentService} from "../document.service";
 import {HttpEventType} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {NgEventBus} from "ng-event-bus";
 import {UserContextService} from "../auth/user-context.service";
 import {FormsModule} from "@angular/forms";
-import {catchError, throwError} from "rxjs";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {throwError} from "rxjs";
+import {NgIf} from "@angular/common";
+import {catchError} from "rxjs/operators";
+import {DocumentService} from "../document.service";
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -25,8 +27,7 @@ import {AsyncPipe, NgIf} from "@angular/common";
   standalone: true,
   imports: [
     FormsModule,
-    NgIf,
-    AsyncPipe
+    NgIf
   ],
   styleUrls: ['./file-upload-dialog.component.css']
 })
@@ -155,7 +156,7 @@ export class FileUploadDialogComponent {
 
   onCancel() {
     this.resetFileInput();
-    this.closeModal.emit();
+    setTimeout(() => this.closeModal.emit(), 1000);
   }
 
   onFileSelected($event: any) {
@@ -202,6 +203,7 @@ export class FileUploadDialogComponent {
       this.summaryChecked.set(false);
     }
   }
+
 }
 
 export enum FileType {
