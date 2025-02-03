@@ -6,6 +6,7 @@ import {
   Renderer2
 } from '@angular/core';
 import {HighlightJS} from 'ngx-highlightjs';
+import {marked} from "marked";
 
 @Directive({
   standalone: true,
@@ -38,15 +39,21 @@ export class HighlightDirective implements OnChanges {
         this.renderer.setProperty(codeElement, 'textContent', block.content);
         this.highlightJS.highlightElement(codeElement);
         const preElement = this.createBlockElement(codeElement, block.content);
+
         this.renderer.appendChild(this.el.nativeElement, preElement);
-      } else {
-        const divElement = this.renderer.createElement('div');
-        this.renderer.addClass(divElement, 'non-code-text markdown ngPreserveWhitespaces');
-        const textNode = this.renderer.createText(this.trimSingleQuotes(block.content));
-        this.renderer.appendChild(divElement, textNode);
-        const containerElement = this.createBlockElement(divElement, block.content);
-        this.renderer.appendChild(this.el.nativeElement, containerElement);
       }
+
+      if (!block.isCode) {
+        const parsedMarkdown = marked.parse(this.trimSingleQuotes(block.content));
+
+        const divElement = this.renderer.createElement('div');
+        this.renderer.setProperty(divElement, 'innerHTML', parsedMarkdown);
+        this.renderer.addClass(divElement, 'non-code-text'); // Add here
+        this.renderer.appendChild(this.el.nativeElement, divElement);
+
+
+      }
+
     });
   }
 

@@ -6,7 +6,6 @@ import { provideOAuthClient } from "angular-oauth2-oidc";
 import { MyHttpInterceptor } from "./http.interceptor";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import {HIGHLIGHT_OPTIONS, provideHighlightOptions} from "ngx-highlightjs";
-import { provideMarkdown } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +26,6 @@ export const appConfig: ApplicationConfig = {
         css: () => import('highlight.js/lib/languages/css'),
         xml: () => import('highlight.js/lib/languages/xml')
       }
-    }),
-    provideMarkdown(),
+    })
   ],
 };
