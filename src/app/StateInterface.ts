@@ -1,11 +1,15 @@
 import {ScreenReadyMessage} from "./chat-main-screen/SreenReadyMessage";
 import {Signal, WritableSignal} from "@angular/core";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 
 export interface StateInterface {
 
 
-  sendCommand(current_message: string): void;
+  sendCommand(current_message: string): Promise<void>
+  ;
+  startVoiceCommand(): Promise<boolean>;
+  endVoiceCommand(): Promise<boolean>;
+
 
   clearConversation(): Observable<any>;
 

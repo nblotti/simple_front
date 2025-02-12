@@ -5,6 +5,8 @@ import {Observable} from "rxjs";
 import {ConversationService} from "../dashboard-main-screen/conversation.service";
 import {Source} from "../Source";
 
+import {AudioRecorderComponentService} from "../voice/audio-recorder-component.service";
+
 
 @Component({
   standalone: true,
@@ -15,9 +17,11 @@ export class DocumentState implements StateInterface {
   public screenReadyMessages: WritableSignal<ScreenReadyMessage[]> = signal([]);
 
   private conversationService: ConversationService;
+  private audioRecorderComponentService: AudioRecorderComponentService;
 
-  constructor(conversationService: ConversationService) {
+  constructor(conversationService: ConversationService, audioRecorderComponentService: AudioRecorderComponentService) {
     this.conversationService = conversationService;
+    this.audioRecorderComponentService = audioRecorderComponentService;
   }
 
 
@@ -34,27 +38,32 @@ export class DocumentState implements StateInterface {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
 
-  sendCommand(current_message: string): void {
+  sendCommand(current_message: string): Promise<void> {
 
 
-    this.screenReadyMessages.update(values => {
-      return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
+    return new Promise<void>((resolve, reject) => {
+
+      this.screenReadyMessages.update(values => {
+        return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
+      });
+
+      this.conversationService.sendCommand(current_message).subscribe({
+        next: (result) => {
+          let sources: Source[] = this.buildSources(result.sources);
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
+          });
+        },
+        error: (error: any) => {
+          console.error(error); // Ensure proper logging
+          reject(error); // Reject the promise on error
+        },
+        complete: () => {
+          resolve(); // Resolve the promise on completion
+        }
+      });
     });
 
-    this.conversationService.sendCommand(current_message).subscribe({
-      next: (result) => {
-        let sources: Source[] = this.buildSources(result.sources)
-        this.screenReadyMessages.update(values => {
-          return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
-        });
-      },
-      error: (result: string) => {
-        console.log(result)
-      },
-      complete: () => {
-
-      }
-    })
   }
 
   public loadConversationMessages() {
@@ -84,6 +93,41 @@ export class DocumentState implements StateInterface {
 
   setPerimeter(perimeter: string): any {
     this.conversationService.setDocumentPerimeter(perimeter)
+  }
+
+  startVoiceCommand(): Promise<boolean> {
+
+    this.audioRecorderComponentService.voice_command_url = "chat/voicecommand/";
+    return this.audioRecorderComponentService.startRecording(this.conversationService.getCurrentConversation(),
+      this.conversationService.getDocumentPerimeter());
+  }
+
+
+  endVoiceCommand(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.audioRecorderComponentService.stopRecording().subscribe({
+        next: (result) => {
+          if (result.question != null) {
+            this.screenReadyMessages.update(values => {
+              return [...values, new ScreenReadyMessage(values.length, "user", result.question)];
+            });
+          }
+          let sources: Source[] = this.buildSources(result.sources)
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
+          });
+          resolve(false);
+        },
+        error: (result: string) => {
+          console.log(result)
+          resolve(false);
+        },
+        complete: () => {
+
+        }
+      })
+    });
+
   }
 
   private buildSources(sources: Source[]): Source[] {

@@ -116,5 +116,12 @@
   fill: black;
 }
 
+.recording-class{
+  background-color: red;
+}
+.not-recording-class{
+  background-color: white
+}
+
 
 

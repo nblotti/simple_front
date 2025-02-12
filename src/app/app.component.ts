@@ -15,17 +15,17 @@ import {AssistantState} from "./assistant/AssistantState";
 import {AssistantService} from "./assistant/assistant.service";
 import {ShareState} from "./share/ShareState";
 import {DocumentService} from "./document.service";
-import {NavigationStateService} from "./dashboard-document-screen/navigation-state.service";
 import {PdfViewerModule} from "ng2-pdf-viewer";
 import {DocumentState} from "./dashboard-document-screen/DocumentState";
 import {LoginService} from "./auth/login.service";
+import {AudioRecorderComponentService} from "./voice/audio-recorder-component.service";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
   imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, PdfViewerModule],
   providers: [NgEventBus, DatePipe, DashboardState, AssistantState, ShareState, DocumentState, StateManagerService,
-    ConversationService, AssistantService, LoginComponent, LoginService, DocumentService, NavigationStateService],
+    ConversationService, AssistantService, LoginComponent, LoginService, DocumentService, AudioRecorderComponentService],
   templateUrl: './app.component.html', // 2.Render the Dom,
   styleUrl: './app.component.css'
 

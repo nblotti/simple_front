@@ -6,6 +6,7 @@ import {AssistantService} from "./assistant.service";
 import {ConversationService} from "../dashboard-main-screen/conversation.service";
 import {Observable} from "rxjs";
 import {Source} from "../Source";
+import {AudioRecorderComponentService} from "../voice/audio-recorder-component.service";
 
 @Component({
   standalone: true,
@@ -17,8 +18,10 @@ export class AssistantState implements StateInterface {
   private conversation_id: number = 0;
 
 
-  constructor(private assistantService: AssistantService, private conversationService: ConversationService) {
+  constructor(private assistantService: AssistantService, private conversationService: ConversationService,
+              private audioRecorderComponentService: AudioRecorderComponentService) {
     this.assistantService = assistantService;
+    this.audioRecorderComponentService = audioRecorderComponentService;
   }
 
 
@@ -36,9 +39,10 @@ export class AssistantState implements StateInterface {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
 
-  sendCommand(current_message: string): void {
+  sendCommand(current_message: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
 
-    this.screenReadyMessages.update(values => {
+      this.screenReadyMessages.update(values => {
       return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
     });
 
@@ -51,14 +55,16 @@ export class AssistantState implements StateInterface {
       },
       error: (result: string) => {
         console.log(result)
+        reject(result); // Reject on error
+
       },
       complete: () => {
-
+        resolve(); // Resolve on completion
       }
-    })
-
-
+    });
+    });
   }
+
 
 
   public loadConversationMessages() {
@@ -88,6 +94,38 @@ export class AssistantState implements StateInterface {
 
   setPerimeter(perimeter: string): any {
     this.assistantService.setDocumentPerimeter(perimeter)
+  }
+
+  startVoiceCommand(): Promise<boolean> {
+    this.audioRecorderComponentService.voice_command_url = "assistants/voicecommand/";
+    return this.audioRecorderComponentService.startRecording(this.conversation_id);
+  }
+
+  endVoiceCommand(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.audioRecorderComponentService.stopRecording().subscribe({
+        next: (result) => {
+          if (result.question != null) {
+            this.screenReadyMessages.update(values => {
+              return [...values, new ScreenReadyMessage(values.length, "user", result.question)];
+            });
+          }
+          let sources: Source[] = this.buildSources(result.sources)
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
+          });
+          resolve(false);
+        },
+        error: (result: string) => {
+          console.log(result)
+          resolve(false);
+        },
+        complete: () => {
+
+        }
+      })
+    });
+
   }
 
   private buildSources(sources: Source[]): Source[] {

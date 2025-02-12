@@ -32,13 +32,31 @@ export class ShareState implements StateInterface {
   loadConversationMessages(): void {
   }
 
-  sendCommand(current_message: string): void {
+  sendCommand(current_message: string): Promise<void>
+  {
+    return Promise.resolve()
   }
 
   setCurrentConversation(conversation_id: number): void {
   }
 
   setPerimeter(perimeter: string): void {
+  }
+
+  endVoiceCommand(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      // Add logic to stop voice commands
+      resolve(true); // Or reject with an error
+    });
+
+  }
+
+  startVoiceCommand(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      // Add logic to stop voice commands
+      resolve(false); // Or reject with an error
+    });
+
   }
 
 

@@ -59,7 +59,19 @@ export class StateManagerService implements OnInit {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
   public sendCommand(current_message: string) {
-    this.stateManager().sendCommand(current_message);
+    this.blurWindow.set(true);
+    this.stateManager()
+      .sendCommand(current_message)
+      .then(() => {
+        console.log("Command sent successfully!");
+      })
+      .catch((error) => {
+        console.error("Error sending command:", error);
+      })
+      .finally(() => {
+        this.blurWindow.set(false);
+      });
+
   }
 
   public clearConversation() {
@@ -105,8 +117,22 @@ export class StateManagerService implements OnInit {
 
   }
 
+  startVoiceCommand(): Promise<boolean> {
+
+    return this.stateManager().startVoiceCommand();
+  }
+
+  async endVoiceCommand(): Promise<boolean> {
+    this.blurWindow.set(true);
+    try {
+      return await this.stateManager().endVoiceCommand();
+    } finally {
+      this.blurWindow.set(false); // Ensure window is unblurred regardless of success or failure
+    }
+  }
+
+
   private loadConversationMessages() {
-    this.screenReadyMessages
     this.stateManager().loadConversationMessages();
 
   }

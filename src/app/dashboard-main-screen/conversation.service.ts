@@ -108,6 +108,9 @@ export class ConversationService {
 
   }
 
+  getDocumentPerimeter() {
+    return this.documentPerimeter
+  }
 }
 
 

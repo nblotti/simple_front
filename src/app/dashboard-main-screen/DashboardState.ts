@@ -4,6 +4,7 @@ import {ScreenReadyMessage} from "../chat-main-screen/SreenReadyMessage";
 import {ConversationService} from "./conversation.service";
 import {Observable} from "rxjs";
 import {Source} from "../Source"
+import {AudioRecorderComponentService} from "../voice/audio-recorder-component.service";
 
 @Component({
   standalone: true,
@@ -14,9 +15,11 @@ export class DashboardState implements StateInterface {
   public screenReadyMessages: WritableSignal<ScreenReadyMessage[]> = signal([]);
 
   private conversationService: ConversationService;
+  private audioRecorderComponentService: AudioRecorderComponentService;
 
-  constructor(conversationService: ConversationService) {
+  constructor(conversationService: ConversationService, audioRecorderComponentService: AudioRecorderComponentService) {
     this.conversationService = conversationService;
+    this.audioRecorderComponentService = audioRecorderComponentService;
   }
 
 
@@ -33,30 +36,35 @@ export class DashboardState implements StateInterface {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
 
-  sendCommand(current_message: string): void {
+  sendCommand(current_message: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
 
 
-    this.screenReadyMessages.update(values => {
-      return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
+      this.screenReadyMessages.update(values => {
+        return [...values, new ScreenReadyMessage(values.length, "user", current_message)];
+      });
+
+      this.conversationService.sendCommand(current_message).subscribe({
+        next: (result) => {
+          let sources: Source[] = this.buildSources(result.sources)
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
+          });
+        },
+        error: (result) => {
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result["error"].detail)];
+          });
+          reject(result); // Reject on error
+
+        },
+        complete: () => {
+          resolve(); // Resolve on completion
+        }
+      });
     });
-
-    this.conversationService.sendCommand(current_message).subscribe({
-      next: (result) => {
-        let sources: Source[] = this.buildSources(result.sources)
-        this.screenReadyMessages.update(values => {
-          return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
-        });
-      },
-      error: (result) => {
-        this.screenReadyMessages.update(values => {
-          return [...values, new ScreenReadyMessage(values.length, "assistant", result["error"].detail)];
-        });
-      },
-      complete: () => {
-
-      }
-    })
   }
+
 
   public loadConversationMessages() {
 
@@ -64,7 +72,7 @@ export class DashboardState implements StateInterface {
 
     this.conversationService.loadConversationMessages().subscribe({
       next: (result) => {
-        result.forEach((message,index) => {
+        result.forEach((message, index) => {
           if (message.type == "ai") {
             screenMessages.push(new ScreenReadyMessage(message.id, "assistant", message.content));
           } else if (message.type == "human") {
@@ -79,6 +87,45 @@ export class DashboardState implements StateInterface {
 
   }
 
+  setCurrentConversation(conversation_id: number): void {
+    this.conversationService.setCurrentConversation(conversation_id);
+  }
+
+  setPerimeter(perimeter: string): any {
+    this.conversationService.setDocumentPerimeter(perimeter)
+  }
+
+  startVoiceCommand(): Promise<boolean> {
+    this.audioRecorderComponentService.voice_command_url = "chat/voicecommand/";
+    return this.audioRecorderComponentService.startRecording(this.conversationService.getCurrentConversation(), this.conversationService.getDocumentPerimeter());
+  }
+
+  endVoiceCommand(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.audioRecorderComponentService.stopRecording().subscribe({
+        next: (result) => {
+          if (result.question != null) {
+            this.screenReadyMessages.update(values => {
+              return [...values, new ScreenReadyMessage(values.length, "user", result.question)];
+            });
+          }
+          let sources: Source[] = this.buildSources(result.sources)
+          this.screenReadyMessages.update(values => {
+            return [...values, new ScreenReadyMessage(values.length, "assistant", result.result, sources)];
+          });
+          resolve(false);
+        },
+        error: (result: string) => {
+          console.log(result)
+          resolve(false);
+        },
+        complete: () => {
+
+        }
+      })
+    });
+  }
+
   private buildSources(sources: Source[]): Source[] {
     let source_http_url: Source[] = []
 
@@ -90,14 +137,6 @@ export class DashboardState implements StateInterface {
       });
 
     return source_http_url;
-  }
-
-  setCurrentConversation(conversation_id: number): void {
-    this.conversationService.setCurrentConversation(conversation_id);
-  }
-
-  setPerimeter(perimeter: string): any {
-    this.conversationService.setDocumentPerimeter(perimeter)
   }
 
 }

@@ -1,19 +1,19 @@
-import {AfterViewChecked, Component, computed, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, computed, Input, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {NgEventBus} from 'ng-event-bus';
+import {HttpClientModule} from "@angular/common/http";
 import {StateManagerService} from "../state-manager.service";
 import {HighlightDirective} from "../chat-highlight-content/highlight.component";
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
-import {Location} from '@angular/common';
+import {Location, NgClass} from '@angular/common';
+import {UserContextService} from "../auth/user-context.service";
 
 
 @Component({
   selector: 'chat-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, HighlightDirective, AppCopyButtonDirective],
+  imports: [FormsModule, HttpClientModule, HighlightDirective, AppCopyButtonDirective, NgClass],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
@@ -22,25 +22,29 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   inputMessage: string = "";
   newMessage: boolean = false;
   @Input() text: string = '';
+  protected listening: WritableSignal<boolean> = signal(false);
+  protected isRecording: WritableSignal<boolean> = signal(false);
   protected screenReadyMessage = computed(() => {
     this.newMessage = true;
     return this.statemanagerService.getScreenReadyMessages()();
   });
   @ViewChild('scrollMe') private myScrollContainer: any;
 
-  constructor(private eventBus: NgEventBus,
-              private httpClient: HttpClient,
-              protected statemanagerService: StateManagerService,
+  constructor(protected statemanagerService: StateManagerService,
               private navStateService: NavigationStateService,
               private router: Router,
-              private location: Location) {
+              private location: Location,
+              private userContextService: UserContextService) {
 
 
   }
 
   ngOnInit() {
     this.scrollToBottom();
-
+    let groups = this.userContextService.getGroups()();
+    if (groups.includes("agp_prod_speech_to_text")) {
+      this.listening.set(true);
+    }
   }
 
 
@@ -122,5 +126,19 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
 
+  startRecording() {
+    if(this.isRecording())
+      this.stopRecording();
+    else
+    this.statemanagerService.startVoiceCommand().then(value => {
+      this.isRecording.set(value);
+    });
+  }
+
+  stopRecording() {
+    this.statemanagerService.endVoiceCommand().then(value => {
+      this.isRecording.set(value);
+    });
+  }
 }
 
