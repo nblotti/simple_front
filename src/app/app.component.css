@@ -111,7 +111,7 @@
   cursor: pointer;
 }
 
-.overlay {
+.simple-overlay {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -121,7 +121,17 @@
   z-index: 9998; /* Just below the popup */
 }
 
-.overlay::before {
+.wheel-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Adjust color and opacity as needed */
+  z-index: 9998; /* Just below the popup */
+}
+
+.wheel-overlay::before {
   content: '';
   position: absolute;
   top: 50%;

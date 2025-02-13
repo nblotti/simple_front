@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
 
   showModal: boolean = false;
   blurWindow = computed<boolean>(() => {
-    return this.stateManagerService.blurWindow()
+    return this.stateManagerService.wheeWindow()
   });
 
   @ViewChild('sidebar') sidebarRef!: ElementRef;

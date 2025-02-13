@@ -120,13 +120,13 @@ export class AssistantComponent implements OnInit {
 
   showFileSelector() {
     this.showModal = true;
-    this.stateManagerService.blurWindow.set(true);
+    this.stateManagerService.wheeWindow.set(true);
 
   }
 
   closeSelector() {
     this.showModal = false;
-    this.stateManagerService.blurWindow.set(false);
+    this.stateManagerService.wheeWindow.set(false);
   }
 
   handleFavoriteChange($event: boolean) {

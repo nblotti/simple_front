@@ -28,6 +28,16 @@ export class StateManagerService implements OnInit {
   ) {
   }
 
+  private _wheeWindow: WritableSignal<boolean> = signal(false);
+
+  get wheeWindow(): WritableSignal<boolean> {
+    return this._wheeWindow;
+  }
+
+  set wheeWindow(value: WritableSignal<boolean>) {
+    this._wheeWindow = value;
+  }
+
   private _blurWindow: WritableSignal<boolean> = signal(false);
 
   get blurWindow(): WritableSignal<boolean> {
@@ -37,6 +47,8 @@ export class StateManagerService implements OnInit {
   set blurWindow(value: WritableSignal<boolean>) {
     this._blurWindow = value;
   }
+
+
 
   ngOnInit(): void {
 
@@ -59,7 +71,7 @@ export class StateManagerService implements OnInit {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
   public sendCommand(current_message: string) {
-    this.blurWindow.set(true);
+    this.wheeWindow.set(true);
     this.stateManager()
       .sendCommand(current_message)
       .then(() => {
@@ -69,7 +81,7 @@ export class StateManagerService implements OnInit {
         console.error("Error sending command:", error);
       })
       .finally(() => {
-        this.blurWindow.set(false);
+        this.wheeWindow.set(false);
       });
 
   }
@@ -123,11 +135,11 @@ export class StateManagerService implements OnInit {
   }
 
   async endVoiceCommand(): Promise<boolean> {
-    this.blurWindow.set(true);
+    this.wheeWindow.set(true);
     try {
       return await this.stateManager().endVoiceCommand();
     } finally {
-      this.blurWindow.set(false); // Ensure window is unblurred regardless of success or failure
+      this.wheeWindow.set(false); // Ensure window is unblurred regardless of success or failure
     }
   }
 

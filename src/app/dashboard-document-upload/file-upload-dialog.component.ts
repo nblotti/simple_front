@@ -138,7 +138,7 @@ export class FileUploadDialogComponent {
       }
     } else if (this.active_tab == TABS.URL) {
       let user = this.userContextService.getUserID()();
-      if (this.isDisabled)
+      if (!this.isDisabled)
         user = this.selectedCategory().id.toString()
 
       this.documentService.requestScrap(user, this.urlToScrap()).subscribe({

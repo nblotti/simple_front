@@ -58,6 +58,10 @@
 
 <app-file-upload-dialog [showModal]="showModal" (closeModal)="closeModal()"></app-file-upload-dialog>
 
+@if (this.stateManagerService.wheeWindow()) {
+  <div class="wheel-overlay"></div>
+}
 @if (this.stateManagerService.blurWindow()) {
-  <div class="overlay"></div>
+  <div class="simple-overlay"></div>
+
 }

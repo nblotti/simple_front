@@ -327,17 +327,17 @@ export class ShareComponent implements OnInit {
 
     if (deleteGroup == null)
       return;
-    this.statemanagerService.blurWindow.set(true);
+    this.statemanagerService.wheeWindow.set(true);
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     this.httpClient.delete(this.sharedGroupDocumentUrl + deleteGroup.id + "/", {headers}).subscribe({
       next: (assistant) => {
         if (groupId != null)
           this.loadDocumentForGroup(groupId)
-          this.statemanagerService.blurWindow.set(false)
+          this.statemanagerService.wheeWindow.set(false)
       },
       error: (err) => {
         console.error(err);
-        this.statemanagerService.blurWindow.set(false)
+        this.statemanagerService.wheeWindow.set(false)
       }
 
     }
