@@ -44,8 +44,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
   protected readonly DASHBOARD_SORTABLE_COLUMNS = DASHBOARD_SORTABLE_COLUMNS;
-  private buttonStatus = ["Auto refresh", "Disable refresh"]
-  protected buttonLabel: string = this.buttonStatus[0]
   private formPerimeterValueChangesSubscription: Subscription | undefined;
   private formShareValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
@@ -324,25 +322,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshDashboard() {
-    if (this.buttonLabel == this.buttonStatus[0]) {
-      this.buttonLabel = this.buttonStatus[1];
-      this.intervalId = setInterval(() => {
-        this.performScheduledTask();
-      }, 120000); // Schedule task every minute
-    } else {
-      this.buttonLabel = this.buttonStatus[0];
-      if (this.intervalId) {
-        clearInterval(this.intervalId);
-      }
-    }
-  }
 
-  performScheduledTask() {
-    // Implement the logic of your scheduled task here
-    console.log('Scheduled task executed at', new Date());
-    this.reload();
-  }
+
 
   clearFormArray(formArray
                  :
@@ -354,10 +335,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   reload() {
+    this.stateManagerService.wheeWindow.set(true);
     this.loadDocuments();
     this.reloadConversations();
     this.loadTemplates();
     this.loadSummary();
+
+    setTimeout(() => this.stateManagerService.wheeWindow.set(false), 500);
     // this.perimeter.set(this.userContextService.userID, true);
   }
 

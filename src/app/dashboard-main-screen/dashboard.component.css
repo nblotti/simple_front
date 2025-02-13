@@ -113,4 +113,13 @@
   cursor: pointer;
 }
 
+.btn-reload{
+  position:absolute;
+  right:2px;
+  top:2px;
+}
+.accordion-header{
+  position:relative;
+}
+
 
