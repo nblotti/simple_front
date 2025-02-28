@@ -26,11 +26,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   protected isRecording: WritableSignal<boolean> = signal(false);
   protected screenReadyMessage = computed(() => {
     this.newMessage = true;
-    return this.statemanagerService.getScreenReadyMessages()();
+    return this.stateManagerService.getScreenReadyMessages()();
   });
   @ViewChild('scrollMe') private myScrollContainer: any;
 
-  constructor(protected statemanagerService: StateManagerService,
+  constructor(protected stateManagerService: StateManagerService,
               private navStateService: NavigationStateService,
               private router: Router,
               private location: Location,
@@ -118,11 +118,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     let current_message = this.inputMessage
     this.inputMessage = "";
 
-    this.statemanagerService.sendCommand(current_message);
+    this.stateManagerService.sendCommand(current_message);
   }
 
   clearInput() {
-    this.statemanagerService.clearConversation();
+    this.stateManagerService.clearConversation();
   }
 
 
@@ -130,13 +130,13 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     if(this.isRecording())
       this.stopRecording();
     else
-    this.statemanagerService.startVoiceCommand().then(value => {
+    this.stateManagerService.startVoiceCommand().then(value => {
       this.isRecording.set(value);
     });
   }
 
   stopRecording() {
-    this.statemanagerService.endVoiceCommand().then(value => {
+    this.stateManagerService.endVoiceCommand().then(value => {
       this.isRecording.set(value);
     });
   }

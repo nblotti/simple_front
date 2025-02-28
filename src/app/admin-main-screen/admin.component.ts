@@ -86,12 +86,13 @@ export class AdminComponent implements OnInit {
     this.loadDocuments();
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
+  onDisplayPDF($event: MouseEvent, documentId: string, documentName: string = "", page: number = -1, content: string = "") {
     // let page_number = 0;
     // this.stateManagerService.loadDocument(Number(documentId), page, content);
     //this.stateManagerService.loadDocument(Number(documentId), page, content);
     const state = {
-      documentId: documentId
+      documentId: documentId,
+      documentName: documentName
     }
     //};
     this.navStateService.setState(state);

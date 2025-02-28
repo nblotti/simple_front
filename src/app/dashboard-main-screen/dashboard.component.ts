@@ -44,16 +44,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
   protected readonly DASHBOARD_SORTABLE_COLUMNS = DASHBOARD_SORTABLE_COLUMNS;
-  private formPerimeterValueChangesSubscription: Subscription | undefined;
-  private formShareValueChangesSubscription: Subscription | undefined;
-  private groupUrl: string;
-  private intervalId: any;
-
   protected sortOrderArray: { [key: string]: SortOrder } = {
     name: {direction: true},
     status: {direction: false},
     date: {direction: true},
   };
+  private formPerimeterValueChangesSubscription: Subscription | undefined;
+  private formShareValueChangesSubscription: Subscription | undefined;
+  private groupUrl: string;
+  private intervalId: any;
 
   constructor(
     private conversationService: ConversationService,
@@ -272,11 +271,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
+  onDisplayPDF($event: MouseEvent, documentId: string, documentName:string = "",page: number = -1, content: string = "") {
     let page_number = 0;
     //this.stateManagerService.loadDocument(Number(documentId), page, content);
 
-    const state = {documentId, page, content};
+    const state = {documentId, page, content, focus_only: false,documentName};
     this.navStateService.setState(state);  // Store state in the service
     this.router.navigate(['/docs']);
     $event.preventDefault();
@@ -321,8 +320,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.reloadConversations();
     });
   }
-
-
 
 
   clearFormArray(formArray
@@ -392,6 +389,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
+  onDisplayFocus($event: MouseEvent, documentId: string, documentName:string) {
+    let page_number = 0;
+    //this.stateManagerService.loadDocument(Number(documentId), page, content);
+
+    const state = {documentId, focus_only: true,documentName};
+    this.navStateService.setState(state);  // Store state in the service
+    this.router.navigate(['/docs']);
+    $event.preventDefault();
+  }
+
   protected createSummaryJob($event: MouseEvent, document: Document) {
 
 
@@ -417,7 +424,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });// Make sure to subscribe to the observable to trigger execution.
   }
-
 
   private sortDocumentsByName(documents: Document[], direction: boolean) {
     return documents.sort((a, b) => {
@@ -464,6 +470,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return response
     }));
   }
+
 }
 
 interface SortOrder {

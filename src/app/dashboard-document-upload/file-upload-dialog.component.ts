@@ -19,7 +19,6 @@ import {throwError} from "rxjs";
 import {NgIf} from "@angular/common";
 import {catchError} from "rxjs/operators";
 import {DocumentService} from "../document.service";
-import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-file-upload-dialog',
@@ -69,12 +68,12 @@ export class FileUploadDialogComponent {
 
   }
 
-  uploadFile(file: File, documentType: DocumentType) {
+  uploadFile(file: File, documentType: DocumentType, focus_only: string = "false") {
 
     let user = this.userContextService.getUserID()();
     if (!this.isDisabled)
       user = this.selectedCategory().id
-    this.fileUploadService.uploadFile(file, documentType, user)
+    this.fileUploadService.uploadFile(file, documentType, user, focus_only)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           if (event.total != undefined)
@@ -124,14 +123,22 @@ export class FileUploadDialogComponent {
         const fileType = file.type as FileType;
 
 
-        if (fileType === FileType.PDF || fileType === FileType.DOCX
-          || fileType === FileType.XLSX || fileType === FileType.PPTX) {
+        if (fileType === FileType.PDF
+          || fileType === FileType.DOCX
+          || fileType === FileType.XLSX
+          || fileType === FileType.PPTX
+          || fileType === FileType.HTML
+          || fileType === FileType.JPEG
+          || fileType === FileType.PNG
+          || fileType === FileType.BMP
+          || fileType === FileType.TIFF
+          || fileType === FileType.HEIF) {
           // Call the uploadFile method with the file and its type
-          this.uploadFile(file, this.templateChecked() ? DocumentType.TEMPLATE : DocumentType.DOCUMENT);
+          this.uploadFile(file, this.templateChecked() ? DocumentType.TEMPLATE : DocumentType.DOCUMENT, "true");
           // Reset the file input
         } else {
           // Show alert and reset the file input
-          alert('Please select a PDF or DOCX file.');
+          alert('Please select a valid file type (PDF, DOCX, XLSX, PPTX, HTML, JPEG/JPG, PNG, BMP, TIFF, HEIF).');
           this.resetFileInput();
         }
 
@@ -206,11 +213,17 @@ export class FileUploadDialogComponent {
 
 }
 
-export enum FileType {
+enum FileType {
   PDF = 'application/pdf',
   DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  HTML = 'text/html',
+  JPEG = 'image/jpeg',
+  PNG = 'image/png',
+  BMP = 'image/bmp',
+  TIFF = 'image/tiff',
+  HEIF = 'image/heif'
 }
 
 export enum DocumentType {

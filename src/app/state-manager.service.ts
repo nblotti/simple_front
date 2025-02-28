@@ -13,9 +13,9 @@ import {DocumentState} from "./dashboard-document-screen/DocumentState";
 })
 export class StateManagerService implements OnInit {
 
-
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
   public chatEnabled: WritableSignal<boolean> = signal(true);
+  private _documentName: WritableSignal<string> = signal("");
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     return this.stateManager().getScreenReadyMessages()();
   });
@@ -26,6 +26,16 @@ export class StateManagerService implements OnInit {
               private shareState: ShareState,
               private documentState: DocumentState
   ) {
+  }
+
+  private _chatFullScreen: WritableSignal<boolean> = signal(false);
+
+  get chatFullScreen(): WritableSignal<boolean> {
+    return this._chatFullScreen;
+  }
+
+  set chatFullScreen(value: WritableSignal<boolean>) {
+    this._chatFullScreen = value;
   }
 
   private _wheeWindow: WritableSignal<boolean> = signal(false);
@@ -47,7 +57,6 @@ export class StateManagerService implements OnInit {
   set blurWindow(value: WritableSignal<boolean>) {
     this._blurWindow = value;
   }
-
 
 
   ngOnInit(): void {
@@ -100,6 +109,7 @@ export class StateManagerService implements OnInit {
   }
 
   public setCurrentState(state: STATES) {
+    this.chatFullScreen.set(false);
     switch (state) {
       case STATES.Assistant:
         this.stateManager.set(this.assistantState);
@@ -152,6 +162,15 @@ export class StateManagerService implements OnInit {
   private resetMessages() {
     this.stateManager().clearConversation();
   }
+
+  get documentName(): WritableSignal<string> {
+    return this._documentName;
+  }
+
+  set documentName(value: WritableSignal<string>) {
+    this._documentName = value;
+  }
+
 }
 
 export enum STATES {

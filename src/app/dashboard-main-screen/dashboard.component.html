@@ -60,20 +60,28 @@
               @for (document of documents(); track document; let index = $index) {
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
-                    @if (document.document_status == DocumentStatus.COMPLETED) {
-                      <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+                    @if (document.focus_only) {
+                      <a href
+                         (click)="onDisplayFocus($event,  document.id, document.name)">{{ document.name |capitalize }} </a>
+                    } @else if (document.document_status == DocumentStatus.COMPLETED) {
+                      <a href
+                         (click)="onDisplayPDF($event,  document.id,document.name)">{{ document.name |capitalize }} </a>
                     } @else {
                       {{ document.name |capitalize }}
                     }
                   </td>
                   <td class="document_text_content">
+
                     {{ document.document_status }}
+
                   </td>
                   <td class="document_text_content">
                     @if (document.document_status != DocumentStatus.COMPLETED) {
 
                     } @else if (document.summary_status == DocumentStatus.COMPLETED) {
-                      <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
+                      <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id,document.name)">
+                        View
+                      </button>
                     } @else if (document.summary_status == DocumentStatus.NONE) {
                       <button class="pdf_button" (click)="createSummaryJob($event,  document)">Request</button>
                     } @else {
@@ -121,7 +129,8 @@
               @for (summary of summaries(); track document; let index = $index) {
                 <tr class=".bg-transparent mt-5">
                   <td class="document_text_content">
-                    <a href (click)="onDisplayPDF($event,  summary.id)">{{ summary.name |capitalize }} </a>
+                    <a href
+                       (click)="onDisplayPDF($event,  summary.id, summary.name)">{{ summary.name |capitalize }} </a>
                   </td>
                   <td class="document_text_content">
                     {{ summary.owner }}
@@ -140,49 +149,49 @@
         </div>
       </div>
     </div>
+    <!--
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFive"
+                    aria-expanded="true" aria-controls="collapseFive">
+              My Templates
+            </button>
+          </h2>
+          <div id="collapseFive" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
 
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapseFive"
-                aria-expanded="true" aria-controls="collapseFive">
-          My Templates
-        </button>
-      </h2>
-      <div id="collapseFive" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-
-          <table class="table table-borderless table_documnents">
-            <thead>
-            <tr>
-              <th class="document_header_content">Template</th>
-              <th class="document_header_content">Date uploaded</th>
-              <th class="document_header_content">Action</th>
-            </tr>
-            </thead>
-            <tbody>
-
-
-              @for (template of templates(); track template; let index = $index) {
-                <tr class=".bg-transparent mt-5">
-                  <td class="document_text_content">
-                    <a href (click)="onDisplayPDF($event,  template.id)">{{ template.name |capitalize }} </a>
-                  </td>
-                  <td class="document_text_content">
-                    {{ template.created_on }}
-                  </td>
-                  <td class="document_text_content">
-                    <button class="pdf_button_delete" (click)="deleteDocument(template.id)">Delete</button>
-                  </td>
+              <table class="table table-borderless table_documnents">
+                <thead>
+                <tr>
+                  <th class="document_header_content">Template</th>
+                  <th class="document_header_content">Date uploaded</th>
+                  <th class="document_header_content">Action</th>
                 </tr>
-              }
+                </thead>
+                <tbody>
 
-            </tbody>
-          </table>
+
+                  @for (template of templates(); track template; let index = $index) {
+                    <tr class=".bg-transparent mt-5">
+                      <td class="document_text_content">
+                        <a href (click)="onDisplayPDF($event,  template.id,template.name)">{{ template.name |capitalize }} </a>
+                      </td>
+                      <td class="document_text_content">
+                        {{ template.created_on }}
+                      </td>
+                      <td class="document_text_content">
+                        <button class="pdf_button_delete" (click)="deleteDocument(template.id)">Delete</button>
+                      </td>
+                    </tr>
+                  }
+
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-
+    -->
     <div class="accordion" id="accordionPerimeter">
       <div class="accordion-item">
         <h2 class="accordion-header">

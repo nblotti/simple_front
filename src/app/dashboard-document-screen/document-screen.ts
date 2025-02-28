@@ -29,6 +29,7 @@ export class DocumentScreen implements OnInit {
   private readonly base_url;
   private documentId: number = 1;
   private content: string = '';
+  private documentName: string = '';
 
   constructor(private router: Router,
               private stateManagerService: StateManagerService,
@@ -43,15 +44,26 @@ export class DocumentScreen implements OnInit {
 
   ngOnInit(): void {
     this.stateManagerService.setCurrentState(STATES.Document);
+
     this.navStateService.getState().subscribe((state) => {
-      if (state) {
+
+      if (state['focus_only']) {
+        this.stateManagerService.chatFullScreen.set(true);
         this.documentId = state['documentId'];
+        this.documentName = state['documentName'];
+        this.stateManagerService.documentName.set(this.documentName);
+        this.loadDocument(this.documentId);
+      } else if (state) {
+        this.stateManagerService.chatFullScreen.set(false);
+        this.documentId = state['documentId'];
+        this.documentName = state['documentName'];
         this.page = state['page'] + 1;
         if (state['content']) {
           const contentLines = state['content'].split('\n');
           this.content = contentLines.length > 0 ? contentLines[0] : '';
         }
-        this.loadDocument(this.documentId, this.page, this.content);
+        this.stateManagerService.documentName.set(this.documentName);
+        this.loadDocument(this.documentId);
         const url = `${this.base_url}${this.documentId}/`;
         this.openPdf(url);
       } else {
@@ -60,7 +72,7 @@ export class DocumentScreen implements OnInit {
           this.documentId = Number(urlParams.get('documentId'));
           this.page = Number(urlParams.get('page')) + 1;
           this.content = urlParams.get('content') || '';
-          this.loadDocument(this.documentId, this.page, this.content);
+          this.loadDocument(this.documentId);
           const url = `${this.base_url}${this.documentId}/`;
           this.openPdf(url);
         }
@@ -103,17 +115,17 @@ export class DocumentScreen implements OnInit {
    /* 1a. on a pas de numéro de chat existant pour ce document, on en crée un -> createConversation
    * /2. on envoie les deux messages -> a au chat. b au pdf viewer
    */
-  public loadDocument(documentId: number, page: number, content: string) {
+  public loadDocument(documentId: number) {
     // 1. on charge le numéro de chat ou on le crée
     this.conversationService.loadOrCreateConversationsByDocumentId(documentId).subscribe({
       next: (result) => {
         //on a pas trouvé de conversation, on la crée
         if (result.length == 0) {
           this.conversationService.createConversation(documentId).subscribe(value => {
-            this.loadConversationAndDocument(value.id, documentId, page, content)
+            this.loadConversationAndDocument(value.id)
           })
         } else {
-          this.loadConversationAndDocument(result[0].id, documentId, page, content)
+          this.loadConversationAndDocument(result[0].id)
         }
       }, error: (error) => {
         console.error('Delete failed:', error);
@@ -128,7 +140,7 @@ export class DocumentScreen implements OnInit {
    /* 2. on charge le pdf viewer
    * /2. on envoie les deux messages ->  au chat. + au pdf viewer
    */
-  public loadConversationAndDocument(conversationId: number, documentId: number, page: number, content: string) {
+  public loadConversationAndDocument(conversationId: number) {
 
     this.stateManagerService.setCurrentConversation(conversationId);
     //this.conversationService.setCurrentConversation(conversationId);

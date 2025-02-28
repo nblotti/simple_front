@@ -22,11 +22,12 @@ export class DocumentService {
     this.jobs_base_url = globalsService.serverAssistmeBase + "job/request"
   }
 
-  uploadFile(file: File, fileType: DocumentType, perimeter: string): Observable<HttpEvent<any>> {
+  uploadFile(file: File, fileType: DocumentType, perimeter: string,focus_only:string = "false"): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('owner', perimeter);
     formData.append('type', fileType);
+    formData.append('focus_only', focus_only);
 
     return this.http.post<any>(this.documents_base_url, formData, {
       reportProgress: true, observe: 'events'

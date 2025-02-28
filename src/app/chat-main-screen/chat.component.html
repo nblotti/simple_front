@@ -77,12 +77,12 @@
   <div class="inputcontent">
     <textarea class="form-control chat_input_component" [(ngModel)]="inputMessage" (keyup)="onKeyUp($event)"
               rows="3"
-              [disabled]="!statemanagerService.chatEnabled()"></textarea>
+              [disabled]="!stateManagerService.chatEnabled()"></textarea>
     <div class="button-group">
       <button class="chat_button" (click)="clearInput()"
-              [disabled]="!statemanagerService.chatEnabled()">Clear
+              [disabled]="!stateManagerService.chatEnabled()">Clear
       </button>
-      <button class="chat_button" (click)="runAction()" [disabled]="!statemanagerService.chatEnabled()">
+      <button class="chat_button" (click)="runAction()" [disabled]="!stateManagerService.chatEnabled()">
         Run
       </button>
       @if (listening()) {
@@ -95,6 +95,9 @@
         </button>
       }
     </div>
+    @if(stateManagerService.chatFullScreen()){
+    <div class="focus-document-div">{{stateManagerService.documentName()}}</div>
+    }
   </div>
 </div>
 

@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, OnInit, ViewChild,} from '@angular/core';
+import {Component, computed, ElementRef, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import {CommonModule, DatePipe} from "@angular/common";
 import {NgEventBus} from "ng-event-bus"
 
@@ -45,7 +45,10 @@ export class AppComponent implements OnInit {
   });
 
 
+
+
   constructor(private router: Router, protected userContextService: UserContextService, protected stateManagerService: StateManagerService,) {
+
   }
 
 

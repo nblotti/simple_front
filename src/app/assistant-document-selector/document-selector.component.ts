@@ -22,6 +22,7 @@ interface AssistantDocument {
   document_name: string;
   assistant_document_type: string;
   shared_group_id: string
+  focus_only: boolean;
 }
 
 @Component({
@@ -72,6 +73,7 @@ export class DocumentSelectorComponent {
       this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.ALL).subscribe({
         next: (result: Document[]) => {
 
+          result = result.filter(document => !document.focus_only);
           this.elementsMyDocuments.set(result);
           this.initialMyDocuments = result;
         },
@@ -84,6 +86,7 @@ export class DocumentSelectorComponent {
       //Loading Shared documents
       this.documentService.fetchSharedDocuments(this.userContextService.getUserID()()).subscribe({
         next: (result: SharedDocument[]) => {
+          result = result.filter(document => !document.focus_only);
           this.elementsSharedDocuments.set(result);
           this.initialSharedDocuments = result;
 
@@ -97,6 +100,7 @@ export class DocumentSelectorComponent {
       if (this.userContextService.userAdminCategories().length > 0) {
         this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), this.userContextService.userAdminCategories()[0].id).subscribe({
           next: (result: CategoryDocument[]) => {
+            result = result.filter(document => !document.focus_only);
             this.elementsCategoryDocuments.set(result);
             this.initialCategoryDocuments = result;
 
@@ -111,6 +115,7 @@ export class DocumentSelectorComponent {
       //Loading selected documents for the assistant
       this.assistantService.loadAssistantDocuments(this.assistant.id).subscribe({
         next: (result: AssistantDocument[]) => {
+          result = result.filter(document => !document.focus_only);
           for (const assistantDocument of result)
             if (assistantDocument.assistant_document_type == AssistantDocumentType.MY_DOCUMENTS)
               this.selectedMyDocuments.update(value => [...value, assistantDocument]);
