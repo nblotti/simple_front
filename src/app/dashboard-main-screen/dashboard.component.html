@@ -215,18 +215,6 @@
               }
             </div>
           </form>
-          <form [formGroup]="formShare">
-            <div class="shares_title">Shares</div>
-            <div class="line-separator"></div>
-            <div formArrayName="checkboxesShare" class="form-check form-switch">
-              @for (checkbox of checkboxesFormShareArray.controls; track checkbox; let index = $index) {
-                <div [formGroupName]="index" class="share_item">
-                  <input type="checkbox" class="form-check-input" role="switch" formControlName="value">
-                  <label class="form-check-label">{{ checkbox.get('label')?.value }}</label>
-                </div>
-              }
-            </div>
-          </form>
         </div>
 
 
