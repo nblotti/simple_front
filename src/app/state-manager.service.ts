@@ -5,7 +5,6 @@ import {StateInterface} from "./StateInterface";
 import {DashboardState} from "./dashboard-main-screen/DashboardState";
 import {ScreenReadyMessage} from "./chat-main-screen/SreenReadyMessage";
 import {AssistantState} from "./assistant/AssistantState";
-import {ShareState} from "./share/ShareState";
 import {DocumentState} from "./dashboard-document-screen/DocumentState";
 
 @Injectable({
@@ -13,19 +12,40 @@ import {DocumentState} from "./dashboard-document-screen/DocumentState";
 })
 export class StateManagerService implements OnInit {
 
-
   public stateManager: WritableSignal<StateInterface> = signal(this.assistantState);
   public chatEnabled: WritableSignal<boolean> = signal(true);
+  private _documentName: WritableSignal<string> = signal("");
   screenReadyMessages: Signal<ScreenReadyMessage[]> = computed((): ScreenReadyMessage[] => {
     return this.stateManager().getScreenReadyMessages()();
   });
 
+  private currentState: STATES = STATES.Dashboard;
+
   constructor(private conversationService: ConversationService, private router: Router,
               private dashboardState: DashboardState,
               private assistantState: AssistantState,
-              private shareState: ShareState,
               private documentState: DocumentState
   ) {
+  }
+
+  private _chatFullScreen: WritableSignal<boolean> = signal(false);
+
+  get chatFullScreen(): WritableSignal<boolean> {
+    return this._chatFullScreen;
+  }
+
+  set chatFullScreen(value: WritableSignal<boolean>) {
+    this._chatFullScreen = value;
+  }
+
+  private _wheeWindow: WritableSignal<boolean> = signal(false);
+
+  get wheeWindow(): WritableSignal<boolean> {
+    return this._wheeWindow;
+  }
+
+  set wheeWindow(value: WritableSignal<boolean>) {
+    this._wheeWindow = value;
   }
 
   private _blurWindow: WritableSignal<boolean> = signal(false);
@@ -37,6 +57,7 @@ export class StateManagerService implements OnInit {
   set blurWindow(value: WritableSignal<boolean>) {
     this._blurWindow = value;
   }
+
 
   ngOnInit(): void {
 
@@ -59,7 +80,7 @@ export class StateManagerService implements OnInit {
    /*L'utilisateur a pressé sur enter et envoyé un nouveau message
    */
   public sendCommand(current_message: string) {
-    this.blurWindow.set(true);
+    this.wheeWindow.set(true);
     this.stateManager()
       .sendCommand(current_message)
       .then(() => {
@@ -69,7 +90,7 @@ export class StateManagerService implements OnInit {
         console.error("Error sending command:", error);
       })
       .finally(() => {
-        this.blurWindow.set(false);
+        this.wheeWindow.set(false);
       });
 
   }
@@ -88,6 +109,8 @@ export class StateManagerService implements OnInit {
   }
 
   public setCurrentState(state: STATES) {
+    this.chatFullScreen.set(false);
+    this.currentState = state;
     switch (state) {
       case STATES.Assistant:
         this.stateManager.set(this.assistantState);
@@ -99,10 +122,6 @@ export class StateManagerService implements OnInit {
         this.stateManager().loadConversationMessages();
         this.chatEnabled.set(true);
         break;
-      case STATES.Share:
-        this.stateManager.set(this.shareState);
-        this.chatEnabled.set(false);
-        break;
       case STATES.Document:
         this.stateManager.set(this.documentState);
         this.stateManager().loadConversationMessages();
@@ -110,6 +129,9 @@ export class StateManagerService implements OnInit {
         break;
     }
 
+  }
+  public getCurrentState(): STATES {
+    return this.currentState;
   }
 
   public setPerimeter(perimeter: string) {
@@ -123,11 +145,11 @@ export class StateManagerService implements OnInit {
   }
 
   async endVoiceCommand(): Promise<boolean> {
-    this.blurWindow.set(true);
+    this.wheeWindow.set(true);
     try {
       return await this.stateManager().endVoiceCommand();
     } finally {
-      this.blurWindow.set(false); // Ensure window is unblurred regardless of success or failure
+      this.wheeWindow.set(false); // Ensure window is unblurred regardless of success or failure
     }
   }
 
@@ -140,11 +162,19 @@ export class StateManagerService implements OnInit {
   private resetMessages() {
     this.stateManager().clearConversation();
   }
+
+  get documentName(): WritableSignal<string> {
+    return this._documentName;
+  }
+
+  set documentName(value: WritableSignal<string>) {
+    this._documentName = value;
+  }
+
 }
 
 export enum STATES {
   Dashboard = "DASHBOARD",
   Assistant = "ASSISTANT",
-  Share = "SHARE",
   Document = "DOCUMENT",
 }

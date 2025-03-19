@@ -57,7 +57,7 @@ export class AssistantService {
     id: string;
     document_id: string
   }) {
-    let call_url = this.assistant_document_base_url;
+
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.httpClient.post<AssistantDocument>(this.assistant_document_base_url, assistantDocument, {headers: headers})
   }
@@ -115,7 +115,7 @@ export class AssistantService {
 
   createAssistant() {
 
-    let assistant = new Assistant("", this.userContextService.getUserID()(), "New Assistant", "", "You are a useful assistant", "3.5", false)
+    let assistant = new Assistant("", this.userContextService.getUserID()(), "New Assistant", "", "You are a useful assistant", "4o", false)
     this.saveAssistant(assistant);
 
 
@@ -206,7 +206,6 @@ export class Assistant {
 
 export enum AssistantDocumentType {
   MY_DOCUMENTS = "MY_DOCUMENTS",
-  SHARED_DOCUMENTS = "SHARED_DOCUMENTS",
   CATEGORY_DOCUMENTS = "CATEGORY_DOCUMENTS"
 }
 
@@ -217,16 +216,18 @@ class AssistantDocument {
   document_name: string
   assistant_document_type: AssistantDocumentType
   shared_group_id: string
+  focus_only: boolean
 
   public constructor(id: string, assistant_id: string, document_id: string, document_name: string,
                      assistant_document_type: AssistantDocumentType = AssistantDocumentType.MY_DOCUMENTS,
-                     shared_group_id: string) {
+                     shared_group_id: string,focus_only: boolean = false) {
     this.id = id;
     this.assistant_id = assistant_id;
     this.document_id = document_id;
     this.document_name = document_name;
     this.assistant_document_type = assistant_document_type;
     this.shared_group_id = shared_group_id;
+    this.focus_only = focus_only;
   }
 }
 

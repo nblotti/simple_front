@@ -27,7 +27,8 @@ export class AssistantComponent implements OnInit {
   @ViewChild('inputName') inputName!: ElementRef;
   options = [
     {value: '4o', label: 'gpt4o'},
-    {value: '4o-mini', label: 'gpt4o-mini'}
+    {value: '4o-mini', label: 'gpt4o-mini'},
+    {value: '4', label: 'gpt4'}
   ];
   assistant_favorite_status: WritableSignal<boolean> = signal(false);
   protected assistants: WritableSignal<Assistant[]> = this.assistantService.getAssistants();
@@ -40,8 +41,10 @@ export class AssistantComponent implements OnInit {
               private renderer: Renderer2, protected userContextService: UserContextService) {
 
     let groups = this.userContextService.getGroups()();
-    if (groups.includes("agp_prod_gpt4")) {
-      this.options.push({value: '4', label: 'gpt4'});
+
+    if (groups.includes("agp_prod_gpt_o")) {
+      this.options.push({value: 'o1', label: 'gpt-o1'});
+      this.options.push({value: 'o3-mini', label: 'gpt03-mini'});
     }
   }
 
@@ -120,13 +123,13 @@ export class AssistantComponent implements OnInit {
 
   showFileSelector() {
     this.showModal = true;
-    this.stateManagerService.blurWindow.set(true);
+    this.stateManagerService.wheeWindow.set(true);
 
   }
 
   closeSelector() {
     this.showModal = false;
-    this.stateManagerService.blurWindow.set(false);
+    this.stateManagerService.wheeWindow.set(false);
   }
 
   handleFavoriteChange($event: boolean) {

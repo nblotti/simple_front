@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpResponse} from "@angular/common/http";
 import {catchError, map, Observable, throwError} from "rxjs";
 import {GlobalsService} from "./globals.service";
-import {CategoryDocument, Document, SharedDocument} from "./dashboard-main-screen/Document";
+import {CategoryDocument, Document} from "./Document";
 import {AssistantDocumentType} from "./assistant/assistant.service";
 
 @Injectable({
@@ -22,11 +22,12 @@ export class DocumentService {
     this.jobs_base_url = globalsService.serverAssistmeBase + "job/request"
   }
 
-  uploadFile(file: File, fileType: DocumentType, perimeter: string): Observable<HttpEvent<any>> {
+  uploadFile(file: File, fileType: DocumentType, perimeter: string, focus_only: string = "false"): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     formData.append('owner', perimeter);
     formData.append('type', fileType);
+    formData.append('focus_only', focus_only);
 
     return this.http.post<any>(this.documents_base_url, formData, {
       reportProgress: true, observe: 'events'
@@ -43,20 +44,6 @@ export class DocumentService {
     return this.http.get<Document[]>(url);
   }
 
-  fetchSharedDocuments(perimeter: string): Observable<SharedDocument[]> {
-    let url = this.documents_base_url + "shared/" + perimeter;
-
-    return this.http.get<SharedDocument[]>(url).pipe(
-      map((documents: SharedDocument[]) => {
-        // Modify one element of the array
-        for (let document of documents as SharedDocument[]) {
-          document.document_type = AssistantDocumentType.SHARED_DOCUMENTS
-        }
-        return documents;
-      })
-    );
-
-  }
 
   fetchCategoryDocuments(perimeter: string, category_id: string): Observable<CategoryDocument[]> {
     let url = this.documents_base_url + "category/" + perimeter + "/" + category_id;

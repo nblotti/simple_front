@@ -44,11 +44,13 @@
         @for (document of documents(); track document; let index = $index) {
           <tr class=".bg-transparent mt-5">
             <td class="document_text_content">
-              <a href (click)="onDisplayPDF($event,  document.id)">{{ document.name |capitalize }} </a>
+                <a href (click)="onDisplayPDF($event,  document.id,document.name)">{{ document.name |capitalize }} </a>
             </td>
             <td class="document_text_content">
-              @if (document.summary_status == DocumentStatus.COMPLETED) {
-                <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id)">View</button>
+              @if (document.focus_only) {
+                Focus only
+              } @else if (document.summary_status == DocumentStatus.COMPLETED) {
+                <button class="pdf_button" (click)="onDisplayPDF($event,  document.summary_id,document.name)">View</button>
               } @else {
                 {{ document.summary_status }}
               }

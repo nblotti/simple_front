@@ -1,19 +1,13 @@
 import {Component, computed, EventEmitter, Input, Output, signal, SimpleChanges, WritableSignal} from '@angular/core';
 import {UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentType} from "../document.service";
-import {Document} from "../share/Document";
+import {Document} from "../Document";
 import {Assistant, AssistantDocumentType, AssistantService} from "../assistant/assistant.service";
 import {CapitalizePipe} from "../capitalize.pipe";
-import {CategoryDocument, SharedDocument} from "../dashboard-main-screen/Document";
+import {CategoryDocument} from "../Document";
 import {ReactiveFormsModule} from "@angular/forms";
 
 
-interface Element {
-  id: number;
-  name: string;
-  age: number;
-  gender: string;
-}
 
 interface AssistantDocument {
   id: string;
@@ -22,6 +16,7 @@ interface AssistantDocument {
   document_name: string;
   assistant_document_type: string;
   shared_group_id: string
+  focus_only: boolean;
 }
 
 @Component({
@@ -41,19 +36,16 @@ export class DocumentSelectorComponent {
   @Output() closeModal: EventEmitter<void> = new EventEmitter<void>();
 
   protected initialMyDocuments: Document[] = [];
-  protected initialSharedDocuments: SharedDocument[] = []
   protected initialCategoryDocuments: CategoryDocument[] = []
   protected elementsMyDocuments: WritableSignal<Document[]> = signal([]);
   protected selectedMyDocuments: WritableSignal<AssistantDocument[]> = signal([]);
-  protected elementsSharedDocuments: WritableSignal<SharedDocument[]> = signal([]);
-  protected selectedSharedDocuments: WritableSignal<AssistantDocument[]> = signal([]);
 
   protected elementsCategoryDocuments: WritableSignal<CategoryDocument[]> = signal([]);
   protected selectedCategoryDocuments: WritableSignal<AssistantDocument[]> = signal([]);
 
 
   protected selectedDocuments = computed(() => {
-    return this.selectedMyDocuments().concat(this.selectedSharedDocuments()).concat(this.selectedCategoryDocuments());
+    return this.selectedMyDocuments().concat(this.selectedCategoryDocuments());
   });
   protected selectedPerimeter: WritableSignal<AssistantDocument[]> = signal([]);
   protected activeTab: string = 'my_document';
@@ -72,6 +64,7 @@ export class DocumentSelectorComponent {
       this.documentService.fetchDocuments(this.userContextService.getUserID()(), DocumentType.ALL).subscribe({
         next: (result: Document[]) => {
 
+          result = result.filter(document => !document.focus_only);
           this.elementsMyDocuments.set(result);
           this.initialMyDocuments = result;
         },
@@ -82,21 +75,10 @@ export class DocumentSelectorComponent {
         }
       });
       //Loading Shared documents
-      this.documentService.fetchSharedDocuments(this.userContextService.getUserID()()).subscribe({
-        next: (result: SharedDocument[]) => {
-          this.elementsSharedDocuments.set(result);
-          this.initialSharedDocuments = result;
-
-        },
-        error: (error) => {
-          console.error('Load failed:', error);
-        },
-        complete: () => {
-        }
-      });
       if (this.userContextService.userAdminCategories().length > 0) {
         this.documentService.fetchCategoryDocuments(this.userContextService.getUserID()(), this.userContextService.userAdminCategories()[0].id).subscribe({
           next: (result: CategoryDocument[]) => {
+            result = result.filter(document => !document.focus_only);
             this.elementsCategoryDocuments.set(result);
             this.initialCategoryDocuments = result;
 
@@ -111,15 +93,13 @@ export class DocumentSelectorComponent {
       //Loading selected documents for the assistant
       this.assistantService.loadAssistantDocuments(this.assistant.id).subscribe({
         next: (result: AssistantDocument[]) => {
+          result = result.filter(document => !document.focus_only);
           for (const assistantDocument of result)
             if (assistantDocument.assistant_document_type == AssistantDocumentType.MY_DOCUMENTS)
               this.selectedMyDocuments.update(value => [...value, assistantDocument]);
-            else if (assistantDocument.assistant_document_type == AssistantDocumentType.SHARED_DOCUMENTS)
-              this.selectedSharedDocuments.update(value => [...value, assistantDocument]);
             else if (assistantDocument.assistant_document_type == AssistantDocumentType.CATEGORY_DOCUMENTS)
               this.selectedCategoryDocuments.update(value => [...value, assistantDocument]);
           this.updateMyDocumentsElements();
-          this.updateSharedElements();
           this.updateCategoryElements();
 
         },
@@ -163,38 +143,6 @@ export class DocumentSelectorComponent {
     });
 
   }
-
-  selectSharedElement(element: SharedDocument) {
-
-    if (!this.assistant)
-      return;
-
-    let assistantDocument = {
-      id: '',
-      assistant_id: this.assistant.id,
-      document_id: element.id,
-      document_name: element.name,
-      assistant_document_type: element.document_type,
-      shared_group_id: element.shared_group_id
-    };
-    //on le sauvegarde sur le serveur comme un élément du périmêtre
-    this.assistantService.createAssistantDocument(assistantDocument).subscribe({
-      next: (element: AssistantDocument) => {
-        //on l'ajoute comme un élément du périmêtre
-        this.selectedSharedDocuments.update(values => {
-          return [...values, element]
-        });
-        //on le supprime des éléments disponibles
-        this.elementsSharedDocuments.set(this.elementsSharedDocuments().filter(item => item.id != element.document_id));
-      },
-      error: (error) => {
-        console.error('Load failed:', error);
-      },
-      complete: () => {
-      }
-    });
-  }
-
 
   selectCategoryElement(element: CategoryDocument) {
     if (!this.assistant)
@@ -240,11 +188,6 @@ export class DocumentSelectorComponent {
           //on met à jour les éléments non sélectionnés
           this.elementsMyDocuments.set(this.initialMyDocuments);
           this.updateMyDocumentsElements();
-        } else if (assistantDocument.assistant_document_type == AssistantDocumentType.SHARED_DOCUMENTS) {
-          this.selectedSharedDocuments.set(this.selectedSharedDocuments().filter(value => value.id != assistantDocument.id));
-          //on met à jour les éléments non sélectionnés
-          this.elementsSharedDocuments.set(this.initialSharedDocuments);
-          this.updateSharedElements();
         } else if (assistantDocument.assistant_document_type == AssistantDocumentType.CATEGORY_DOCUMENTS) {
           this.selectedCategoryDocuments.set(this.selectedCategoryDocuments().filter(value => value.id != assistantDocument.id));
           //on met à jour les éléments non sélectionnés
@@ -328,34 +271,10 @@ export class DocumentSelectorComponent {
     );
   }
 
-  private updateSharedElements() {
-    // Create an array to hold the filtered elements
-    let filteredElements: Document[] = [];
-
-    // Iterate through each item in elementsZone1 using forEach
-    this.elementsSharedDocuments().forEach(item => {
-      // Iterate through each item in selectedElementsZone1 using forEach
-      this.selectedSharedDocuments().forEach(selectedItem => {
-        // Check if the document_id matches the id of the item
-        if (selectedItem.document_id === item.id) {
-          // Add the item to the filteredElements array
-          filteredElements.push(item);
-          return; // Exit the inner forEach loop as match is found
-        }
-      });
-    });
-
-    // Remove the elements in filteredElements from elementsZone1
-    this.elementsSharedDocuments.set(
-      this.elementsSharedDocuments().filter(item =>
-        !filteredElements.some(filteredItem => filteredItem.id === item.id)
-      )
-    );
-  }
 
   private updateCategoryElements() {
     // Create an array to hold the filtered elements
-    let filteredElements: Document[] = [];
+    let filteredElements: CategoryDocument[] = [];
 
     // Iterate through each item in elementsZone1 using forEach
     this.elementsCategoryDocuments().forEach(item => {
@@ -380,7 +299,6 @@ export class DocumentSelectorComponent {
 
   private resetModal() {
     this.selectedMyDocuments.set([]);
-    this.selectedSharedDocuments.set([]);
     this.selectedCategoryDocuments.set([]);
     this.selectedPerimeter.set([]);
 

@@ -25,8 +25,8 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "./node_modules/ng2-pdfjs-viewer/pdfjs",
-                "output": "/assets/pdfjs"
+                "input": "./node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/assets/"
               }
             ],
             "styles": [

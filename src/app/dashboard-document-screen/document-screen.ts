@@ -1,13 +1,13 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import {Router} from "@angular/router";
-import {catchError, map, throwError} from "rxjs";
+import {catchError, map, tap, throwError} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {NgEventBus} from "ng-event-bus";
+import {MetaData, NgEventBus} from "ng-event-bus";
 import {GlobalsService} from "../globals.service";
 import {NavigationStateService} from "./navigation-state.service";
-import {PdfViewerComponent, PdfViewerModule} from "ng2-pdf-viewer";
 import {StateManagerService, STATES} from "../state-manager.service";
 import {ConversationService} from "../dashboard-main-screen/conversation.service";
+import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
 
 
 @Component({
@@ -15,7 +15,7 @@ import {ConversationService} from "../dashboard-main-screen/conversation.service
   standalone: true,
   templateUrl: './document-screen.html',
   imports: [
-    PdfViewerModule
+    NgxExtendedPdfViewerModule
   ],
   styleUrl: './document-screen.css'
 })
@@ -24,11 +24,13 @@ export class DocumentScreen implements OnInit {
 
   protected pdfSrc?: Uint8Array;
   protected page: number = 0;
-  @ViewChild(PdfViewerComponent, {static: false})
-  private pdfComponent?: PdfViewerComponent;
+  @ViewChild('pdfViewerOnDemand') protected pdfViewerOnDemand!: any
+
   private readonly base_url;
   private documentId: number = 1;
   private content: string = '';
+  private documentName: string = '';
+
 
   constructor(private router: Router,
               private stateManagerService: StateManagerService,
@@ -43,59 +45,46 @@ export class DocumentScreen implements OnInit {
 
   ngOnInit(): void {
     this.stateManagerService.setCurrentState(STATES.Document);
+
+    this.eventBus.on("change_page").subscribe((meta: MetaData) => {
+      this.page = meta.data.data;
+    });
+
     this.navStateService.getState().subscribe((state) => {
-      if (state) {
+
+      if (state['focus_only']) {
+        this.stateManagerService.chatFullScreen.set(true);
         this.documentId = state['documentId'];
+        this.documentName = state['documentName'];
+        this.stateManagerService.documentName.set(this.documentName);
+        this.loadDocument(this.documentId);
+      } else if (state) {
+        this.stateManagerService.chatFullScreen.set(false);
+        this.documentId = state['documentId'];
+        this.documentName = state['documentName'];
         this.page = state['page'] + 1;
         if (state['content']) {
           const contentLines = state['content'].split('\n');
           this.content = contentLines.length > 0 ? contentLines[0] : '';
         }
-        this.loadDocument(this.documentId, this.page, this.content);
+        this.stateManagerService.documentName.set(this.documentName);
+        this.loadDocument(this.documentId);
         const url = `${this.base_url}${this.documentId}/`;
-        this.openPdf(url);
+        this.downloadFile(url);
       } else {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('documentId') && urlParams.has('page') && urlParams.has('content')) {
           this.documentId = Number(urlParams.get('documentId'));
           this.page = Number(urlParams.get('page')) + 1;
           this.content = urlParams.get('content') || '';
-          this.loadDocument(this.documentId, this.page, this.content);
+          this.loadDocument(this.documentId);
           const url = `${this.base_url}${this.documentId}/`;
-          this.openPdf(url);
+          this.downloadFile(url);
         }
       }
     });
   }
 
-  public openPdf(url: string) {
-
-    this.downloadFile(url).subscribe(
-      (res: Blob) => {
-        this.blobToUint8Array(res).then((uint8Array: Uint8Array) => {
-          if (this.pdfComponent != null) {
-            this.pdfSrc = uint8Array; // Assign the Uint8Array to the pdfComponent
-          }
-        }).catch(err => {
-          console.error("Conversion failed", err);
-        });
-      },
-      (error: any) => {
-        console.error("Download failed", error);
-      }
-    );
-  }
-
-  search() {
-
-    this.pdfComponent?.eventBus.dispatch('find', {
-      query: this.content,
-      caseSensitive: false,
-      findPrevious: undefined,
-      highlightAll: true,
-      phraseSearch: true
-    });
-  }
 
   /*********************************************************************************************
    /*Chargement du document et du chat associé. Cela peut venir du chat ou du dashboard
@@ -103,17 +92,17 @@ export class DocumentScreen implements OnInit {
    /* 1a. on a pas de numéro de chat existant pour ce document, on en crée un -> createConversation
    * /2. on envoie les deux messages -> a au chat. b au pdf viewer
    */
-  public loadDocument(documentId: number, page: number, content: string) {
+  public loadDocument(documentId: number) {
     // 1. on charge le numéro de chat ou on le crée
     this.conversationService.loadOrCreateConversationsByDocumentId(documentId).subscribe({
       next: (result) => {
         //on a pas trouvé de conversation, on la crée
         if (result.length == 0) {
           this.conversationService.createConversation(documentId).subscribe(value => {
-            this.loadConversationAndDocument(value.id, documentId, page, content)
+            this.loadConversationAndDocument(value.id)
           })
         } else {
-          this.loadConversationAndDocument(result[0].id, documentId, page, content)
+          this.loadConversationAndDocument(result[0].id)
         }
       }, error: (error) => {
         console.error('Delete failed:', error);
@@ -128,17 +117,13 @@ export class DocumentScreen implements OnInit {
    /* 2. on charge le pdf viewer
    * /2. on envoie les deux messages ->  au chat. + au pdf viewer
    */
-  public loadConversationAndDocument(conversationId: number, documentId: number, page: number, content: string) {
+  public loadConversationAndDocument(conversationId: number) {
 
     this.stateManagerService.setCurrentConversation(conversationId);
     //this.conversationService.setCurrentConversation(conversationId);
 
   }
 
-  protected callBackFn(pdf: CustomEvent) {
-
-    this.search();
-  }
 
   private blobToUint8Array(blob: Blob): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
@@ -154,16 +139,11 @@ export class DocumentScreen implements OnInit {
 
   private downloadFile(url: string): any {
     return this.http.get(url, {responseType: 'blob'})
-      .pipe(
-        catchError(error => {
-          // Handle the error
-          console.error('Error occurred:', error);
-          return throwError(error); // Rethrow the error or return a custom error
-        })
-        , map((result: any) => {
-          return result;
-        })
-      );
+      .subscribe((blob) => {
+          this.pdfViewerOnDemand.src = blob;
+
+        });
+
   }
 
 

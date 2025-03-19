@@ -1,13 +1,14 @@
 import {AfterViewChecked, Component, computed, Input, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
-import {StateManagerService} from "../state-manager.service";
+import {StateManagerService, STATES} from "../state-manager.service";
 import {HighlightDirective} from "../chat-highlight-content/highlight.component";
 import {AppCopyButtonDirective} from "../chat-copy-content-button/copy-button.component";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
 import {Location, NgClass} from '@angular/common';
 import {UserContextService} from "../auth/user-context.service";
+import {NgEventBus} from "ng-event-bus";
 
 
 @Component({
@@ -26,14 +27,15 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   protected isRecording: WritableSignal<boolean> = signal(false);
   protected screenReadyMessage = computed(() => {
     this.newMessage = true;
-    return this.statemanagerService.getScreenReadyMessages()();
+    return this.stateManagerService.getScreenReadyMessages()();
   });
   @ViewChild('scrollMe') private myScrollContainer: any;
 
-  constructor(protected statemanagerService: StateManagerService,
+  constructor(protected stateManagerService: StateManagerService,
               private navStateService: NavigationStateService,
               private router: Router,
               private location: Location,
+              private eventBus: NgEventBus,
               private userContextService: UserContextService) {
 
 
@@ -78,14 +80,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
     const queryParams = {documentId: documentId, page: page, content: content};
 
-    // Using Angular's Router to serialize the URL with query params
-    const url = this.location.prepareExternalUrl(this.router.serializeUrl(
-      this.router.createUrlTree(['/docs'], {queryParams})
-    ));
-
-    // Opening a new tab
-    window.open(url, '_blank');
-
+    if (this.stateManagerService.getCurrentState() == STATES.Document) {
+      this.eventBus.cast("change_page", {data: page});
+    } else {
+      // Using Angular's Router to serialize the URL with query params
+      const url = this.location.prepareExternalUrl(this.router.serializeUrl(
+        this.router.createUrlTree(['/docs'], {queryParams})
+      ));
+      // Opening a new tab
+      window.open(url, '_blank');
+    }
     $event.preventDefault()
   }
 
@@ -118,25 +122,25 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     let current_message = this.inputMessage
     this.inputMessage = "";
 
-    this.statemanagerService.sendCommand(current_message);
+    this.stateManagerService.sendCommand(current_message);
   }
 
   clearInput() {
-    this.statemanagerService.clearConversation();
+    this.stateManagerService.clearConversation();
   }
 
 
   startRecording() {
-    if(this.isRecording())
+    if (this.isRecording())
       this.stopRecording();
     else
-    this.statemanagerService.startVoiceCommand().then(value => {
-      this.isRecording.set(value);
-    });
+      this.stateManagerService.startVoiceCommand().then(value => {
+        this.isRecording.set(value);
+      });
   }
 
   stopRecording() {
-    this.statemanagerService.endVoiceCommand().then(value => {
+    this.stateManagerService.endVoiceCommand().then(value => {
       this.isRecording.set(value);
     });
   }

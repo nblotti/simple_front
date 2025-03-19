@@ -11,7 +11,7 @@ import {UserCategory, UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentStatus, DocumentType} from "../document.service";
 import {GlobalsService} from "../globals.service";
 import {SharedGroupDTO} from "./SharedGroupDTO";
-import {Document} from "./Document";
+import {Document} from "../Document";
 import {CapitalizePipe} from "../capitalize.pipe";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
@@ -44,18 +44,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly document = document;
   protected readonly DocumentStatus = DocumentStatus;
   protected readonly DASHBOARD_SORTABLE_COLUMNS = DASHBOARD_SORTABLE_COLUMNS;
-  private buttonStatus = ["Auto refresh", "Disable refresh"]
-  protected buttonLabel: string = this.buttonStatus[0]
-  private formPerimeterValueChangesSubscription: Subscription | undefined;
-  private formShareValueChangesSubscription: Subscription | undefined;
-  private groupUrl: string;
-  private intervalId: any;
-
   protected sortOrderArray: { [key: string]: SortOrder } = {
     name: {direction: true},
     status: {direction: false},
     date: {direction: true},
   };
+  private formPerimeterValueChangesSubscription: Subscription | undefined;
+  private formShareValueChangesSubscription: Subscription | undefined;
+  private groupUrl: string;
+  private intervalId: any;
 
   constructor(
     private conversationService: ConversationService,
@@ -106,9 +103,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.stateManagerService.setCurrentState(STATES.Dashboard);
+    this.reload()
     this.loadCategories();
-    this.loadGroups();
-
     this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.NAME] = {direction: true};
     this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.STATUS] = {direction: false};
     this.sortOrderArray[DASHBOARD_SORTABLE_COLUMNS.DATE] = {direction: false};
@@ -259,7 +255,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   selectCurrentConversation() {
     let current_conversation: number = 0;
-    let current_date = this.datePipe.transform(new Date(), 'dd.MM.yyyy');
+
     this.conversations().forEach((loc_conversation) => {
       if ((loc_conversation.pdf_id == 0)) {
         current_conversation = loc_conversation.id;
@@ -274,11 +270,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
-    let page_number = 0;
-    //this.stateManagerService.loadDocument(Number(documentId), page, content);
+  onDisplayPDF($event: MouseEvent, documentId: string, documentName:string = "",page: number = -1, content: string = "") {
 
-    const state = {documentId, page, content};
+    const state = {documentId, page, content, focus_only: false,documentName};
     this.navStateService.setState(state);  // Store state in the service
     this.router.navigate(['/docs']);
     $event.preventDefault();
@@ -324,25 +318,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshDashboard() {
-    if (this.buttonLabel == this.buttonStatus[0]) {
-      this.buttonLabel = this.buttonStatus[1];
-      this.intervalId = setInterval(() => {
-        this.performScheduledTask();
-      }, 120000); // Schedule task every minute
-    } else {
-      this.buttonLabel = this.buttonStatus[0];
-      if (this.intervalId) {
-        clearInterval(this.intervalId);
-      }
-    }
-  }
-
-  performScheduledTask() {
-    // Implement the logic of your scheduled task here
-    console.log('Scheduled task executed at', new Date());
-    this.reload();
-  }
 
   clearFormArray(formArray
                  :
@@ -354,10 +329,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   reload() {
+    this.stateManagerService.wheeWindow.set(true);
     this.loadDocuments();
     this.reloadConversations();
     this.loadTemplates();
     this.loadSummary();
+
+    setTimeout(() => this.stateManagerService.wheeWindow.set(false), 500);
     // this.perimeter.set(this.userContextService.userID, true);
   }
 
@@ -408,6 +386,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
+  onDisplayFocus($event: MouseEvent, documentId: string, documentName:string) {
+
+    const state = {documentId, focus_only: true,documentName};
+    this.navStateService.setState(state);  // Store state in the service
+    this.router.navigate(['/docs']);
+    $event.preventDefault();
+  }
+
   protected createSummaryJob($event: MouseEvent, document: Document) {
 
 
@@ -433,7 +419,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });// Make sure to subscribe to the observable to trigger execution.
   }
-
 
   private sortDocumentsByName(documents: Document[], direction: boolean) {
     return documents.sort((a, b) => {
@@ -480,6 +465,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return response
     }));
   }
+
 }
 
 interface SortOrder {

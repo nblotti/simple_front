@@ -32,7 +32,6 @@ export const APP_ROUTES: Route[] = [
         path: 'dashboard',
         loadComponent: () => import('./dashboard-main-screen/dashboard.component').then(m => m.DashboardComponent)
       },
-      {path: 'share', loadComponent: () => import('./share/share.component').then(m => m.ShareComponent)},
       {path: 'admin', loadComponent: () => import('./admin-main-screen/admin.component').then(m => m.AdminComponent)}
     ]
   },

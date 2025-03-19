@@ -32,13 +32,24 @@ export class AdminState implements StateInterface {
   loadConversationMessages(): void {
   }
 
-  sendCommand(current_message: string): void {
-  }
+
 
   setCurrentConversation(conversation_id: number): void {
   }
 
   setPerimeter(perimeter: string): void {
+  }
+
+  endVoiceCommand(): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
+  sendCommand(current_message: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  startVoiceCommand(): Promise<boolean> {
+    return Promise.resolve(false);
   }
 
 

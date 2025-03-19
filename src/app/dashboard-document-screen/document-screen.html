@@ -1,5 +1,12 @@
 <div style="width: 100%; height: 99%">
-  <pdf-viewer [page]="page" [src]="pdfSrc" [show-all]="true" [render-text]="true" (text-layer-rendered)="callBackFn($event)"
-              style="width: 100%; height: 100%"></pdf-viewer>
+  <ngx-extended-pdf-viewer #pdfViewerOnDemand
+                           [(page)]="page"
+
+                           zoom="page-width"
+                           [textLayer]="true"
+                           [showHandToolButton]="true"
+                           style="width: 100%; height: 100%">
+
+  </ngx-extended-pdf-viewer>
 
 </div>

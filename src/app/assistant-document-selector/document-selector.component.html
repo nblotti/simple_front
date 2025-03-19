@@ -19,15 +19,6 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                [class.active]="activeTab === 'shared'"
-                (click)="setActiveTab('shared_document')"
-                href="javascript:void(0);"
-              >Shared Documents</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
                 [class.active]="activeTab === 'category'"
                 (click)="setActiveTab('category_document')"
                 href="javascript:void(0);"
@@ -65,33 +56,6 @@
               </div>
               <div class="col-12">
                 <h5></h5>
-              </div>
-            </div>
-            <div class="row table-container tab-pane"
-                 [class.active]="activeTab === 'shared_document'"
-                 [class.show]="activeTab === 'shared_document'"
-                 id="shared_document"
-            >
-              <div class="col-12" style="overflow: auto; max-height: 400px;">
-                <table class="table table-borderless table_documnents">
-                  <thead>
-                  <tr>
-                    <th class="document_header_content">Document</th>
-                    <th class="document_header_action_content">Action</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    @for (element of this.elementsSharedDocuments(); track element) {
-                      <tr class=" .bg-transparent mt-5" (dblclick)="selectSharedElement(element)">
-                        <td class="document_text_content">{{ element.name | capitalize }}</td>
-                        <td class="document_action_content">
-                          <button (click)="selectSharedElement(element)">Add</button>
-                        </td>
-                      </tr>
-                    }
-
-                  </tbody>
-                </table>
               </div>
             </div>
             <div class="row table-container tab-pane"

@@ -20,7 +20,6 @@
             <li>
               <hr class="dropdown-divider">
             </li>
-            <li><a class="dropdown-item" routerLink="/share/">Share document</a></li>
 
 
           </ul>
@@ -36,9 +35,11 @@
 </nav>
 
 <div class="container-fluid full-height-minus-menu app_content" [class.blurred]="showModal">
-  <div class="row">
+  <div class="row h-100 " >
     <!-- Left Sidebar -->
-    <div class="h-100 sidebar shared_side" #sidebar *ngIf="isLoggedIn()">
+    <div
+      [ngClass]="{'full sidebar w-100': stateManagerService.chatFullScreen(), 'h-100 sidebar shared_side': !stateManagerService.chatFullScreen()}"
+      #sidebar *ngIf="isLoggedIn()">
       <div class="sidebar-content">
         <chat-component></chat-component>
 
@@ -46,7 +47,9 @@
     </div>
 
     <!-- Right Content -->
-    <div [ngClass]="{'main-content shared': isLoggedIn(), 'main-content notshared': !isLoggedIn()}" #mainContent>
+    <div
+      [ngClass]="{'main-content not-visible': stateManagerService.chatFullScreen(), 'main-content shared': isLoggedIn(), 'main-content notshared': !isLoggedIn()}"
+      #mainContent>
       <router-outlet></router-outlet>
 
     </div>
@@ -58,6 +61,10 @@
 
 <app-file-upload-dialog [showModal]="showModal" (closeModal)="closeModal()"></app-file-upload-dialog>
 
+@if (this.stateManagerService.wheeWindow()) {
+  <div class="wheel-overlay"></div>
+}
 @if (this.stateManagerService.blurWindow()) {
-  <div class="overlay"></div>
+  <div class="simple-overlay"></div>
+
 }

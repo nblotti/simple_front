@@ -4,7 +4,7 @@ import {HttpClient, HttpEventType} from "@angular/common/http";
 import {UserContextService} from "../auth/user-context.service";
 import {DocumentService, DocumentStatus, DocumentType} from "../document.service";
 import {CapitalizePipe} from "../capitalize.pipe";
-import {Document} from "../dashboard-main-screen/Document";
+import {Document} from "../Document";
 import {map, Observable} from "rxjs";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
@@ -86,12 +86,10 @@ export class AdminComponent implements OnInit {
     this.loadDocuments();
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string, page: number = -1, content: string = "") {
-    // let page_number = 0;
-    // this.stateManagerService.loadDocument(Number(documentId), page, content);
-    //this.stateManagerService.loadDocument(Number(documentId), page, content);
+  onDisplayPDF($event: MouseEvent, documentId: string, documentName: string = "", page: number = -1, content: string = "") {
     const state = {
-      documentId: documentId
+      documentId: documentId,
+      documentName: documentName
     }
     //};
     this.navStateService.setState(state);
