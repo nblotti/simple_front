@@ -16,11 +16,12 @@ import {DocumentService} from "./document.service";
 import {DocumentState} from "./dashboard-document-screen/DocumentState";
 import {LoginService} from "./auth/login.service";
 import {AudioRecorderComponentService} from "./voice/audio-recorder-component.service";
+import {SummaryPopupComponent} from "./summary-popup/summary-popup.component";
 
 @Component({
   selector: 'root',
   standalone: true,//  1. instantiate standalone flag
-  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink],
+  imports: [CommonModule, ChatComponent, FileUploadDialogComponent, RouterOutlet, RouterLink, SummaryPopupComponent],
   providers: [NgEventBus, DatePipe, DashboardState, AssistantState, DocumentState, StateManagerService,
     ConversationService, AssistantService, LoginComponent, LoginService, DocumentService, AudioRecorderComponentService],
   templateUrl: './app.component.html', // 2.Render the Dom,
@@ -30,6 +31,9 @@ import {AudioRecorderComponentService} from "./voice/audio-recorder-component.se
 export class AppComponent  {
 
   showModal: boolean = false;
+
+
+
   blurWindow = computed<boolean>(() => {
     return this.stateManagerService.wheeWindow()
   });
@@ -63,6 +67,7 @@ export class AppComponent  {
     this.showModal = false
     this.stateManagerService.blurWindow.set(false);
   }
+
 
   loadAdmin() {
 

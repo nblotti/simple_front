@@ -1,0 +1,20 @@
+<div class="modal" [class.show]="showModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create summary</h5>
+      </div>
+
+      <div class="modal-body">
+      <textarea id="basic-url" [(ngModel)]="summaryPrompt" class="form-control summary-txtarea-class"
+                aria-label="With textarea"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="onRequest()">Upload
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

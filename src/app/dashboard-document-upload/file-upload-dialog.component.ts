@@ -41,8 +41,6 @@ export class FileUploadDialogComponent {
   )
 
   protected uploadProgress: number = 0;
-  protected summaryChecked: WritableSignal<boolean> = signal(false);
-  protected templateChecked: WritableSignal<boolean> = signal(false);
   protected isFileSelected: WritableSignal<boolean> = signal(false);
   protected urlToScrap: WritableSignal<string> = signal("");
   protected active_tab: TABS = TABS.DOCUMENTS;
@@ -60,7 +58,6 @@ export class FileUploadDialogComponent {
   resetFileInput(): void {
     this.fileInput.nativeElement.value = '';
     this.fileInput.nativeElement.value = '';
-    this.summaryChecked.set(false);
     this.isFileSelected.set(false)
     this.urlToScrap.set("")
     this.uploadProgress = 0;
@@ -79,36 +76,10 @@ export class FileUploadDialogComponent {
           if (event.total != undefined)
             this.uploadProgress = Math.round((100 * event.loaded) / event.total);
         } else if (event.type === HttpEventType.Response) {
-          if (this.summaryChecked()) {
-            this.documentService.requestSummary(user, event.body.id)
-              .pipe(
-                catchError(error => {
-                  this.resetFileInput();
-                  console.error('An error occurred:', error);
-                  return throwError(error);
-                })
-              )
-              .subscribe({
-                next: (response) => {
-                  this.resetFileInput();
-                  this.closeModal.emit();
-                  // Reset upload progress after successful upload
-                  this.uploadProgress = 0;
-                  this.eventBus.cast("reload_data");
+          this.resetFileInput();
+          this.closeModal.emit();
+          this.eventBus.cast("reload_data");
 
-                },
-                error: (error) => {
-                  this.resetFileInput();
-                  console.error('An error occurred while creating the job:', error);
-                  return throwError(error);
-                }
-              });
-
-          } else {
-            this.resetFileInput();
-            this.closeModal.emit();
-            this.eventBus.cast("reload_data");
-          }
         }
       });
 
@@ -134,7 +105,7 @@ export class FileUploadDialogComponent {
           || fileType === FileType.TIFF
           || fileType === FileType.HEIF) {
           // Call the uploadFile method with the file and its type
-          this.uploadFile(file, this.templateChecked() ? DocumentType.TEMPLATE : DocumentType.DOCUMENT, "true");
+          this.uploadFile(file, DocumentType.DOCUMENT, "true");
           // Reset the file input
         } else {
           // Show alert and reset the file input
@@ -204,12 +175,6 @@ export class FileUploadDialogComponent {
     return this.userContextService.userAdminCategories().length != 0;
   }
 
-
-  templateChanged() {
-    if (this.templateChecked()) {
-      this.summaryChecked.set(false);
-    }
-  }
 
 }
 

@@ -59,12 +59,18 @@ export class DocumentService {
 
   }
 
-  requestSummary(user: string, id: string) {
+  requestSummary(user: string, id: string, prompt: string) {
+
+   const promptJson = { "prompt": prompt };
+
+// Convert the object to a JSON string using JSON.stringify
     const jsonData = {
-      "source": id,
-      "owner": user,
-      "job_type": "SUMMARY"
+      source: id,
+      owner: user,
+      job_type: "SUMMARY", // Optional since it's the default on the backend
+      payload: { prompt }
     };
+
 
 
     let url = this.jobs_base_url

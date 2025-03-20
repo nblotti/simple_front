@@ -15,11 +15,12 @@ import {Document} from "../Document";
 import {CapitalizePipe} from "../capitalize.pipe";
 import {NavigationStateService} from "../dashboard-document-screen/navigation-state.service";
 import {Router} from "@angular/router";
+import {SummaryPopupComponent} from "../summary-popup/summary-popup.component";
 
 @Component({
   selector: 'dashboard-component',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, ReactiveFormsModule, CapitalizePipe],
+  imports: [FormsModule, HttpClientModule, ReactiveFormsModule, CapitalizePipe, SummaryPopupComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -53,6 +54,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private formShareValueChangesSubscription: Subscription | undefined;
   private groupUrl: string;
   private intervalId: any;
+  protected document2Summarize: Document | undefined;
+  protected showSummaryModal: boolean = false;
 
   constructor(
     private conversationService: ConversationService,
@@ -60,7 +63,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private documentService: DocumentService,
     private stateManagerService: StateManagerService,
     private eventBus: NgEventBus,
-    private datePipe: DatePipe,
     private fb: FormBuilder,
     private router: Router,
     private globalsService: GlobalsService,
@@ -270,9 +272,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDisplayPDF($event: MouseEvent, documentId: string, documentName:string = "",page: number = -1, content: string = "") {
+  onDisplayPDF($event: MouseEvent, documentId: string, documentName: string = "", page: number = -1, content: string = "") {
 
-    const state = {documentId, page, content, focus_only: false,documentName};
+    const state = {documentId, page, content, focus_only: false, documentName};
     this.navStateService.setState(state);  // Store state in the service
     this.router.navigate(['/docs']);
     $event.preventDefault();
@@ -282,6 +284,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    /*Gestion des documents
    /* */
   deleteDocument(blobId: string) {
+
+    this.stateManagerService.wheeWindow.set(true);
     return this.documentService.deleteDocument(Number(blobId)).subscribe({
       next: (result) => {
         console.log('Delete successful:', result);
@@ -291,6 +295,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.reload();
+        this.stateManagerService.wheeWindow.set(false);
       }
     });
   }
@@ -386,9 +391,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  onDisplayFocus($event: MouseEvent, documentId: string, documentName:string) {
+  onDisplayFocus($event: MouseEvent, documentId: string, documentName: string) {
 
-    const state = {documentId, focus_only: true,documentName};
+    const state = {documentId, focus_only: true, documentName};
     this.navStateService.setState(state);  // Store state in the service
     this.router.navigate(['/docs']);
     $event.preventDefault();
@@ -396,28 +401,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected createSummaryJob($event: MouseEvent, document: Document) {
 
+    this.openSummaryDialog(document)
 
-    document.summary_status = DocumentStatus.REQUESTED
-    return this.documentService.requestSummary(this.userContextService.getUserID()(), document.id)
-      .pipe(
-        catchError(error => {
-          console.error('An error occurred:', error);
-          return throwError(error);
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          console.log('Job created successfully', response);
-
-          setTimeout(() => {
-            this.reload();
-          }, 10000); // Wait for 10 seconds
-
-        },
-        error: (error) => {
-          console.error('An error occurred while creating the job:', error);
-        }
-      });// Make sure to subscribe to the observable to trigger execution.
   }
 
   private sortDocumentsByName(documents: Document[], direction: boolean) {
@@ -464,6 +449,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return []
       return response
     }));
+  }
+
+  openSummaryDialog(document: Document): void {
+
+    this.stateManagerService.blurWindow.set(true);
+    this.document2Summarize = document;
+    this.showSummaryModal = true;
+
+  }
+
+  closeSummaryModal(status:boolean): void {
+    this.showSummaryModal = false;
+    this.stateManagerService.blurWindow.set(false);
   }
 
 }

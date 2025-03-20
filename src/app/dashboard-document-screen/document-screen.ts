@@ -52,13 +52,16 @@ export class DocumentScreen implements OnInit {
 
     this.navStateService.getState().subscribe((state) => {
 
-      if (state['focus_only']) {
-        this.stateManagerService.chatFullScreen.set(true);
-        this.documentId = state['documentId'];
-        this.documentName = state['documentName'];
-        this.stateManagerService.documentName.set(this.documentName);
-        this.loadDocument(this.documentId);
-      } else if (state) {
+
+       if (state) {
+         if (state['focus_only']) {
+           this.stateManagerService.chatFullScreen.set(true);
+           this.documentId = state['documentId'];
+           this.documentName = state['documentName'];
+           this.stateManagerService.documentName.set(this.documentName);
+           this.loadDocument(this.documentId);
+           return;
+         }
         this.stateManagerService.chatFullScreen.set(false);
         this.documentId = state['documentId'];
         this.documentName = state['documentName'];
@@ -138,11 +141,18 @@ export class DocumentScreen implements OnInit {
   }
 
   private downloadFile(url: string): any {
+    this.stateManagerService.wheeWindow.set(true);
     return this.http.get(url, {responseType: 'blob'})
-      .subscribe((blob) => {
+      .subscribe({
+        next: (blob) => {
           this.pdfViewerOnDemand.src = blob;
-
-        });
+          this.stateManagerService.wheeWindow.set(false);
+        },
+        error: (err) => {
+          console.error('File download failed:', err);
+          this.stateManagerService.wheeWindow.set(false);
+        }
+      });
 
   }
 

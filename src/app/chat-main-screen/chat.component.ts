@@ -144,5 +144,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       this.isRecording.set(value);
     });
   }
+
+  protected readonly STATES = STATES;
 }
 
