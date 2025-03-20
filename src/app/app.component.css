@@ -133,7 +133,7 @@
   left: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.6); /* Adjust color and opacity as needed */
-  z-index: 9998; /* Just below the popup */
+  z-index: 10000; /* Just below the popup */
 }
 
 .wheel-overlay::before {

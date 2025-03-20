@@ -462,6 +462,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   closeSummaryModal(status:boolean): void {
     this.showSummaryModal = false;
     this.stateManagerService.blurWindow.set(false);
+    this.reload()
   }
 
 }

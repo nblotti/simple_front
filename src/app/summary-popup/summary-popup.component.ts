@@ -20,7 +20,7 @@ export class SummaryPopupComponent {
   @Input() documentID: string | undefined;
   @Output() closeModal: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  private defaultString: string = "Create a detailed summary of a provided document with a minimum length of 300 words.\n" +
+  private defaultString: string = "Create a detailed summary of a provided document\n" +
     "\n" +
     "Start with an overall description, followed by a detailed examination of each important element. Conclude with a concise recap that synthesizes the main points.\n" +
     "\n" +
@@ -54,13 +54,14 @@ export class SummaryPopupComponent {
   summaryPrompt: WritableSignal<string> = signal(this.defaultString);
 
 
-  constructor(private documentService: DocumentService, private userContextService: UserContextService) {
+  constructor(private documentService: DocumentService, private userContextService: UserContextService, private stateManagerService: StateManagerService) {
   }
 
 
   onRequest() {
     if (this.documentID == undefined)
       return;
+    this.stateManagerService.wheeWindow.set(true);
     this.documentService.requestSummary(this.userContextService.getUserID()(), this.documentID, this.summaryPrompt())
       .subscribe({
         next: (response) => {
@@ -68,12 +69,14 @@ export class SummaryPopupComponent {
 
           setTimeout(() => {
             this.closeModal.emit(true)
+            this.stateManagerService.wheeWindow.set(false);
           }, 10000); // Wait for 10 seconds
 
         },
         error: (error) => {
           console.error('An error occurred while creating the job:', error);
           this.closeModal.emit(false)
+          this.stateManagerService.wheeWindow.set(false);
         }
       });
   }
